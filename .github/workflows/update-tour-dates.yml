@@ -1,0 +1,48 @@
+name: Update Tour Dates
+
+on:
+  schedule:
+    - cron: "0 15 * * *"  # Daily 3pm UTC — always runs full scrape
+    - cron: "0 * * * *"   # Every hour — only scrapes if a show is today
+  workflow_dispatch:       # Manual trigger from GitHub Actions UI
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Playwright + Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run tour date scraper (daily 3pm)
+        if: github.event.schedule == '0 15 * * *' || github.event_name == 'workflow_dispatch'
+        run: node scripts/scrape-tour-dates.js
+
+      - name: Run tour date scraper (hourly — show-day only)
+        if: github.event.schedule == '0 * * * *'
+        run: node scripts/scrape-tour-dates.js --check-today
+
+      - name: Commit updated tour dates if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/tour-dates.json
+          if git diff --staged --quiet; then
+            echo "No changes to tour dates — skipping commit."
+          else
+            git commit -m "chore: update tour dates from punchup.live [skip ci]"
+            git push
+          fi
