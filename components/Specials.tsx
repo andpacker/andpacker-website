@@ -12,11 +12,18 @@ interface Special {
 
 const SPECIALS: Special[] = [
   {
-    title: "Special Title Here",
-    year: "2024",
+    title: "Never Call Her Crazy",
+    year: "2023",
     youtubeId: null,
+    angelUrl: "https://www.angel.com/shareandrewp",
+    description: "Andrew Packer's debut comedy special — streaming now on Angel.",
+  },
+  {
+    title: "On Guard",
+    year: "2022",
+    youtubeId: "wBo6-8DoiRU",
     angelUrl: null,
-    description: "Add your comedy special YouTube ID and/or Angel TV URL to Specials.tsx",
+    description: "Andrew Packer live — watch the full special on YouTube.",
   },
 ];
 
