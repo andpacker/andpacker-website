@@ -1,7 +1,7 @@
 export async function POST(req: Request) {
-  const { name, email, city } = await req.json();
+  const { firstName, lastName, email, city } = await req.json();
 
-  if (!name?.trim() || !email?.trim() || !city?.trim()) {
+  if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !city?.trim()) {
     return Response.json({ error: "All fields are required." }, { status: 400 });
   }
 
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const res = await fetch(scriptUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.trim(), email: email.trim(), city }),
+      body: JSON.stringify({ first_name: firstName.trim(), last_name: lastName.trim(), email: email.trim(), city }),
       redirect: "follow",
     });
 

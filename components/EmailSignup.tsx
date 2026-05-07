@@ -8,7 +8,8 @@ const CITIES = [
 ];
 
 export default function EmailSignup() {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [city, setCity] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -23,7 +24,7 @@ export default function EmailSignup() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, city }),
+        body: JSON.stringify({ firstName, lastName, email, city }),
       });
       const data = await res.json();
 
@@ -60,14 +61,24 @@ export default function EmailSignup() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md mx-auto">
-            <input
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full bg-white/10 border border-white/30 text-white placeholder-white/50 px-5 py-4 outline-none focus:border-white transition-colors text-sm"
-            />
+            <div className="flex gap-3">
+              <input
+                type="text"
+                placeholder="First name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                className="flex-1 bg-white/10 border border-white/30 text-white placeholder-white/50 px-5 py-4 outline-none focus:border-white transition-colors text-sm min-w-0"
+              />
+              <input
+                type="text"
+                placeholder="Last name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                className="flex-1 bg-white/10 border border-white/30 text-white placeholder-white/50 px-5 py-4 outline-none focus:border-white transition-colors text-sm min-w-0"
+              />
+            </div>
             <input
               type="email"
               placeholder="Your email address"
