@@ -2,15 +2,29 @@
   {
     "date": "2026-05-15",
     "city": "Toronto, ON",
-    "venue": "Placeholder Venue — auto-updated from punchup.live",
-    "ticketUrl": "https://punchup.live/AndrewPacker",
+    "venue": "CHEFS HALL",
+    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317",
     "status": "on_sale"
   },
   {
-    "date": "2026-05-22",
-    "city": "New York, NY",
-    "venue": "Placeholder Venue — auto-updated from punchup.live",
-    "ticketUrl": "https://punchup.live/AndrewPacker",
+    "date": "2026-05-16",
+    "city": "Toronto, ON",
+    "venue": "COMEDY BAR - TORONTO",
+    "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
+    "status": "on_sale"
+  },
+  {
+    "date": "2026-05-29",
+    "city": "Seattle, WA",
+    "venue": "LAUGHS COMEDY CLUB",
+    "ticketUrl": "https://www.eventbrite.com/e/comedy-show-andrew-packer-may-29th-and-30th-at-laughs-comedy-seattle-tickets-1984589789484?aff=oddtdtcreator",
+    "status": "on_sale"
+  },
+  {
+    "date": "2026-05-30",
+    "city": "Seattle, WA",
+    "venue": "LAUGHS COMEDY CLUB",
+    "ticketUrl": "https://www.eventbrite.com/e/comedy-show-andrew-packer-may-29th-and-30th-at-laughs-comedy-seattle-tickets-1984589789484?aff=oddtdtcreator",
     "status": "on_sale"
   }
 ]

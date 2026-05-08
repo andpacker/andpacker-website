@@ -24,6 +24,30 @@ function showIsToday(dateStr) {
   return dateStr === todayUTC();
 }
 
+// Parse "May 15" or "May 15, 2026" style date strings into YYYY-MM-DD.
+// Falls back to current year if year is omitted.
+function parsePunchupDate(raw) {
+  if (!raw) return "";
+  const cleaned = raw.trim();
+  // Already ISO
+  if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) return cleaned;
+
+  const currentYear = new Date().getFullYear();
+  // Try with year appended if not present
+  const withYear = /\d{4}/.test(cleaned)
+    ? cleaned
+    : `${cleaned}, ${currentYear}`;
+  const parsed = new Date(withYear);
+  if (!isNaN(parsed.getTime())) {
+    // Use UTC to avoid timezone shifting the date
+    const y = parsed.getFullYear();
+    const m = String(parsed.getMonth() + 1).padStart(2, "0");
+    const d = String(parsed.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  return cleaned;
+}
+
 async function main() {
   if (CHECK_TODAY) {
     let existing = [];
@@ -47,139 +71,139 @@ async function main() {
   const page = await context.newPage();
 
   console.log(`Navigating to ${PUNCHUP_URL}...`);
-  await page.goto(PUNCHUP_URL, { waitUntil: "networkidle", timeout: 60000 });
+  await page.goto(PUNCHUP_URL, { waitUntil: "domcontentloaded", timeout: 60000 });
 
-  // Wait for event cards to appear — punchup.live is a React SPA
-  // Try multiple possible selectors
-  const CARD_SELECTORS = [
-    '[data-testid="event-card"]',
-    ".event-card",
-    "[class*='event']",
-    "[class*='show']",
-    "article",
-  ];
+  // punchup.live renders show rows as grid divs with exactly 4 direct children:
+  //   [0] date/city column, [1] info column, [2] ticket button column, [3] share button column
+  //
+  // The page also renders wider wrapper containers (childCount >= 8) that span multiple rows
+  // and pollute the data — we must filter those out by requiring childCount === 4.
+  //
+  // Strategy: find all "Buy Tickets" anchors, walk up to the nearest 4-child container,
+  // then extract date, city, and venue from siblings within that row.
 
-  let cardSelector = null;
-  for (const sel of CARD_SELECTORS) {
-    const count = await page.locator(sel).count();
-    if (count > 0) {
-      cardSelector = sel;
-      console.log(`Found ${count} event cards with selector: ${sel}`);
-      break;
-    }
+  // Wait for at least one Buy Tickets link to appear
+  try {
+    await page.waitForSelector('a:has-text("Buy Tickets")', { timeout: 15000 });
+  } catch {
+    // May have timed out — try anyway
   }
 
-  if (!cardSelector) {
-    // Try waiting a bit longer for JS to render
-    console.log("No event cards found immediately, waiting 5s for JS render...");
-    await page.waitForTimeout(5000);
+  const shows = await page.evaluate(() => {
+    const results = [];
 
-    for (const sel of CARD_SELECTORS) {
-      const count = await page.locator(sel).count();
-      if (count > 0) {
-        cardSelector = sel;
-        console.log(`Found ${count} cards after wait with selector: ${sel}`);
-        break;
+    // Find all Buy Tickets anchors
+    const ticketLinks = Array.from(
+      document.querySelectorAll("a")
+    ).filter((a) => (a.innerText || a.textContent || "").trim() === "Buy Tickets");
+
+    for (const ticketLink of ticketLinks) {
+      const ticketUrl = ticketLink.href || "";
+
+      // Walk up to find the individual show row: exactly 4 direct children.
+      // Stop before reaching a container that has many children (multi-row wrapper).
+      let row = ticketLink.parentElement;
+      for (let i = 0; i < 6; i++) {
+        if (!row) break;
+        if (row.children.length === 4) break;
+        row = row.parentElement;
       }
-    }
-  }
 
-  if (!cardSelector) {
-    // Dump page content for debugging
+      // Only accept rows with exactly 4 children (clean individual show rows)
+      if (!row || row.children.length !== 4) continue;
+
+      const rowText = row.innerText || row.textContent || "";
+
+      // Extract date and city — they appear in anchor tags pointing to /e/<uuid>
+      const eventLinks = Array.from(row.querySelectorAll('a[href^="/e/"]'));
+      let dateRaw = "";
+      let city = "";
+
+      if (eventLinks.length >= 1) {
+        const firstP = eventLinks[0].querySelector("p");
+        dateRaw = firstP ? (firstP.innerText || firstP.textContent || "").trim() : "";
+      }
+      if (eventLinks.length >= 2) {
+        const secondP = eventLinks[1].querySelector("p");
+        city = secondP ? (secondP.innerText || secondP.textContent || "").trim() : "";
+      }
+
+      // Fallback: split first event link text on newline
+      if (!city && eventLinks.length === 1) {
+        const parts = (eventLinks[0].innerText || "").trim().split("\n").map((s) => s.trim()).filter(Boolean);
+        if (parts.length >= 2) {
+          dateRaw = parts[0];
+          city = parts[1];
+        }
+      }
+
+      // Extract venue — punchup styles venue names with "uppercase" in className
+      let venue = "";
+      const allP = Array.from(row.querySelectorAll("p"));
+      for (const p of allP) {
+        const cls = p.className || "";
+        if (cls.includes("uppercase") && cls.includes("semibold")) {
+          const t = (p.innerText || p.textContent || "").trim();
+          if (t && t.length < 100) {
+            venue = t;
+            break;
+          }
+        }
+      }
+      // Fallback: computed textTransform
+      if (!venue) {
+        for (const p of allP) {
+          if (window.getComputedStyle(p).textTransform === "uppercase") {
+            const t = (p.innerText || p.textContent || "").trim();
+            if (t && t.length < 100) {
+              venue = t;
+              break;
+            }
+          }
+        }
+      }
+
+      // Status detection
+      const cardText = rowText.toLowerCase();
+      let status = "on_sale";
+      if (cardText.includes("sold out")) status = "sold_out";
+      else if (cardText.includes("low ticket") || cardText.includes("almost sold")) status = "low_tickets";
+
+      results.push({ dateRaw, city, venue, ticketUrl, status });
+    }
+
+    return results;
+  });
+
+  console.log(`Extracted ${shows.length} raw show entries.`);
+
+  if (shows.length === 0) {
     const html = await page.content();
     fs.writeFileSync("/tmp/punchup-debug.html", html);
     console.error(
-      "Could not find event cards. Page HTML saved to /tmp/punchup-debug.html"
+      "Could not find any shows. Page HTML saved to /tmp/punchup-debug.html"
     );
     await browser.close();
     process.exit(1);
   }
 
-  const shows = await page.evaluate((selector) => {
-    const cards = Array.from(document.querySelectorAll(selector));
-    return cards.map((card) => {
-      const text = card.innerText || card.textContent || "";
-
-      // Extract date — look for ISO date or formatted date text
-      let date = "";
-      const dateEl =
-        card.querySelector("[class*='date']") ||
-        card.querySelector("time") ||
-        card.querySelector("[datetime]");
-      if (dateEl) {
-        date =
-          dateEl.getAttribute("datetime") ||
-          dateEl.getAttribute("data-date") ||
-          dateEl.innerText ||
-          "";
-      }
-
-      // Extract city/venue
-      const cityEl =
-        card.querySelector("[class*='city']") ||
-        card.querySelector("[class*='location']") ||
-        card.querySelector("h3") ||
-        card.querySelector("h2");
-      const city = cityEl ? cityEl.innerText.trim() : "";
-
-      const venueEl =
-        card.querySelector("[class*='venue']") ||
-        card.querySelector("[class*='name']") ||
-        card.querySelector("p");
-      const venue = venueEl ? venueEl.innerText.trim() : "";
-
-      // Extract ticket link — look for an anchor inside the card
-      const linkEl =
-        card.querySelector("a[href*='ticket']") ||
-        card.querySelector("a[href*='event']") ||
-        card.querySelector("a[href]");
-      const ticketUrl = linkEl ? linkEl.href : "";
-
-      // Extract status — look for sold out / low tickets badge text
-      const cardText = text.toLowerCase();
-      let status = "on_sale";
-      if (cardText.includes("sold out")) status = "sold_out";
-      else if (
-        cardText.includes("low ticket") ||
-        cardText.includes("almost sold")
-      )
-        status = "low_tickets";
-
-      return { date, city, venue, ticketUrl, status, _rawText: text.slice(0, 200) };
-    });
-  }, cardSelector);
-
-  console.log(`Extracted ${shows.length} raw show entries.`);
-
-  // If the simple approach got us nothing useful, try clicking each card for details
+  // Normalize and deduplicate
+  const seen = new Set();
   const enriched = [];
+
   for (const show of shows) {
-    let ticketUrl = show.ticketUrl;
+    const dateStr = parsePunchupDate(show.dateRaw);
+    const key = `${dateStr}|${show.city}|${show.venue}|${show.ticketUrl}`;
 
-    if (!ticketUrl || ticketUrl.includes("punchup.live")) {
-      // Navigate to the show detail page to get the real external ticket link
-      const cardLinks = await page.locator(`${cardSelector} a`).all();
-      for (const link of cardLinks) {
-        const href = await link.getAttribute("href");
-        if (href && !href.includes("punchup.live") && href.startsWith("http")) {
-          ticketUrl = href;
-          break;
-        }
-      }
-    }
-
-    // Normalize date to YYYY-MM-DD
-    let dateStr = show.date;
-    const parsed = new Date(dateStr);
-    if (!isNaN(parsed.getTime())) {
-      dateStr = parsed.toISOString().slice(0, 10);
-    }
+    // Skip duplicates (punchup renders desktop + mobile copies of each row)
+    if (seen.has(key)) continue;
+    seen.add(key);
 
     enriched.push({
       date: dateStr,
-      city: show.city || show._rawText.split("\n")[0] || "TBD",
+      city: show.city || "TBD",
       venue: show.venue || "",
-      ticketUrl: ticketUrl || PUNCHUP_URL,
+      ticketUrl: show.ticketUrl || PUNCHUP_URL,
       status: show.status,
     });
   }
@@ -190,9 +214,12 @@ async function main() {
     .filter((s) => s.date >= today)
     .sort((a, b) => a.date.localeCompare(b.date));
 
-  const existing = JSON.parse(
-    fs.existsSync(OUTPUT_PATH) ? fs.readFileSync(OUTPUT_PATH, "utf8") : "[]"
-  );
+  console.log(`${future.length} upcoming shows after dedup + filtering past dates.`);
+
+  const existingRaw = fs.existsSync(OUTPUT_PATH)
+    ? fs.readFileSync(OUTPUT_PATH, "utf8")
+    : "[]";
+  const existing = JSON.parse(existingRaw);
 
   if (JSON.stringify(future) === JSON.stringify(existing)) {
     console.log("Tour dates unchanged — no commit needed.");
