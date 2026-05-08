@@ -31,7 +31,8 @@ body {
 
 @media (min-width: 768px) {
   .hero-bg {
-    background-position: 85% 10%;
+    left: -220px;
+    background-position: center 10%;
   }
 }
 
