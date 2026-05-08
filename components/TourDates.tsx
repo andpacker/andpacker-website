@@ -65,9 +65,6 @@ export default function TourDates() {
           <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,4rem)] leading-none tracking-tight text-white">
             Tour Dates
           </h2>
-          <p className="text-[#555] text-xs tracking-widest uppercase hidden md:block">
-            Updated daily from punchup.live
-          </p>
         </div>
 
         {upcomingShows.length === 0 ? (
