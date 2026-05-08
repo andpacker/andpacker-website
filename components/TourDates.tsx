@@ -59,7 +59,7 @@ export default function TourDates() {
   const visibleShows = expanded ? upcomingShows : upcomingShows.slice(0, PREVIEW_COUNT);
 
   return (
-    <section id="tour" className="py-24 px-6">
+    <section id="tour" className="pt-7 pb-7 px-6">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-end justify-between mb-12">
           <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,4rem)] leading-none tracking-tight text-white">

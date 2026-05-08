@@ -102,7 +102,7 @@ export default function Specials() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
   return (
-    <section id="watch" className="py-24 px-6 bg-[#0A0A0A]">
+    <section id="watch" className="pt-7 pb-24 px-6 bg-[#0A0A0A]">
       <div className="max-w-5xl mx-auto">
         <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,4rem)] leading-none tracking-tight text-white mb-12">
           Watch & Listen

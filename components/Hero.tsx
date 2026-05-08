@@ -10,7 +10,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/50 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/60 to-transparent" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pb-20 w-full">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pb-6 w-full">
         <p className="font-[family-name:var(--font-display)] font-bold text-[#0D41CB] tracking-[0.3em] uppercase text-sm md:text-base mb-4">
           Stand-Up Comedian
         </p>
