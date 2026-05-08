@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import tourDates from "@/data/tour-dates.json";
 
 type ShowStatus = "on_sale" | "low_tickets" | "sold_out";
@@ -47,9 +50,13 @@ function TicketButton({ status, url }: { status: ShowStatus; url: string }) {
 }
 
 export default function TourDates() {
-  const shows = (tourDates as Show[]).filter(
+  const [expanded, setExpanded] = useState(false);
+  const PREVIEW_COUNT = 5;
+
+  const upcomingShows = (tourDates as Show[]).filter(
     (s) => new Date(s.date + "T23:59:59Z") >= new Date()
   );
+  const visibleShows = expanded ? upcomingShows : upcomingShows.slice(0, PREVIEW_COUNT);
 
   return (
     <section id="tour" className="py-24 px-6">
@@ -63,7 +70,7 @@ export default function TourDates() {
           </p>
         </div>
 
-        {shows.length === 0 ? (
+        {upcomingShows.length === 0 ? (
           <div className="border border-[#222] py-16 text-center">
             <p className="text-[#888] tracking-widest uppercase text-sm">
               No upcoming dates right now — check back soon.
@@ -71,7 +78,7 @@ export default function TourDates() {
           </div>
         ) : (
           <div className="divide-y divide-[#1a1a1a]">
-            {shows.map((show, i) => {
+            {visibleShows.map((show, i) => {
               const d = formatDate(show.date);
               return (
                 <div
@@ -101,6 +108,17 @@ export default function TourDates() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {upcomingShows.length > PREVIEW_COUNT && (
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => setExpanded((prev) => !prev)}
+              className="inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-8 py-3 border border-white text-white hover:bg-white hover:text-black transition-colors"
+            >
+              {expanded ? "Show Less ↑" : "See All Upcoming Shows ↓"}
+            </button>
           </div>
         )}
       </div>
