@@ -34,7 +34,7 @@ const SPECIALS: Special[] = [
     year: "Podcast",
     youtubeId: null,
     angelUrl: null,
-    description: "A comedy podcast about mental health — new episodes every week.",
+    description: "A group therapy comedy show hosted by a therapist and his comedian son.",
     image: "/images/laugh-it-off-artwork.jpg",
     playlistUrl: "https://youtube.com/playlist?list=PLekDw2qplsR74ehfNP5Ce9EaHcCTHF90k",
     listenLinks: [
