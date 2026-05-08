@@ -89,6 +89,31 @@ async function main() {
     // May have timed out — try anyway
   }
 
+  // Click "See All" button if present to expand the full show list
+  try {
+    const seeAllBtn = await page.$('button:has-text("See All")');
+    if (seeAllBtn) {
+      console.log("Found 'See All' button — clicking to expand full show list...");
+      await seeAllBtn.click();
+      // Scroll to bottom to trigger any lazy-loaded rows, then wait for network to settle
+      await page.waitForTimeout(1500);
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      await page.waitForTimeout(1000);
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      await page.waitForTimeout(1000);
+      // Wait for additional ticket links to appear beyond the initial batch
+      await page.waitForFunction(
+        () => document.querySelectorAll('a').length > 10,
+        { timeout: 10000 }
+      ).catch(() => console.log("waitForFunction timed out — continuing anyway"));
+      console.log("Expansion complete.");
+    } else {
+      console.log("No 'See All' button found — scraping visible shows only.");
+    }
+  } catch (err) {
+    console.log("See All click failed:", err.message, "— continuing anyway.");
+  }
+
   const shows = await page.evaluate(() => {
     const results = [];
 
