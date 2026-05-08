@@ -33,6 +33,8 @@ body {
   .hero-bg {
     transform: translateX(220px);
     background-position: center 10%;
+    -webkit-mask-image: linear-gradient(to right, transparent 0px, black 80px);
+    mask-image: linear-gradient(to right, transparent 0px, black 80px);
   }
 }
 
