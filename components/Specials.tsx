@@ -8,6 +8,7 @@ interface Special {
   youtubeId: string | null;
   angelUrl: string | null;
   description: string;
+  image?: string | null;
 }
 
 const SPECIALS: Special[] = [
@@ -17,6 +18,7 @@ const SPECIALS: Special[] = [
     youtubeId: null,
     angelUrl: "https://www.angel.com/shareandrewp",
     description: "Andrew Packer's debut comedy special — streaming now on Angel.",
+    image: "/images/never-call-her-crazy.png",
   },
   {
     title: "On Guard",
@@ -69,7 +71,7 @@ export default function Specials() {
           {SPECIALS.map((special, i) => {
             const thumb = special.youtubeId
               ? `https://img.youtube.com/vi/${special.youtubeId}/maxresdefault.jpg`
-              : null;
+              : special.image ?? null;
 
             return (
               <div key={i} className="group relative bg-[#141414] overflow-hidden">
