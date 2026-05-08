@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-end overflow-hidden">
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat md:bg-[80%_15%]"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat md:bg-[90%_15%]"
         style={{ backgroundImage: "url('/hero.jpg')" }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/50 to-transparent" />
