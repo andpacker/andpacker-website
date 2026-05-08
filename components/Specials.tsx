@@ -113,10 +113,10 @@ export default function Specials() {
             const thumb = special.youtubeId
               ? `https://img.youtube.com/vi/${special.youtubeId}/maxresdefault.jpg`
               : special.image ?? null;
+            const imageLink = special.angelUrl ?? special.playlistUrl ?? null;
 
-            return (
-              <div key={i} className="group relative bg-[#141414] overflow-hidden">
-                <div className="relative aspect-video bg-[#1a1a1a] overflow-hidden">
+            const imageArea = (
+              <div className="relative aspect-video bg-[#1a1a1a] overflow-hidden">
                   {thumb ? (
                     <img
                       src={thumb}
@@ -144,6 +144,17 @@ export default function Specials() {
                     </button>
                   )}
                 </div>
+            );
+
+            return (
+              <div key={i} className="group relative bg-[#141414] overflow-hidden">
+                {imageLink ? (
+                  <a href={imageLink} target="_blank" rel="noopener noreferrer" className="block">
+                    {imageArea}
+                  </a>
+                ) : (
+                  imageArea
+                )}
 
                 <div className="p-5">
                   <div className="text-[#0D41CB] text-xs tracking-widest uppercase mb-1">{special.year}</div>
