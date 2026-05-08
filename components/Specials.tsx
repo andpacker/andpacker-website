@@ -19,7 +19,7 @@ const SPECIALS: Special[] = [
     year: "2026",
     youtubeId: null,
     angelUrl: "https://www.angel.com/shareandrewp",
-    description: "Andrew's first clean comedy special — safe for the whole family. Streaming now on Angel.",
+    description: "Andrew's first clean comedy special — put it on when family's over and not worry about who's in the room. Streaming now on Angel.",
     image: "/images/never-call-her-crazy.png",
   },
   {
