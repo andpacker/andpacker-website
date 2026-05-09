@@ -11,7 +11,8 @@
     "city": "Toronto, ON",
     "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
-    "status": "on_sale"
+    "status": "on_sale",
+    "showType": "laugh_it_off"
   },
   {
     "date": "2026-05-29",
@@ -74,7 +75,8 @@
     "city": "Toronto, ON",
     "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
-    "status": "on_sale"
+    "status": "on_sale",
+    "showType": "laugh_it_off"
   },
   {
     "date": "2026-07-24",
@@ -88,7 +90,8 @@
     "city": "Toronto, ON",
     "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
-    "status": "on_sale"
+    "status": "on_sale",
+    "showType": "laugh_it_off"
   },
   {
     "date": "2026-08-28",
@@ -102,7 +105,8 @@
     "city": "Toronto, ON",
     "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
-    "status": "on_sale"
+    "status": "on_sale",
+    "showType": "laugh_it_off"
   },
   {
     "date": "2026-10-09",
