@@ -24,7 +24,7 @@ function formatDate(dateStr: string) {
   };
 }
 
-function TicketButton({ status, url }: { status: ShowStatus; url: string }) {
+function TicketButton({ status, url, showType }: { status: ShowStatus; url: string; showType?: "laugh_it_off" }) {
   if (status === "sold_out") {
     return (
       <span className="inline-block bg-[#222] text-[#555] font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 cursor-not-allowed">
@@ -34,6 +34,7 @@ function TicketButton({ status, url }: { status: ShowStatus; url: string }) {
   }
 
   const isLow = status === "low_tickets";
+  const isLaughItOff = showType === "laugh_it_off";
   return (
     <a
       href={url}
@@ -42,7 +43,7 @@ function TicketButton({ status, url }: { status: ShowStatus; url: string }) {
       className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 transition-colors ${
         isLow
           ? "bg-amber-500 hover:bg-amber-400 text-black"
-          : "bg-[#0D41CB] hover:bg-[#0b35a8] text-white"
+          : `bg-[#0D41CB] hover:bg-[#0b35a8] text-white${isLaughItOff ? " border border-[#FBBF24]" : ""}`
       }`}
     >
       {isLow ? "Low Tickets" : "Get Tickets"}
@@ -107,7 +108,7 @@ export default function TourDates() {
                   </div>
 
                   <div className="flex-shrink-0">
-                    <TicketButton status={show.status} url={show.ticketUrl} />
+                    <TicketButton status={show.status} url={show.ticketUrl} showType={show.showType} />
                   </div>
                 </div>
               );
