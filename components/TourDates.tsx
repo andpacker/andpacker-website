@@ -43,7 +43,7 @@ function TicketButton({ status, url, showType }: { status: ShowStatus; url: stri
       className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 transition-colors ${
         isLow
           ? "bg-amber-500 hover:bg-amber-400 text-black"
-          : `bg-[#0D41CB] hover:bg-[#0b35a8] text-white${isLaughItOff ? " border border-[#FBBF24]" : ""}`
+          : `bg-[#0D41CB] hover:bg-[#0b35a8] text-white${isLaughItOff ? " ring-1 ring-[#FBBF24] ring-offset-2 ring-offset-[#0A0A0A]" : ""}`
       }`}
     >
       {isLow ? "Low Tickets" : "Get Tickets"}
