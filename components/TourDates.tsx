@@ -96,7 +96,7 @@ export default function TourDates() {
 
                   <div className="h-10 w-px bg-[#222] flex-shrink-0" />
 
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 md:flex-none md:max-w-xs">
                     <div className="text-white font-semibold truncate">{show.city}</div>
                     <div className="text-[#888] text-sm truncate">{show.venue}</div>
                     {show.showType === "laugh_it_off" && (
