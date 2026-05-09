@@ -100,7 +100,7 @@ export default function TourDates() {
                     <div className="text-[#888] text-sm truncate">{show.venue}</div>
                     {show.showType === "laugh_it_off" && (
                       <span className="mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-[10px] text-[#FBBF24] border border-[#FBBF24] px-2 py-0.5">
-                        Laugh It Off
+                        Laugh It Off – Group Therapy Comedy Show
                       </span>
                     )}
                   </div>
