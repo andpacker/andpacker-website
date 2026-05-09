@@ -108,8 +108,7 @@ export default function TourDates() {
                     )}
                     {show.showType === "sauna_comedy" && (
                       <span className="mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-[10px] text-[#C4A882] border border-[#C4A882] px-2 py-0.5">
-                        <span className="md:hidden">Sauna Comedy</span>
-                        <span className="hidden md:inline">Sauna Comedy at Othership</span>
+                        Sauna Comedy
                       </span>
                     )}
                   </div>
