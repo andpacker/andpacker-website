@@ -5,17 +5,28 @@ export async function POST(req: Request) {
     return Response.json({ error: "All fields are required." }, { status: 400 });
   }
 
-  const scriptUrl = process.env.GOOGLE_APPS_SCRIPT_URL;
-  if (!scriptUrl) {
+  const apiKey = process.env.KIT_API_KEY;
+  if (!apiKey) {
     return Response.json({ error: "Form not configured." }, { status: 500 });
   }
 
   try {
-    const res = await fetch(scriptUrl, {
+    const res = await fetch("https://api.kit.com/v4/subscribers", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ first_name: firstName.trim(), last_name: lastName.trim(), email: email.trim(), city }),
-      redirect: "follow",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+        "X-Kit-Api-Version": "2025-01-01",
+      },
+      body: JSON.stringify({
+        email_address: email.trim(),
+        first_name: firstName.trim(),
+        state: "active",
+        fields: {
+          last_name: lastName.trim(),
+          city: city.trim(),
+        },
+      }),
     });
 
     if (!res.ok) {
