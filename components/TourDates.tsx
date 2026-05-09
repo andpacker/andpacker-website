@@ -62,7 +62,7 @@ export default function TourDates() {
 
   return (
     <section id="tour" className="pt-7 pb-7 px-6">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         <div className="flex items-end justify-between mb-12">
           <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,4rem)] leading-none tracking-tight text-white">
             Tour Dates
@@ -96,7 +96,7 @@ export default function TourDates() {
 
                   <div className="h-10 w-px bg-[#222] flex-shrink-0" />
 
-                  <div className="flex-1 min-w-0 md:flex-none md:max-w-xs">
+                  <div className="flex-1 min-w-0">
                     <div className="text-white font-semibold truncate">{show.city}</div>
                     <div className="text-[#888] text-sm truncate">{show.venue}</div>
                     {show.showType === "laugh_it_off" && (
