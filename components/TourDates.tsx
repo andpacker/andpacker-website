@@ -11,7 +11,7 @@ interface Show {
   venue: string;
   ticketUrl: string;
   status: ShowStatus;
-  showType?: "laugh_it_off";
+  showType?: "laugh_it_off" | "sauna_comedy";
 }
 
 function formatDate(dateStr: string) {
@@ -24,7 +24,7 @@ function formatDate(dateStr: string) {
   };
 }
 
-function TicketButton({ status, url, showType }: { status: ShowStatus; url: string; showType?: "laugh_it_off" }) {
+function TicketButton({ status, url, showType }: { status: ShowStatus; url: string; showType?: "laugh_it_off" | "sauna_comedy" }) {
   if (status === "sold_out") {
     return (
       <span className="inline-block bg-[#222] text-[#555] font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 cursor-not-allowed">
@@ -35,6 +35,7 @@ function TicketButton({ status, url, showType }: { status: ShowStatus; url: stri
 
   const isLow = status === "low_tickets";
   const isLaughItOff = showType === "laugh_it_off";
+  const isSaunaComedy = showType === "sauna_comedy";
   return (
     <a
       href={url}
@@ -43,7 +44,7 @@ function TicketButton({ status, url, showType }: { status: ShowStatus; url: stri
       className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 transition-colors ${
         isLow
           ? "bg-amber-500 hover:bg-amber-400 text-black"
-          : `bg-[#0D41CB] hover:bg-[#0b35a8] text-white${isLaughItOff ? " ring-1 ring-[#FBBF24] ring-offset-2 ring-offset-[#0A0A0A]" : ""}`
+          : `bg-[#0D41CB] hover:bg-[#0b35a8] text-white${isLaughItOff ? " ring-1 ring-[#FBBF24] ring-offset-2 ring-offset-[#0A0A0A]" : isSaunaComedy ? " ring-1 ring-[#C4A882] ring-offset-2 ring-offset-[#0A0A0A]" : ""}`
       }`}
     >
       {isLow ? "Low Tickets" : "Get Tickets"}
@@ -103,6 +104,12 @@ export default function TourDates() {
                       <span className="mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-[10px] text-[#FBBF24] border border-[#FBBF24] px-2 py-0.5">
                         <span className="md:hidden">Laugh It Off</span>
                         <span className="hidden md:inline">Laugh It Off – Group Therapy Comedy Show</span>
+                      </span>
+                    )}
+                    {show.showType === "sauna_comedy" && (
+                      <span className="mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-[10px] text-[#C4A882] border border-[#C4A882] px-2 py-0.5">
+                        <span className="md:hidden">Sauna Comedy</span>
+                        <span className="hidden md:inline">Sauna Comedy at Othership</span>
                       </span>
                     )}
                   </div>

@@ -15,6 +15,14 @@
     "showType": "laugh_it_off"
   },
   {
+    "date": "2026-05-18",
+    "city": "New York, NY",
+    "venue": "OTHERSHIP FLATIRON",
+    "ticketUrl": "https://www.othership.us/schedule?_mt=%2Fclasses%2F74930%2Freserve",
+    "status": "on_sale",
+    "showType": "sauna_comedy"
+  },
+  {
     "date": "2026-05-29",
     "city": "Seattle, WA",
     "venue": "LAUGHS COMEDY CLUB",
@@ -50,6 +58,22 @@
     "status": "on_sale"
   },
   {
+    "date": "2026-06-08",
+    "city": "Toronto, ON",
+    "venue": "OTHERSHIP YORKVILLE",
+    "ticketUrl": "https://othership.marianaiframes.com/iframe/classes/77469/reserve",
+    "status": "on_sale",
+    "showType": "sauna_comedy"
+  },
+  {
+    "date": "2026-06-22",
+    "city": "New York, NY",
+    "venue": "OTHERSHIP FLATIRON",
+    "ticketUrl": "https://www.othership.us/schedule?_mt=%2Fclasses%2F78929%2Freserve",
+    "status": "on_sale",
+    "showType": "sauna_comedy"
+  },
+  {
     "date": "2026-06-25",
     "city": "Toronto, ON",
     "venue": "THE CORNER COMEDY CLUB",
@@ -77,6 +101,22 @@
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
     "status": "on_sale",
     "showType": "laugh_it_off"
+  },
+  {
+    "date": "2026-07-13",
+    "city": "Toronto, ON",
+    "venue": "OTHERSHIP YORKVILLE",
+    "ticketUrl": "https://othership.marianaiframes.com/iframe/classes/81029/reserve",
+    "status": "on_sale",
+    "showType": "sauna_comedy"
+  },
+  {
+    "date": "2026-07-20",
+    "city": "New York, NY",
+    "venue": "OTHERSHIP FLATIRON",
+    "ticketUrl": "https://www.othership.us/schedule?_mt=%2Fclasses%2F81674%2Freserve",
+    "status": "on_sale",
+    "showType": "sauna_comedy"
   },
   {
     "date": "2026-07-24",

@@ -230,7 +230,11 @@ async function main() {
       venue: show.venue || "",
       ticketUrl: show.ticketUrl || PUNCHUP_URL,
       status: show.status,
-      ...(show.ticketUrl.toLowerCase().includes("laugh-it-off") && { showType: "laugh_it_off" }),
+      ...(show.ticketUrl.toLowerCase().includes("laugh-it-off")
+        ? { showType: "laugh_it_off" }
+        : (show.venue || "").toLowerCase().includes("othership")
+        ? { showType: "sauna_comedy" }
+        : {}),
     });
   }
 
