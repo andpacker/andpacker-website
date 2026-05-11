@@ -64,7 +64,7 @@ export default function Nav() {
           <Link href="#watch" className="text-sm tracking-widest uppercase text-[#888] hover:text-white transition-colors">
             Watch
           </Link>
-          <Link href="#contact" className="text-sm tracking-widest uppercase text-[#888] hover:text-white transition-colors">
+          <Link href="#email" className="text-sm tracking-widest uppercase text-[#888] hover:text-white transition-colors">
             Contact
           </Link>
         </div>
@@ -105,14 +105,18 @@ export default function Nav() {
 
       {menuOpen && (
         <div className="md:hidden bg-[#0A0A0A] border-t border-[#222] px-6 py-6 flex flex-col gap-6">
-          {["tour", "watch", "contact"].map((id) => (
+          {[
+            { label: "tour", href: "#tour" },
+            { label: "watch", href: "#watch" },
+            { label: "contact", href: "#email" },
+          ].map(({ label, href }) => (
             <a
-              key={id}
-              href={`#${id}`}
+              key={label}
+              href={href}
               onClick={() => setMenuOpen(false)}
               className="text-sm tracking-widest uppercase text-[#888] hover:text-white transition-colors"
             >
-              {id}
+              {label}
             </a>
           ))}
           <div className="flex items-center gap-5 pt-2">
