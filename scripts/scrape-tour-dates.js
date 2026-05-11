@@ -82,16 +82,19 @@ async function main() {
   // Strategy: find all "Buy Tickets" anchors, walk up to the nearest 4-child container,
   // then extract date, city, and venue from siblings within that row.
 
-  // Wait for at least one Buy Tickets link to appear
+  // Wait for at least one ticket link to appear (try multiple button text variants)
   try {
-    await page.waitForSelector('a:has-text("Buy Tickets")', { timeout: 15000 });
+    await page.waitForSelector(
+      'a:has-text("Buy Tickets"), a:has-text("Tickets"), a:has-text("Get Tickets")',
+      { timeout: 15000 }
+    );
   } catch {
     // May have timed out — try anyway
   }
 
   // Click "See All" button if present to expand the full show list
   try {
-    const seeAllBtn = await page.$('button:has-text("See All")');
+    const seeAllBtn = await page.$('button:has-text("See All"), button:has-text("View All"), button:has-text("Load More"), button:has-text("Show All"), button:has-text("Show More")');
     if (seeAllBtn) {
       console.log("Found 'See All' button — clicking to expand full show list...");
       await seeAllBtn.click();
@@ -117,10 +120,13 @@ async function main() {
   const shows = await page.evaluate(() => {
     const results = [];
 
-    // Find all Buy Tickets anchors
+    // Find all ticket anchors — match "Buy Tickets", "Tickets", "Get Tickets", etc.
     const ticketLinks = Array.from(
       document.querySelectorAll("a")
-    ).filter((a) => (a.innerText || a.textContent || "").trim() === "Buy Tickets");
+    ).filter((a) => {
+      const t = (a.innerText || a.textContent || "").trim().toLowerCase();
+      return t === "buy tickets" || t === "tickets" || t === "get tickets" || t === "purchase tickets" || t === "ticket";
+    });
 
     for (const ticketLink of ticketLinks) {
       const ticketUrl = ticketLink.href || "";
@@ -205,11 +211,11 @@ async function main() {
   if (shows.length === 0) {
     const html = await page.content();
     fs.writeFileSync("/tmp/punchup-debug.html", html);
-    console.error(
-      "Could not find any shows. Page HTML saved to /tmp/punchup-debug.html"
+    console.warn(
+      "WARNING: Could not find any shows. Page HTML saved to /tmp/punchup-debug.html. Preserving existing tour-dates.json unchanged."
     );
     await browser.close();
-    process.exit(1);
+    process.exit(0);
   }
 
   // Normalize and deduplicate

@@ -2,8 +2,7 @@ name: Update Tour Dates
 
 on:
   schedule:
-    - cron: "0 15 * * *"  # Daily 3pm UTC — always runs full scrape
-    - cron: "0 * * * *"   # Every hour — only scrapes if a show is today
+    - cron: "0 15 * * *"  # Daily 3pm UTC
   workflow_dispatch:       # Manual trigger from GitHub Actions UI
 
 permissions:
@@ -27,13 +26,8 @@ jobs:
       - name: Install Playwright + Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run tour date scraper (daily 3pm)
-        if: github.event.schedule == '0 15 * * *' || github.event_name == 'workflow_dispatch'
+      - name: Run tour date scraper
         run: node scripts/scrape-tour-dates.js
-
-      - name: Run tour date scraper (hourly — show-day only)
-        if: github.event.schedule == '0 * * * *'
-        run: node scripts/scrape-tour-dates.js --check-today
 
       - name: Commit updated tour dates if changed
         run: |
