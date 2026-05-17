@@ -1,20 +1,5 @@
 [
   {
-    "date": "2026-05-15",
-    "city": "Toronto, ON",
-    "venue": "CHEFS HALL",
-    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317",
-    "status": "on_sale"
-  },
-  {
-    "date": "2026-05-16",
-    "city": "Toronto, ON",
-    "venue": "COMEDY BAR - TORONTO",
-    "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
-    "status": "on_sale",
-    "showType": "laugh_it_off"
-  },
-  {
     "date": "2026-05-18",
     "city": "New York, NY",
     "venue": "OTHERSHIP FLATIRON",
