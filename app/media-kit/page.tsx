@@ -650,7 +650,8 @@ export default function MediaKitPage() {
                   alt="Prenatal"
                   width={300}
                   height={168}
-                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  style={{ objectPosition: "center 15%" }}
                 />
               </div>
               <div className="mt-2 p-1">
