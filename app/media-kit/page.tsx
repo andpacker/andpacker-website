@@ -327,8 +327,8 @@ export default function MediaKitPage() {
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-14">
         {/* TODO: Andrew drops media-kit-hero.jpg into /public/ — currently falls back to hero.jpg */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/media-kit-hero.jpg'), url('/hero.jpg')" }}
+          className="absolute inset-0 bg-cover bg-no-repeat"
+          style={{ backgroundImage: "url('/media-kit-hero.jpg'), url('/hero.jpg')", backgroundPosition: "center 25%" }}
         />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/50" />
@@ -730,7 +730,6 @@ export default function MediaKitPage() {
             </a>
 
             {/* 5. Sauna Comedy */}
-            {/* TODO: Andrew drops sauna-comedy.jpg into /public/images/ */}
             <a
               href="https://nypost.com/2025/11/12/health/inside-a-comedy-show-in-a-sauna-and-why-its-great-for-health/"
               target="_blank"
@@ -745,6 +744,7 @@ export default function MediaKitPage() {
                   Sauna Comedy
                 </p>
                 <p className="text-xs italic text-gray-500 mt-0.5">Original live format · Creator &amp; host</p>
+                <p className="text-[10px] text-gray-400 mt-0.5">Photo: McKenzie Beard / N.Y. Post</p>
               </div>
             </a>
           </div>
