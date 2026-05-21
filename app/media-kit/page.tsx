@@ -329,7 +329,7 @@ export default function MediaKitPage() {
         {/* TODO: Andrew drops media-kit-hero.jpg into /public/ — currently falls back to hero.jpg */}
         <div
           className="mk-hero-bg absolute inset-0 bg-cover bg-no-repeat"
-          style={{ backgroundImage: "url('/media-kit-hero.jpg'), url('/hero.jpg')" }}
+          style={{ backgroundImage: "url('/media-kit-hero.png'), url('/hero.jpg')" }}
         />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/50" />

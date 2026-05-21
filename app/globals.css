@@ -45,10 +45,10 @@ body {
 
 /* ── media-kit page backgrounds ──────────────────────────────── */
 .mk-hero-bg {
-  background-position: center 20%;
+  background-position: center center;
 }
 
 @media (min-width: 768px) {
-  .mk-hero-bg { background-position: 30% 20%; }
+  .mk-hero-bg { background-position: 40% center; }
   .mk-stats-bg { background-position: center 55%; }
 }
