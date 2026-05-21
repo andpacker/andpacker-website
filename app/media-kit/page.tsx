@@ -182,7 +182,7 @@ const PLATFORM_STATS = [
   { platform: "TikTok", count: "2.9M", label: "FOLLOWERS" },
   { platform: "YouTube", count: "1.2M", label: "SUBSCRIBERS" },
   { platform: "Instagram", count: "617K", label: "FOLLOWERS" },
-  { platform: "Facebook", count: "177K", label: "FOLLOWERS" },
+  { platform: "Facebook", count: "180K", label: "FOLLOWERS" },
   { platform: "Combined", count: "5M+", label: "TOTAL REACH" },
   { platform: "Live Tour", count: "26+", label: "DATES / YEAR" },
 ];
@@ -235,6 +235,49 @@ const BRAND_GRID = [
     format: "IRL",
     url: "https://www.instagram.com/reel/C5OzyidP_yM/",
     note: null,
+  },
+];
+
+const FORMAT_CARDS = [
+  {
+    format: "MAN NEWS",
+    pitch: "Andrew becomes the anchor. Your brand is the story.",
+    bestFor: "Consumer products · entertainment · tech",
+    primaryUrl: "https://www.tiktok.com/@andpacker/video/7603834660698836244",
+    thumbs: [
+      { name: "OPTIMUM", url: "https://www.tiktok.com/@andpacker/video/7603834660698836244", type: "placeholder", youtubeId: undefined },
+      { name: "PARAMOUNT+", url: "https://www.instagram.com/p/Cy1VKDMvpKc/", type: "placeholder", youtubeId: undefined },
+    ],
+  },
+  {
+    format: "SKETCH COMEDY",
+    pitch: "Scripted premise, brand woven into the bit. Memorable and shareable.",
+    bestFor: "Challenger brands · products with a personality",
+    primaryUrl: "https://www.tiktok.com/@andpacker/video/7349287739914767622",
+    thumbs: [
+      { name: "NISSAN", url: "https://www.tiktok.com/@andpacker/video/7349287739914767622", type: "placeholder", youtubeId: undefined },
+      { name: "MINTIER", url: "https://www.instagram.com/reel/DI6mx_Wp4Ly/", type: "placeholder", youtubeId: undefined },
+    ],
+  },
+  {
+    format: "IRL / LIFESTYLE",
+    pitch: "Andrew uses it in real life. Feels like a recommendation, not an ad.",
+    bestFor: "Everyday products · food & beverage · home goods",
+    primaryUrl: "https://www.tiktok.com/@andpacker/video/7314312960170593542",
+    thumbs: [
+      { name: "COZEY", url: "https://www.tiktok.com/@andpacker/video/7314312960170593542", type: "placeholder", youtubeId: undefined },
+      { name: "FAT BASTARD BURRITO", url: "https://www.instagram.com/reel/C5OzyidP_yM/", type: "placeholder", youtubeId: undefined },
+    ],
+  },
+  {
+    format: "HERO CONTENT",
+    pitch: "Brand integrated into long-form production. Perpetual organic reach.",
+    bestFor: "Premium brands · Prenatal campaign · parenting category",
+    primaryUrl: "https://www.youtube.com/watch?v=wBo6-8DoiRU",
+    thumbs: [
+      { name: "ON GUARD", url: "https://www.youtube.com/watch?v=wBo6-8DoiRU", type: "youtube", youtubeId: "wBo6-8DoiRU" },
+      { name: "PRENATAL", url: "#prenatal", type: "prenatal", youtubeId: undefined },
+    ],
   },
 ];
 
@@ -312,6 +355,71 @@ function PackageCard({
       >
         Let&apos;s Talk
       </a>
+    </div>
+  );
+}
+
+// ─── Format card ─────────────────────────────────────────────────────────────
+
+function FormatCard({ card }: { card: typeof FORMAT_CARDS[number] }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="grid grid-cols-2 gap-0.5 bg-gray-200">
+        {card.thumbs.map((thumb) => (
+          <a
+            key={thumb.name}
+            href={thumb.url}
+            target={thumb.url.startsWith("#") ? undefined : "_blank"}
+            rel={thumb.url.startsWith("#") ? undefined : "noopener noreferrer"}
+            className="group block aspect-video bg-gray-900 overflow-hidden relative"
+          >
+            {thumb.type === "youtube" && thumb.youtubeId && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`https://img.youtube.com/vi/${thumb.youtubeId}/maxresdefault.jpg`}
+                alt={thumb.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            )}
+            {thumb.type === "prenatal" && (
+              <Image
+                src="/images/prenatal-thumb.png"
+                alt="Prenatal"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                style={{ objectPosition: "center 15%" }}
+              />
+            )}
+            {thumb.type === "placeholder" && (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-950" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="relative font-[family-name:var(--font-display)] font-black text-white/70 text-xs tracking-widest uppercase text-center px-3 leading-tight">
+                    {thumb.name}
+                  </span>
+                </div>
+              </>
+            )}
+            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors" />
+          </a>
+        ))}
+      </div>
+      <div className="p-5">
+        <p className="text-[10px] tracking-widest uppercase text-[#0D41CB] mb-1">Format</p>
+        <h3 className="font-[family-name:var(--font-display)] font-black text-2xl uppercase leading-tight text-[#111111]">
+          {card.format}
+        </h3>
+        <p className="text-sm text-gray-600 mt-2 leading-relaxed">{card.pitch}</p>
+        <p className="text-xs text-gray-400 mt-3">Best for: {card.bestFor}</p>
+        <a
+          href={card.primaryUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block text-xs text-[#0D41CB] hover:underline mt-4"
+        >
+          See examples &rarr;
+        </a>
+      </div>
     </div>
   );
 }
@@ -446,7 +554,7 @@ export default function MediaKitPage() {
               <p className="text-xs text-white/40 mt-1">81% from non-subscribers</p>
             </div>
             <div className="text-center">
-              <div className="font-[family-name:var(--font-display)] font-black text-7xl md:text-8xl text-white leading-none">32M</div>
+              <div className="font-[family-name:var(--font-display)] font-black text-7xl md:text-8xl text-white leading-none">32M+</div>
               <p className="text-sm text-white/60 mt-2 tracking-wide uppercase">Facebook views / 90 days</p>
             </div>
           </div>
@@ -636,10 +744,21 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 9. CONTENT PORTFOLIO (warm cream) ────────────────────────────── */}
+      {/* ── 9. CONTENT (warm cream) ──────────────────────────────────────── */}
       <section className="py-20 px-6" style={{ backgroundColor: "#F5F0EB" }}>
         <div className="max-w-5xl mx-auto">
-          <SectionHeader title="Content" subtitle="Specials, Podcast &amp; Live Formats" />
+
+          {/* Part A: Content Formats */}
+          <SectionHeader title="Content Formats" subtitle="Brand Integration Opportunities" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
+            {FORMAT_CARDS.map((card) => (
+              <FormatCard key={card.format} card={card} />
+            ))}
+          </div>
+
+          {/* Part B: Featured Projects */}
+          <SectionHeader title="Featured Projects" subtitle="Production &amp; Press" />
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {/* 1. Prenatal */}
@@ -752,6 +871,7 @@ export default function MediaKitPage() {
               </div>
             </a>
           </div>
+
         </div>
       </section>
 
