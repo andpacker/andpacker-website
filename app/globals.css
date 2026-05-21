@@ -42,3 +42,13 @@ body {
   background-color: #0D41CB;
   color: #ffffff;
 }
+
+/* ── media-kit page backgrounds ──────────────────────────────── */
+.mk-hero-bg {
+  background-position: center 20%;
+}
+
+@media (min-width: 768px) {
+  .mk-hero-bg { background-position: 30% 20%; }
+  .mk-stats-bg { background-position: center 55%; }
+}

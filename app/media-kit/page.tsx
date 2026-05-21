@@ -321,12 +321,6 @@ function PackageCard({
 export default function MediaKitPage() {
   return (
     <div className="bg-white text-[#111111] min-h-screen">
-      <style>{`
-        @media (min-width: 768px) {
-          .hero-bg { background-position: 30% 20% !important; }
-          .stats-bg { background-position: center 70% !important; }
-        }
-      `}</style>
       {/* Light nav — scoped to this page, does NOT modify the main Nav component */}
       <LightNav />
 
@@ -334,8 +328,8 @@ export default function MediaKitPage() {
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-14">
         {/* TODO: Andrew drops media-kit-hero.jpg into /public/ — currently falls back to hero.jpg */}
         <div
-          className="hero-bg absolute inset-0 bg-cover bg-no-repeat"
-          style={{ backgroundImage: "url('/media-kit-hero.jpg'), url('/hero.jpg')", backgroundPosition: "center 20%" }}
+          className="mk-hero-bg absolute inset-0 bg-cover bg-no-repeat"
+          style={{ backgroundImage: "url('/media-kit-hero.jpg'), url('/hero.jpg')" }}
         />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/50" />
@@ -430,7 +424,7 @@ export default function MediaKitPage() {
       <section id="audience" className="relative py-20 px-6 overflow-hidden">
         {/* Background: hero.jpg with dark overlay */}
         <div
-          className="stats-bg absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="mk-stats-bg absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/hero.jpg')" }}
         />
         <div className="absolute inset-0 bg-black/75" />
