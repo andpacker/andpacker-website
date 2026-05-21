@@ -587,18 +587,13 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 8. PRENATAL (full-bleed brand blue + stage background) ─────────── */}
+      {/* ── 8. PRENATAL (full-bleed brand blue) ───────────────────────────── */}
       <section
         id="prenatal"
-        className="relative py-20 px-6 overflow-hidden"
+        className="py-20 px-6"
         style={{ backgroundColor: "#0D41CB" }}
       >
-        {/* Stage shot background */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/prenatal-stage.png')", opacity: 0.18 }}
-        />
-        <div className="relative z-10 max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center">
             <SectionHeader
               title="Prenatal"
@@ -651,13 +646,13 @@ export default function MediaKitPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {/* 1. Prenatal */}
             <a href="#prenatal" className="group block">
-              <div className="aspect-video bg-[#0D41CB] rounded-sm overflow-hidden flex items-center justify-center">
+              <div className="aspect-video bg-gray-200 rounded-sm overflow-hidden">
                 <Image
-                  src="/images/never-call-her-crazy.png"
+                  src="/images/prenatal-stage.png"
                   alt="Prenatal"
                   width={300}
                   height={168}
-                  className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="mt-2 p-1">
