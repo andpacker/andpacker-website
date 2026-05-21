@@ -323,7 +323,7 @@ export default function MediaKitPage() {
     <div className="bg-white text-[#111111] min-h-screen">
       <style>{`
         @media (min-width: 768px) {
-          .hero-bg { background-position: 30% 5% !important; }
+          .hero-bg { background-position: 30% 20% !important; }
           .stats-bg { background-position: center 70% !important; }
         }
       `}</style>
@@ -335,7 +335,7 @@ export default function MediaKitPage() {
         {/* TODO: Andrew drops media-kit-hero.jpg into /public/ — currently falls back to hero.jpg */}
         <div
           className="hero-bg absolute inset-0 bg-cover bg-no-repeat"
-          style={{ backgroundImage: "url('/media-kit-hero.jpg'), url('/hero.jpg')", backgroundPosition: "center 5%" }}
+          style={{ backgroundImage: "url('/media-kit-hero.jpg'), url('/hero.jpg')", backgroundPosition: "center 20%" }}
         />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/50" />
