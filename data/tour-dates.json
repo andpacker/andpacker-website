@@ -61,6 +61,7 @@
     "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
     "status": "on_sale",
+    "time": "7 PM",
     "showType": "laugh_it_off"
   },
   {
@@ -76,6 +77,7 @@
     "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
     "status": "on_sale",
+    "time": "7 PM",
     "showType": "laugh_it_off"
   },
   {
@@ -91,6 +93,7 @@
     "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
     "status": "on_sale",
+    "time": "7 PM",
     "showType": "laugh_it_off"
   },
   {
@@ -98,14 +101,16 @@
     "city": "Dallas, TX",
     "venue": "DALLAS COMEDY CLUB",
     "ticketUrl": "https://www.prekindle.com/event/56327-andrew-packer-730pm-dallas",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "7:30 PM"
   },
   {
     "date": "2026-10-09",
     "city": "Dallas, TX",
     "venue": "DALLAS COMEDY CLUB",
     "ticketUrl": "https://www.prekindle.com/event/94714-andrew-packer-930pm-dallas",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "9:30 PM"
   },
   {
     "date": "2026-10-10",

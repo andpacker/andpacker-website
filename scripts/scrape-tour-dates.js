@@ -48,6 +48,33 @@ function parsePunchupDate(raw) {
   return cleaned;
 }
 
+function timeFromUrl(url) {
+  // Decode percent-encoded colons (%3A) before matching
+  const decoded = url.replace(/%3A/gi, ":");
+
+  // Match ISO-style time in URL: T19:00:00
+  const isoM = decoded.match(/T(\d{2}):(\d{2}):\d{2}/);
+  if (isoM) {
+    let h = parseInt(isoM[1], 10);
+    const min = isoM[2];
+    const ampm = h >= 12 ? "PM" : "AM";
+    if (h > 12) h -= 12;
+    if (h === 0) h = 12;
+    return min === "00" ? `${h} ${ampm}` : `${h}:${min} ${ampm}`;
+  }
+
+  // Match plain-text time slug in URL: 730pm, 930pm, 800pm, etc.
+  const slugM = url.match(/[^a-z](\d{1,2})(\d{2})(am|pm)\b/i);
+  if (slugM) {
+    let h = parseInt(slugM[1], 10);
+    const min = slugM[2];
+    const ampm = slugM[3].toUpperCase();
+    return min === "00" ? `${h} ${ampm}` : `${h}:${min} ${ampm}`;
+  }
+
+  return "";
+}
+
 async function main() {
   if (CHECK_TODAY) {
     let existing = [];
@@ -148,11 +175,24 @@ async function main() {
       // Extract date and city — they appear in anchor tags pointing to /e/<uuid>
       const eventLinks = Array.from(row.querySelectorAll('a[href^="/e/"]'));
       let dateRaw = "";
+      let timeRaw = "";
       let city = "";
 
       if (eventLinks.length >= 1) {
-        const firstP = eventLinks[0].querySelector("p");
-        dateRaw = firstP ? (firstP.innerText || firstP.textContent || "").trim() : "";
+        const allPs = Array.from(eventLinks[0].querySelectorAll("p"));
+        dateRaw = allPs[0] ? (allPs[0].innerText || allPs[0].textContent || "").trim() : "";
+        // Look for a time string (e.g. "7:00 PM") in remaining <p> elements
+        const timeRe = /\d{1,2}:\d{2}\s*[APap][Mm]/;
+        for (let j = 1; j < allPs.length; j++) {
+          const t = (allPs[j].innerText || allPs[j].textContent || "").trim();
+          if (timeRe.test(t)) { timeRaw = t; break; }
+        }
+        // Fallback: scan full innerText of the first event link
+        if (!timeRaw) {
+          const linkText = eventLinks[0].innerText || "";
+          const m = linkText.match(timeRe);
+          if (m) timeRaw = m[0].trim();
+        }
       }
       if (eventLinks.length >= 2) {
         const secondP = eventLinks[1].querySelector("p");
@@ -200,7 +240,7 @@ async function main() {
       if (cardText.includes("sold out")) status = "sold_out";
       else if (cardText.includes("low ticket") || cardText.includes("almost sold")) status = "low_tickets";
 
-      results.push({ dateRaw, city, venue, ticketUrl, status });
+      results.push({ dateRaw, timeRaw, city, venue, ticketUrl, status });
     }
 
     return results;
@@ -230,12 +270,15 @@ async function main() {
     if (seen.has(key)) continue;
     seen.add(key);
 
+    const resolvedTime = show.timeRaw || timeFromUrl(show.ticketUrl);
+
     enriched.push({
       date: dateStr,
       city: show.city || "TBD",
       venue: show.venue || "",
       ticketUrl: show.ticketUrl || PUNCHUP_URL,
       status: show.status,
+      ...(resolvedTime ? { time: resolvedTime } : {}),
       ...(show.ticketUrl.toLowerCase().includes("laugh-it-off")
         ? { showType: "laugh_it_off" }
         : (show.venue || "").toLowerCase().includes("othership")

@@ -11,6 +11,7 @@ interface Show {
   venue: string;
   ticketUrl: string;
   status: ShowStatus;
+  time?: string;
   showType?: "laugh_it_off" | "sauna_comedy";
 }
 
@@ -99,7 +100,10 @@ export default function TourDates() {
 
                   <div className="flex-1 min-w-0">
                     <div className="text-white font-semibold truncate">{show.city}</div>
-                    <div className="text-[#888] text-sm truncate">{show.venue}</div>
+                    <div className="flex items-center gap-1.5 text-[#888] text-sm min-w-0">
+                      <span className="truncate">{show.venue}</span>
+                      {show.time && <span className="flex-shrink-0">– {show.time}</span>}
+                    </div>
                     {show.showType === "laugh_it_off" && (
                       <span className="mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-[10px] text-[#FBBF24] border border-[#FBBF24] px-2 py-0.5">
                         <span className="md:hidden">Laugh It Off</span>
