@@ -158,7 +158,7 @@ function SectionHeader({
         {subtitle}
       </p>
       <hr
-        className={`mt-4 border-0 h-px w-24 ${
+        className={`mt-4 border-0 h-px w-24 mx-auto ${
           light ? "bg-white/30" : "bg-gray-200"
         }`}
       />
@@ -438,13 +438,17 @@ export default function MediaKitPage() {
             />
           </div>
 
-          {/* Lead stat */}
-          <div className="text-center mb-8">
-            <div className="font-[family-name:var(--font-display)] font-black text-7xl md:text-8xl text-white leading-none">
-              10M+
+          {/* Lead stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto">
+            <div className="text-center">
+              <div className="font-[family-name:var(--font-display)] font-black text-7xl md:text-8xl text-white leading-none">10M+</div>
+              <p className="text-sm text-white/60 mt-2 tracking-wide uppercase">YouTube views / 90 days</p>
+              <p className="text-xs text-white/40 mt-1">81% from non-subscribers</p>
             </div>
-            <p className="text-sm text-white/70 mt-2">YouTube views in the last 90 days</p>
-            <p className="text-xs text-white/50 mt-1">81% from non-subscribers</p>
+            <div className="text-center">
+              <div className="font-[family-name:var(--font-display)] font-black text-7xl md:text-8xl text-white leading-none">32M</div>
+              <p className="text-sm text-white/60 mt-2 tracking-wide uppercase">Facebook views / 90 days</p>
+            </div>
           </div>
 
           <hr className="border-0 h-px bg-white/20 w-48 mx-auto my-8" />
@@ -525,7 +529,7 @@ export default function MediaKitPage() {
                 platform: "Instagram",
                 num: "5.9%",
                 label: "Engagement Rate",
-                note: "~3,000 shares per Reel",
+                note: "Content travels beyond existing audience",
               },
               {
                 platform: "YouTube",
@@ -642,11 +646,11 @@ export default function MediaKitPage() {
             <a href="#prenatal" className="group block">
               <div className="aspect-video bg-gray-200 rounded-sm overflow-hidden">
                 <Image
-                  src="/images/prenatal-stage.png"
+                  src="/images/prenatal-thumb.png"
                   alt="Prenatal"
                   width={300}
                   height={168}
-                  className="w-full h-full object-cover object-top scale-[1.15] group-hover:scale-[1.20] transition-transform duration-500"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="mt-2 p-1">
