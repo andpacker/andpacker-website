@@ -582,13 +582,18 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 8. PRENATAL (full-bleed brand blue) ───────────────────────────── */}
+      {/* ── 8. PRENATAL (full-bleed brand blue + stage background) ─────────── */}
       <section
         id="prenatal"
-        className="py-20 px-6"
+        className="relative py-20 px-6 overflow-hidden"
         style={{ backgroundColor: "#0D41CB" }}
       >
-        <div className="max-w-5xl mx-auto">
+        {/* Stage shot background */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/prenatal-stage.png')", opacity: 0.18 }}
+        />
+        <div className="relative z-10 max-w-5xl mx-auto">
           <div className="text-center">
             <SectionHeader
               title="Prenatal"
