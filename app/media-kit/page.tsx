@@ -169,12 +169,13 @@ function SectionHeader({
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const PRESS_LOGOS = [
-  { file: "nypost.svg", name: "New York Post", year: "2025", width: 160, height: 28 },
+  { file: "nypost.svg", name: "New York Post", year: "2025", width: 220, height: 28 },
   { file: "cbc.svg", name: "CBC", year: "2026", width: 60, height: 28 },
   { file: "bellmedia.svg", name: "Bell Media", year: "2025", width: 140, height: 28 },
   { file: "amny.svg", name: "amNY", year: "2025", width: 70, height: 28 },
   { file: "chortle.svg", name: "Chortle", year: "2025", width: 100, height: 28 },
   { file: "georgia-straight.svg", name: "Georgia Straight", year: "2026", width: 175, height: 28 },
+  { file: "angel-studios.svg", name: "Angel Studios", year: "2026", width: 190, height: 28 },
 ];
 
 const PLATFORM_STATS = [
@@ -320,6 +321,12 @@ function PackageCard({
 export default function MediaKitPage() {
   return (
     <div className="bg-white text-[#111111] min-h-screen">
+      <style>{`
+        @media (min-width: 768px) {
+          .hero-bg { background-position: 30% 25% !important; }
+          .stats-bg { background-position: center 70% !important; }
+        }
+      `}</style>
       {/* Light nav — scoped to this page, does NOT modify the main Nav component */}
       <LightNav />
 
@@ -327,7 +334,7 @@ export default function MediaKitPage() {
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-14">
         {/* TODO: Andrew drops media-kit-hero.jpg into /public/ — currently falls back to hero.jpg */}
         <div
-          className="absolute inset-0 bg-cover bg-no-repeat"
+          className="hero-bg absolute inset-0 bg-cover bg-no-repeat"
           style={{ backgroundImage: "url('/media-kit-hero.jpg'), url('/hero.jpg')", backgroundPosition: "center 25%" }}
         />
         {/* Dark overlay */}
@@ -347,7 +354,7 @@ export default function MediaKitPage() {
               {[
                 { num: "5M+", label: "FOLLOWERS" },
                 { num: "89%", label: "MALE" },
-                { num: "25–44 YRS OLD", label: "AUDIENCE" },
+                { num: "25–44", label: "AGE RANGE" },
               ].map((stat, i) => (
                 <div key={stat.label} className="flex items-stretch">
                   {i > 0 && (
@@ -378,11 +385,9 @@ export default function MediaKitPage() {
           </p>
 
           {/* Badge */}
-          <div className="mt-3 flex justify-center">
-            <span className="bg-[#0D41CB] text-white text-xs px-4 py-1.5 rounded-full font-medium tracking-wide">
-              First baby due August 2026
-            </span>
-          </div>
+          <p className="font-[family-name:var(--font-display)] font-black text-sm uppercase text-white/80 tracking-tight mt-4">
+            First Baby Due August 2026
+          </p>
 
           {/* CTA */}
           <div className="mt-8">
@@ -425,7 +430,7 @@ export default function MediaKitPage() {
       <section id="audience" className="relative py-20 px-6 overflow-hidden">
         {/* Background: hero.jpg with dark overlay */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="stats-bg absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/hero.jpg')" }}
         />
         <div className="absolute inset-0 bg-black/75" />
