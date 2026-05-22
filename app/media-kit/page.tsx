@@ -518,7 +518,7 @@ export default function MediaKitPage() {
                   alt={logo.name}
                   width={logo.width}
                   height={logo.height}
-                  className="h-7 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                  className="h-10 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
                   unoptimized
                 />
                 <span className="text-xs text-gray-400">{logo.year}</span>
