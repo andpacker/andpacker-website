@@ -168,14 +168,20 @@ function SectionHeader({
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
+const LOGO_SIZE: Record<string, string> = {
+  sm:  "h-28 w-48",   // Angel Studios — 15% smaller than md
+  md:  "h-32 w-56",   // NY Post — reference size
+  lg:  "h-48 w-80",   // all others — 1.5x md
+};
+
 const PRESS_LOGOS = [
-  { file: "nypost.png",        name: "New York Post", year: "2025", width: 220, height: 28 },
-  { file: "cbc.png",           name: "CBC",           year: "2026", width: 60,  height: 28 },
-  { file: "bellmedia.png",     name: "Bell Media",    year: "2025", width: 140, height: 28 },
-  { file: "amny.png",          name: "amNY",          year: "2025", width: 70,  height: 28 },
-  { file: "ctv.png",           name: "CTV",           year: "2026", width: 100, height: 28 },
-  { file: "deadline.png",      name: "Deadline",      year: "2025", width: 160, height: 28 },
-  { file: "angel-studios.svg", name: "Angel Studios", year: "2026", width: 190, height: 28 },
+  { file: "nypost.png",        name: "New York Post", year: "2025", size: "md" },
+  { file: "cbc.png",           name: "CBC",           year: "2026", size: "lg" },
+  { file: "bellmedia.png",     name: "Bell Media",    year: "2025", size: "lg" },
+  { file: "amny.png",          name: "amNY",          year: "2025", size: "lg" },
+  { file: "ctv.png",           name: "CTV",           year: "2026", size: "lg" },
+  { file: "deadline.png",      name: "Deadline",      year: "2025", size: "lg" },
+  { file: "angel-studios.svg", name: "Angel Studios", year: "2026", size: "sm" },
 ];
 
 const PLATFORM_STATS = [
@@ -513,7 +519,7 @@ export default function MediaKitPage() {
           <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
             {PRESS_LOGOS.map((logo) => (
               <div key={logo.name} className="flex flex-col items-center gap-2">
-                <div className="relative h-32 w-56">
+                <div className={`relative ${LOGO_SIZE[logo.size]}`}>
                   <Image
                     src={`/press/${logo.file}`}
                     alt={logo.name}
