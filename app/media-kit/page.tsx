@@ -510,17 +510,18 @@ export default function MediaKitPage() {
       <section className="py-14 px-6" style={{ backgroundColor: "#F5F0EB" }}>
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-xs tracking-widest uppercase text-gray-500 mb-6">As Seen In</p>
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
             {PRESS_LOGOS.map((logo) => (
-              <div key={logo.name} className="flex flex-col items-center gap-1.5">
-                <Image
-                  src={`/press/${logo.file}`}
-                  alt={logo.name}
-                  width={logo.width}
-                  height={logo.height}
-                  className="h-10 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-                  unoptimized
-                />
+              <div key={logo.name} className="flex flex-col items-center gap-2">
+                <div className="relative h-24 w-44">
+                  <Image
+                    src={`/press/${logo.file}`}
+                    alt={logo.name}
+                    fill
+                    className="object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                    unoptimized
+                  />
+                </div>
                 <span className="text-xs text-gray-400">{logo.year}</span>
               </div>
             ))}
