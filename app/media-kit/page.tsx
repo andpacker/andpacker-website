@@ -168,20 +168,14 @@ function SectionHeader({
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-const LOGO_SIZE: Record<string, string> = {
-  sm:  "h-28 w-48",   // Angel Studios — 15% smaller than md
-  md:  "h-32 w-56",   // NY Post — reference size
-  lg:  "h-48 w-80",   // all others — 1.5x md
-};
-
 const PRESS_LOGOS = [
-  { file: "nypost.png",        name: "New York Post", year: "2025", size: "md" },
-  { file: "cbc.png",           name: "CBC",           year: "2026", size: "lg" },
-  { file: "bellmedia.png",     name: "Bell Media",    year: "2025", size: "lg" },
-  { file: "amny.png",          name: "amNY",          year: "2025", size: "lg" },
-  { file: "ctv.png",           name: "CTV",           year: "2026", size: "lg" },
-  { file: "deadline.png",      name: "Deadline",      year: "2025", size: "lg" },
-  { file: "angel-studios.svg", name: "Angel Studios", year: "2026", size: "sm" },
+  { file: "nypost.png",        name: "New York Post", year: "2025" },
+  { file: "cbc.png",           name: "CBC",           year: "2026" },
+  { file: "bellmedia.png",     name: "Bell Media",    year: "2025" },
+  { file: "amny.png",          name: "amNY",          year: "2025" },
+  { file: "ctv.png",           name: "CTV",           year: "2026" },
+  { file: "deadline.png",      name: "Deadline",      year: "2025" },
+  { file: "angel-studios.svg", name: "Angel Studios", year: "2026" },
 ];
 
 const PLATFORM_STATS = [
@@ -516,18 +510,15 @@ export default function MediaKitPage() {
       <section className="py-14 px-6" style={{ backgroundColor: "#F5F0EB" }}>
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-xs tracking-widest uppercase text-gray-500 mb-6">As Seen In</p>
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-8 md:gap-x-14">
             {PRESS_LOGOS.map((logo) => (
               <div key={logo.name} className="flex flex-col items-center gap-2">
-                <div className={`relative ${LOGO_SIZE[logo.size]}`}>
-                  <Image
-                    src={`/press/${logo.file}`}
-                    alt={logo.name}
-                    fill
-                    className="object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
-                    unoptimized
-                  />
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/press/${logo.file}`}
+                  alt={logo.name}
+                  className="max-h-14 w-auto grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                />
                 <span className="text-xs text-gray-400">{logo.year}</span>
               </div>
             ))}
