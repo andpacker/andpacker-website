@@ -46,9 +46,6 @@ function LightNav() {
 
         <div className="hidden md:flex items-center gap-8">
           {[
-            { label: "Tours", href: "/#tours" },
-            { label: "Watch", href: "/#watch" },
-            { label: "Listen", href: "/#listen" },
             { label: "Contact", href: "/#contact" },
           ].map((link) => (
             <Link
