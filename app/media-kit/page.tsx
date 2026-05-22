@@ -432,9 +432,12 @@ export default function MediaKitPage() {
       {/* ── 1. HERO (full-bleed, dark) ─────────────────────────────────────── */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-14">
         {/* TODO: Andrew drops media-kit-hero.jpg into /public/ — currently falls back to hero.jpg */}
-        <div
-          className="mk-hero-bg absolute inset-0 bg-cover bg-no-repeat"
-          style={{ backgroundImage: "url('/media-kit-hero.png'), url('/hero.jpg')" }}
+        <Image
+          src="/media-kit-hero-opt.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover object-[center_center] md:object-[40%_center]"
         />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 to-black/50" />
