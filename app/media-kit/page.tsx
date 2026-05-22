@@ -169,12 +169,12 @@ function SectionHeader({
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const PRESS_LOGOS = [
-  { file: "nypost.svg", name: "New York Post", year: "2025", width: 220, height: 28 },
-  { file: "cbc.svg", name: "CBC", year: "2026", width: 60, height: 28 },
-  { file: "bellmedia.svg", name: "Bell Media", year: "2025", width: 140, height: 28 },
-  { file: "amny.svg", name: "amNY", year: "2025", width: 70, height: 28 },
-  { file: "chortle.svg", name: "Chortle", year: "2025", width: 100, height: 28 },
-  { file: "georgia-straight.svg", name: "Georgia Straight", year: "2026", width: 175, height: 28 },
+  { file: "nypost.png",        name: "New York Post", year: "2025", width: 220, height: 28 },
+  { file: "cbc.png",           name: "CBC",           year: "2026", width: 60,  height: 28 },
+  { file: "bellmedia.png",     name: "Bell Media",    year: "2025", width: 140, height: 28 },
+  { file: "amny.png",          name: "amNY",          year: "2025", width: 70,  height: 28 },
+  { file: "ctv.png",           name: "CTV",           year: "2026", width: 100, height: 28 },
+  { file: "deadline.png",      name: "Deadline",      year: "2025", width: 160, height: 28 },
   { file: "angel-studios.svg", name: "Angel Studios", year: "2026", width: 190, height: 28 },
 ];
 
