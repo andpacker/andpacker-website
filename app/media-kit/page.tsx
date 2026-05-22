@@ -169,13 +169,13 @@ function SectionHeader({
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const PRESS_LOGOS = [
-  { file: "nypost.png",        name: "New York Post", year: "2025" },
-  { file: "cbc.png",           name: "CBC",           year: "2026" },
-  { file: "bellmedia.png",     name: "Bell Media",    year: "2025" },
-  { file: "amny.png",          name: "amNY",          year: "2025" },
-  { file: "ctv.png",           name: "CTV",           year: "2026" },
-  { file: "deadline.png",      name: "Deadline",      year: "2025" },
-  { file: "angel-studios.svg", name: "Angel Studios", year: "2026" },
+  { file: "nypost.png",        name: "New York Post", year: "2025", cls: "max-h-20 w-auto" },
+  { file: "cbc.png",           name: "CBC",           year: "2026", cls: "max-h-14 w-auto" },
+  { file: "bellmedia.png",     name: "Bell Media",    year: "2025", cls: "max-h-14 w-auto" },
+  { file: "amny.png",          name: "amNY",          year: "2025", cls: "max-h-14 w-auto" },
+  { file: "ctv.png",           name: "CTV",           year: "2026", cls: "max-h-14 w-auto" },
+  { file: "deadline.png",      name: "Deadline",      year: "2025", cls: "max-h-14 w-auto" },
+  { file: "angel-studios.svg", name: "Angel Studios", year: "2026", cls: "h-14 w-auto" },
 ];
 
 const PLATFORM_STATS = [
@@ -517,7 +517,7 @@ export default function MediaKitPage() {
                 <img
                   src={`/press/${logo.file}`}
                   alt={logo.name}
-                  className="max-h-14 w-auto grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+                  className={`${logo.cls} grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300`}
                 />
                 <span className="text-xs text-gray-400">{logo.year}</span>
               </div>
