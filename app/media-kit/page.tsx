@@ -169,13 +169,13 @@ function SectionHeader({
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const PRESS_LOGOS = [
-  { file: "nypost.png",        name: "New York Post", year: "2025", cls: "max-h-20 w-auto" },
-  { file: "cbc.png",           name: "CBC",           year: "2026", cls: "max-h-14 w-auto" },
-  { file: "bellmedia.png",     name: "Bell Media",    year: "2025", cls: "max-h-14 w-auto" },
-  { file: "amny.png",          name: "amNY",          year: "2025", cls: "max-h-14 w-auto" },
-  { file: "ctv.png",           name: "CTV",           year: "2026", cls: "max-h-14 w-auto" },
-  { file: "deadline.png",      name: "Deadline",      year: "2025", cls: "max-h-14 w-auto" },
-  { file: "angel-studios.svg", name: "Angel Studios", year: "2026", cls: "h-14 w-auto" },
+  { file: "nypost.png",        name: "New York Post", year: "2025", cls: "max-h-20 w-auto" }, // 80px → 78×80 = 6,240 px²
+  { file: "cbc.png",           name: "CBC",           year: "2026", cls: "max-h-10 w-auto" }, // 40px → 157×40 = 6,280 px²
+  { file: "bellmedia.png",     name: "Bell Media",    year: "2025", cls: "max-h-10 w-auto" }, // 40px → 161×40 = 6,440 px²
+  { file: "amny.png",          name: "amNY",          year: "2025", cls: "max-h-10 w-auto" }, // 40px → 145×40 = 5,800 px²
+  { file: "ctv.png",           name: "CTV",           year: "2026", cls: "max-h-12 w-auto" }, // 48px → 152×48 = 7,296 px²
+  { file: "deadline.png",      name: "Deadline",      year: "2025", cls: "max-h-8 w-auto"  }, // 32px → 248×32 = 7,936 px²
+  { file: "angel-studios.svg", name: "Angel Studios", year: "2026", cls: "h-12 w-auto"     }, // exact h (SVG is 32px natural, max-h won't scale up)
 ];
 
 const PLATFORM_STATS = [
