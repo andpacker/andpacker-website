@@ -513,7 +513,7 @@ export default function MediaKitPage() {
           <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
             {PRESS_LOGOS.map((logo) => (
               <div key={logo.name} className="flex flex-col items-center gap-2">
-                <div className="relative h-24 w-44">
+                <div className="relative h-32 w-56">
                   <Image
                     src={`/press/${logo.file}`}
                     alt={logo.name}
