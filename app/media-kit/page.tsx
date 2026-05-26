@@ -61,13 +61,6 @@ function LightNav() {
 
           <div className="w-px h-4 bg-gray-300" />
 
-          {/* TikTok */}
-          <a href="https://www.tiktok.com/@andpacker" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="text-[#111] hover:text-[#0D41CB] transition-colors">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.2 8.2 0 004.79 1.53V6.78a4.85 4.85 0 01-1.02-.09z"/>
-            </svg>
-          </a>
-
           {/* YouTube */}
           <a href="https://www.youtube.com/@andpacker" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-[#111] hover:text-[#0D41CB] transition-colors">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -86,6 +79,13 @@ function LightNav() {
           <a href="https://www.facebook.com/andpacker" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-[#111] hover:text-[#0D41CB] transition-colors">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+
+          {/* TikTok */}
+          <a href="https://www.tiktok.com/@andpacker" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="text-[#111] hover:text-[#0D41CB] transition-colors">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.2 8.2 0 004.79 1.53V6.78a4.85 4.85 0 01-1.02-.09z"/>
             </svg>
           </a>
         </div>
@@ -208,10 +208,10 @@ const PRESS_LOGOS = [
 ];
 
 const PLATFORM_STATS = [
-  { platform: "TikTok", count: "2.9M", label: "FOLLOWERS" },
   { platform: "YouTube", count: "1.2M", label: "SUBSCRIBERS" },
   { platform: "Instagram", count: "617K", label: "FOLLOWERS" },
   { platform: "Facebook", count: "180K", label: "FOLLOWERS" },
+  { platform: "TikTok", count: "2.9M", label: "FOLLOWERS" },
   { platform: "Combined", count: "5M+", label: "TOTAL REACH" },
   { platform: "Live Tour", count: "26+", label: "DATES / YEAR" },
 ];
@@ -1060,15 +1060,6 @@ export default function MediaKitPage() {
           <div className="flex items-center justify-center gap-8 mt-10">
             {[
               {
-                name: "TikTok",
-                url: "https://www.tiktok.com/@andpacker",
-                svg: (
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.85a8.16 8.16 0 004.77 1.53V6.93a4.85 4.85 0 01-1-.24z"/>
-                  </svg>
-                ),
-              },
-              {
                 name: "YouTube",
                 url: "https://www.youtube.com/@andpacker",
                 svg: (
@@ -1092,6 +1083,15 @@ export default function MediaKitPage() {
                 svg: (
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                ),
+              },
+              {
+                name: "TikTok",
+                url: "https://www.tiktok.com/@andpacker",
+                svg: (
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.85a8.16 8.16 0 004.77 1.53V6.93a4.85 4.85 0 01-1-.24z"/>
                   </svg>
                 ),
               },
