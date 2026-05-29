@@ -65,6 +65,20 @@
     "showType": "laugh_it_off"
   },
   {
+    "date": "2026-07-17",
+    "city": "St. Catharines, ON",
+    "venue": "SPOTLIGHT COMEDY CLUB",
+    "ticketUrl": "https://www.eventbrite.ca/e/1990575761688?aff=oddtdtcreator",
+    "status": "on_sale"
+  },
+  {
+    "date": "2026-07-18",
+    "city": "St. Catharines, ON",
+    "venue": "SPOTLIGHT COMEDY CLUB",
+    "ticketUrl": "https://www.eventbrite.ca/e/1990576433698?aff=oddtdtcreator",
+    "status": "on_sale"
+  },
+  {
     "date": "2026-07-24",
     "city": "Toronto, ON",
     "venue": "CHEFS HALL",
