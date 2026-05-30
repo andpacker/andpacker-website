@@ -300,6 +300,20 @@ async function main() {
     : "[]";
   const existing = JSON.parse(existingRaw);
 
+  // Preserve manually-set showType values (e.g. comedy_special_recording) that
+  // the scraper has no auto-detection pattern for.
+  const existingByKey = {};
+  for (const s of existing) {
+    existingByKey[`${s.date}|${s.city}|${s.venue}|${s.ticketUrl}`] = s;
+  }
+  for (const show of future) {
+    const key = `${show.date}|${show.city}|${show.venue}|${show.ticketUrl}`;
+    const prev = existingByKey[key];
+    if (prev?.showType && !show.showType) {
+      show.showType = prev.showType;
+    }
+  }
+
   if (JSON.stringify(future) === JSON.stringify(existing)) {
     console.log("Tour dates unchanged — no commit needed.");
   } else {
