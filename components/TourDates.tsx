@@ -117,7 +117,7 @@ export default function TourDates() {
                       </span>
                     )}
                     {show.showType === "comedy_special_recording" && (
-                      <span className="mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-[10px] text-[#FACC15] border border-[#FACC15] px-2 py-0.5">
+                      <span className="mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase whitespace-nowrap tracking-wide md:tracking-widest text-[8px] md:text-[10px] text-[#FACC15] border border-[#FACC15] px-2 py-0.5">
                         Comedy Special Recording
                       </span>
                     )}
