@@ -17,7 +17,6 @@
   .performer-row { border-bottom: 1px solid #222222; }
   .performer-name { font-size: 16px; font-weight: bold; color: #FFFFFF; padding-bottom: 4px; }
   .performer-ig { font-size: 14px; }
-  .performer-photo { border-radius: 4px; }
   .next-show {
     background-color: #141414; border: 1px solid #222222;
     padding: 20px; margin: 20px 0; text-align: center;
@@ -28,16 +27,6 @@
     display: inline-block; background-color: #0D41CB; color: #FFFFFF;
     padding: 12px 28px; font-weight: bold; border-radius: 4px; font-size: 15px;
   }
-  .podcast-footer { padding: 24px 20px; text-align: center; border-top: 1px solid #222222; }
-  .podcast-footer p { color: #888888; font-size: 16px; margin-bottom: 10px; line-height: 1.5; }
-  .podcast-link {
-    display: block; width: 100%; box-sizing: border-box;
-    color: #FFFFFF; padding: 14px 18px; border-radius: 4px;
-    font-size: 15px; font-weight: bold; text-align: center; margin-bottom: 10px;
-  }
-  .podcast-spotify { background-color: #1DB954; }
-  .podcast-apple   { background-color: #872EC4; }
-  .podcast-youtube { background-color: #FF0000; }
   .body-padding { padding: 0 20px; }
 </style>
 </head>
@@ -52,40 +41,81 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     
     <tr class="performer-row">
-      <td style="padding: 16px 0;">
+      <td style="padding: 14px 0;">
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr>
-            <td valign="top">
+            <td width="72" valign="middle" style="padding-right: 16px;">
+              <img src="https://unavatar.io/instagram/andpacker" width="72" height="72" alt="Andrew Packer"
+                   style="width:72px;height:72px;border-radius:50%;display:block;object-fit:cover;">
+            </td>
+            <td valign="middle">
               <div class="performer-name">Andrew Packer</div>
               <a href="https://instagram.com/andpacker" class="performer-ig">@andpacker</a>
             </td>
-            <td width="80"></td>
           </tr>
         </table>
       </td>
     </tr>
     <tr class="performer-row">
-      <td style="padding: 16px 0;">
+      <td style="padding: 14px 0;">
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr>
-            <td valign="top">
+            <td width="72" valign="middle" style="padding-right: 16px;">
+              <img src="https://unavatar.io/instagram/janedoe" width="72" height="72" alt="Jane Doe"
+                   style="width:72px;height:72px;border-radius:50%;display:block;object-fit:cover;">
+            </td>
+            <td valign="middle">
               <div class="performer-name">Jane Doe</div>
               <a href="https://instagram.com/janedoe" class="performer-ig">@janedoe</a>
             </td>
-            <td width="80"></td>
           </tr>
         </table>
       </td>
     </tr>
     <tr class="performer-row">
-      <td style="padding: 16px 0;">
+      <td style="padding: 14px 0;">
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr>
-            <td valign="top">
+            <td width="72" valign="middle" style="padding-right: 16px;">
+              <img src="https://unavatar.io/instagram/johnsmith" width="72" height="72" alt="John Smith"
+                   style="width:72px;height:72px;border-radius:50%;display:block;object-fit:cover;">
+            </td>
+            <td valign="middle">
               <div class="performer-name">John Smith</div>
               <a href="https://instagram.com/johnsmith" class="performer-ig">@johnsmith</a>
             </td>
-            <td width="80"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr class="performer-row">
+      <td style="padding: 14px 0;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td width="72" valign="middle" style="padding-right: 16px;">
+              <img src="https://unavatar.io/instagram/comedycomedycomedy" width="72" height="72" alt="Another Comic"
+                   style="width:72px;height:72px;border-radius:50%;display:block;object-fit:cover;">
+            </td>
+            <td valign="middle">
+              <div class="performer-name">Another Comic</div>
+              <a href="https://instagram.com/comedycomedycomedy" class="performer-ig">@comedycomedycomedy</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr class="performer-row">
+      <td style="padding: 14px 0;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td width="72" valign="middle" style="padding-right: 16px;">
+              <img src="https://unavatar.io/instagram/fifthcomic" width="72" height="72" alt="Fifth Performer"
+                   style="width:72px;height:72px;border-radius:50%;display:block;object-fit:cover;">
+            </td>
+            <td valign="middle">
+              <div class="performer-name">Fifth Performer</div>
+              <a href="https://instagram.com/fifthcomic" class="performer-ig">@fifthcomic</a>
+            </td>
           </tr>
         </table>
       </td>
@@ -99,28 +129,30 @@
   </div>
   
   <div style="margin-top: 24px;">
-    <div style="font-size:15px;color:#888888;margin-bottom:16px;line-height:1.6;">Also, if you haven't checked it out yet, I record a podcast called Laugh It Off right here in Toronto. It's a group therapy comedy show co-hosted by my dad (an actual therapist) and new episodes dropping regularly.</div>
-    <img src="https://andpacker.com/laugh-it-off-poster.png"
-         alt="Laugh It Off Podcast"
-         width="600" style="width:100%;display:block;">
+    <div style="font-size:15px;color:#888888;margin-bottom:16px;line-height:1.6;text-align:center;">Also, if you haven't checked it out yet, I record a podcast called Laugh It Off right here in Toronto. It's a group therapy comedy show co-hosted by my dad (an actual therapist) and new episodes dropping regularly.</div>
+    <a href="https://pod.link/1800539752" style="display:block;">
+      <img src="https://andpacker.com/laugh-it-off-poster.png"
+           alt="Laugh It Off Podcast"
+           width="600" style="width:100%;display:block;">
+    </a>
     <div style="background-color:#141414;padding:20px;">
       <div style="font-size:12px;font-weight:bold;letter-spacing:3px;text-transform:uppercase;color:#0D41CB;margin-bottom:8px;">Podcast</div>
       <div style="font-size:20px;font-weight:900;text-transform:uppercase;color:#FFFFFF;letter-spacing:1px;margin-bottom:16px;">Laugh It Off w/ Andrew Packer</div>
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td width="50%" style="padding:0 6px 10px 0;">
-            <a href="https://youtube.com/@PLACEHOLDER" style="display:block;background-color:#FF0000;color:#FFFFFF;text-align:center;padding:12px;border-radius:4px;font-weight:bold;font-size:14px;text-decoration:none;">Watch on YouTube</a>
+            <a href="https://youtube.com/playlist?list=PLekDw2qplsR74ehfNP5Ce9EaHcCTHF90k" style="display:block;background-color:#FF0000;color:#FFFFFF;text-align:center;padding:12px;border-radius:4px;font-weight:bold;font-size:14px;text-decoration:none;">Watch on YouTube</a>
           </td>
           <td width="50%" style="padding:0 0 10px 6px;">
-            <a href="https://open.spotify.com/show/PLACEHOLDER" style="display:block;background-color:#1DB954;color:#FFFFFF;text-align:center;padding:12px;border-radius:4px;font-weight:bold;font-size:14px;text-decoration:none;">Spotify</a>
+            <a href="https://open.spotify.com/show/45GCMsEKtagVf9C9JmjGSb" style="display:block;background-color:#1DB954;color:#FFFFFF;text-align:center;padding:12px;border-radius:4px;font-weight:bold;font-size:14px;text-decoration:none;">Spotify</a>
           </td>
         </tr>
         <tr>
           <td width="50%" style="padding:0 6px 0 0;">
-            <a href="https://podcasts.apple.com/PLACEHOLDER" style="display:block;background-color:#872EC4;color:#FFFFFF;text-align:center;padding:12px;border-radius:4px;font-weight:bold;font-size:14px;text-decoration:none;">Apple Podcasts</a>
+            <a href="https://podcasts.apple.com/us/podcast/id1800539752" style="display:block;background-color:#872EC4;color:#FFFFFF;text-align:center;padding:12px;border-radius:4px;font-weight:bold;font-size:14px;text-decoration:none;">Apple Podcasts</a>
           </td>
           <td width="50%" style="padding:0 0 0 6px;">
-            <a href="https://pod.link/laughitoff" style="display:block;background-color:#222222;color:#FFFFFF;text-align:center;padding:12px;border-radius:4px;font-weight:bold;font-size:14px;text-decoration:none;">All Platforms</a>
+            <a href="https://pod.link/1800539752" style="display:block;background-color:#222222;color:#FFFFFF;text-align:center;padding:12px;border-radius:4px;font-weight:bold;font-size:14px;text-decoration:none;">All Platforms</a>
           </td>
         </tr>
       </table>
