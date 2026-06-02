@@ -1,19 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import tourDates from "@/data/tour-dates.json";
+import { tourDates, type Show } from "@/lib/tour";
 
-type ShowStatus = "on_sale" | "low_tickets" | "sold_out";
-
-interface Show {
-  date: string;
-  city: string;
-  venue: string;
-  ticketUrl: string;
-  status: ShowStatus;
-  time?: string;
-  showType?: "laugh_it_off" | "sauna_comedy" | "comedy_special_recording";
-}
+type ShowStatus = Show["status"];
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr + "T12:00:00Z");
@@ -25,7 +15,7 @@ function formatDate(dateStr: string) {
   };
 }
 
-function TicketButton({ status, url, showType }: { status: ShowStatus; url: string; showType?: "laugh_it_off" | "sauna_comedy" | "comedy_special_recording" }) {
+function TicketButton({ status, url, showType }: { status: ShowStatus; url: string; showType?: Show["showType"] }) {
   if (status === "sold_out") {
     return (
       <span className="inline-block bg-[#222] text-[#555] font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 cursor-not-allowed">
@@ -58,7 +48,7 @@ export default function TourDates() {
   const [expanded, setExpanded] = useState(false);
   const PREVIEW_COUNT = 5;
 
-  const upcomingShows = (tourDates as Show[]).filter(
+  const upcomingShows = tourDates.filter(
     (s) => new Date(s.date + "T23:59:59Z") >= new Date()
   );
   const visibleShows = expanded ? upcomingShows : upcomingShows.slice(0, PREVIEW_COUNT);
