@@ -1,195 +1,170 @@
 [
   {
-    "slug": "campfire-comedy-club",
-    "venue": "Campfire Comedy Club",
-    "city": "Thunder Bay, ON",
     "date": "2026-06-05",
+    "city": "Thunder Bay, Ontario",
+    "venue": "CAMPFIRE COMEDY CLUB",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-live-campfire-comedy-tickets-1983927468464?aff=oddtdtcreator",
     "status": "on_sale"
   },
   {
-    "slug": "campfire-comedy-club",
-    "venue": "Campfire Comedy Club",
-    "city": "Thunder Bay, ON",
     "date": "2026-06-06",
+    "city": "Thunder Bay, Ontario",
+    "venue": "CAMPFIRE COMEDY CLUB",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-live-campfire-comedy-tickets-1983927468464?aff=oddtdtcreator",
     "status": "on_sale"
   },
   {
-    "slug": "the-corner-comedy-club",
-    "venue": "The Corner Comedy Club",
-    "city": "Toronto, ON",
     "date": "2026-06-25",
+    "city": "Toronto, ON",
+    "venue": "THE CORNER COMEDY CLUB",
     "ticketUrl": "https://thecornercomedy.com/tickets/saturday-showcase-gbf8m-mrn63",
-    "status": "on_sale",
-    "showType": "comedy_special_recording"
+    "status": "on_sale"
   },
   {
-    "slug": "chefs-hall",
-    "venue": "Chefs Hall",
-    "city": "Toronto, ON",
     "date": "2026-06-26",
+    "city": "Toronto, ON",
+    "venue": "CHEFS HALL",
     "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317",
     "status": "on_sale"
   },
   {
-    "slug": "the-corner-comedy-club",
-    "venue": "The Corner Comedy Club",
-    "city": "Toronto, ON",
     "date": "2026-06-26",
+    "city": "Toronto, ON",
+    "venue": "THE CORNER COMEDY CLUB",
     "ticketUrl": "https://thecornercomedy.com/tickets/saturday-showcase-gbf8m-mrn63",
-    "status": "on_sale",
-    "showType": "comedy_special_recording"
+    "status": "on_sale"
   },
   {
-    "slug": "comedy-bar-toronto",
-    "venue": "Comedy Bar - Toronto",
-    "city": "Toronto, ON",
     "date": "2026-06-27",
+    "city": "Toronto, ON",
+    "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
     "status": "on_sale",
     "time": "7 PM",
     "showType": "laugh_it_off"
   },
   {
-    "slug": "spotlight-comedy-club",
-    "venue": "Spotlight Comedy Club",
-    "city": "St. Catharines, ON",
     "date": "2026-07-17",
+    "city": "St. Catharines, ON",
+    "venue": "SPOTLIGHT COMEDY CLUB",
     "ticketUrl": "https://www.eventbrite.ca/e/1990575761688?aff=oddtdtcreator",
     "status": "on_sale"
   },
   {
-    "slug": "spotlight-comedy-club",
-    "venue": "Spotlight Comedy Club",
-    "city": "St. Catharines, ON",
     "date": "2026-07-18",
+    "city": "St. Catharines, ON",
+    "venue": "SPOTLIGHT COMEDY CLUB",
     "ticketUrl": "https://www.eventbrite.ca/e/1990576433698?aff=oddtdtcreator",
     "status": "on_sale"
   },
   {
-    "slug": "chefs-hall",
-    "venue": "Chefs Hall",
-    "city": "Toronto, ON",
     "date": "2026-07-24",
+    "city": "Toronto, ON",
+    "venue": "CHEFS HALL",
     "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317",
     "status": "on_sale"
   },
   {
-    "slug": "comedy-bar-toronto",
-    "venue": "Comedy Bar - Toronto",
-    "city": "Toronto, ON",
     "date": "2026-07-25",
+    "city": "Toronto, ON",
+    "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
     "status": "on_sale",
     "time": "7 PM",
     "showType": "laugh_it_off"
   },
   {
-    "slug": "chefs-hall",
-    "venue": "Chefs Hall",
-    "city": "Toronto, ON",
     "date": "2026-08-28",
+    "city": "Toronto, ON",
+    "venue": "CHEFS HALL",
     "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317",
     "status": "on_sale"
   },
   {
-    "slug": "comedy-bar-toronto",
-    "venue": "Comedy Bar - Toronto",
-    "city": "Toronto, ON",
     "date": "2026-08-29",
+    "city": "Toronto, ON",
+    "venue": "COMEDY BAR - TORONTO",
     "ticketUrl": "https://comedybar.ca/shows/Laugh-It-Off-Bloor?ev=2026-05-16T19%3A00%3A00",
     "status": "on_sale",
     "time": "7 PM",
     "showType": "laugh_it_off"
   },
   {
-    "slug": "dallas-comedy-club",
-    "venue": "Dallas Comedy Club",
-    "city": "Dallas, TX",
     "date": "2026-10-09",
+    "city": "Dallas, TX",
+    "venue": "DALLAS COMEDY CLUB",
     "ticketUrl": "https://www.prekindle.com/event/56327-andrew-packer-730pm-dallas",
     "status": "on_sale",
     "time": "7:30 PM"
   },
   {
-    "slug": "dallas-comedy-club",
-    "venue": "Dallas Comedy Club",
-    "city": "Dallas, TX",
     "date": "2026-10-09",
+    "city": "Dallas, TX",
+    "venue": "DALLAS COMEDY CLUB",
     "ticketUrl": "https://www.prekindle.com/event/94714-andrew-packer-930pm-dallas",
     "status": "on_sale",
     "time": "9:30 PM"
   },
   {
-    "slug": "libertine-brewing-company",
-    "venue": "Libertine Brewing Company",
-    "city": "San Luis Obispo, CA",
     "date": "2026-10-10",
+    "city": "San Luis Obispo, CA",
+    "venue": "LIBERTINE BREWING COMPANY",
     "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-san-luis-opbispo-tickets-1987786559108?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale"
   },
   {
-    "slug": "yuk-yuks-comedy-club-calgary",
-    "venue": "Yuk Yuk'S Comedy Club - Calgary",
-    "city": "Calgary, AB",
     "date": "2026-11-06",
+    "city": "Calgary, AB",
+    "venue": "YUK YUK'S COMEDY CLUB - CALGARY",
     "ticketUrl": "https://www.yukyuks.com/calgary/show/andrew-packer-live-in-calgary-44017",
     "status": "on_sale"
   },
   {
-    "slug": "kings-head-pub",
-    "venue": "King'S Head Pub",
-    "city": "Winnipeg, MB",
     "date": "2026-11-07",
+    "city": "Winnipeg, MB",
+    "venue": "KING'S HEAD PUB",
     "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-winnipeg-kings-head-pub-tickets-1987789006428?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale"
   },
   {
-    "slug": "the-bus-stop-theatre",
-    "venue": "The Bus Stop Theatre",
-    "city": "Halifax, NS",
     "date": "2026-11-13",
+    "city": "Halifax, NS",
+    "venue": "THE BUS STOP THEATRE",
     "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-halifax-tickets-1987791634288?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale"
   },
   {
-    "slug": "th\u00e9\u00e2tre-sainte-catherine",
-    "venue": "Th\u00e9\u00e2tre Sainte-Catherine",
-    "city": "Montr\u00e9al, QC",
     "date": "2026-11-14",
+    "city": "Montréal, QC",
+    "venue": "THÉÂTRE SAINTE-CATHERINE",
     "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-montreal-tickets-1987787385580?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale"
   },
   {
-    "slug": "naukabout-brewery-and-taproom",
-    "venue": "Naukabout Brewery And Taproom",
-    "city": "Mashpee, MA",
     "date": "2026-11-19",
+    "city": "Mashpee, MA",
+    "venue": "NAUKABOUT BREWERY AND TAPROOM",
     "ticketUrl": "https://mannewsmashpee.eventbrite.com/",
     "status": "on_sale"
   },
   {
-    "slug": "scituate-veterans-of-foreign-wars-post-3169",
-    "venue": "Scituate Veterans Of Foreign Wars Post 3169",
-    "city": "Scituate, MA",
     "date": "2026-11-20",
+    "city": "Scituate, MA",
+    "venue": "SCITUATE VETERANS OF FOREIGN WARS POST 3169",
     "ticketUrl": "https://andrewscituate.eventbrite.com/",
     "status": "on_sale"
   },
   {
-    "slug": "royal-garden-chinese-restaurant",
-    "venue": "Royal Garden | Chinese Restaurant",
-    "city": "Kingston, MA",
     "date": "2026-11-21",
+    "city": "Kingston, MA",
+    "venue": "ROYAL GARDEN | CHINESE RESTAURANT",
     "ticketUrl": "http://sweetandsourap.eventbrite.com/",
     "status": "on_sale"
   },
   {
-    "slug": "simcoe-street-theatre",
-    "venue": "Simcoe Street Theatre",
-    "city": "Collingwood, ON",
     "date": "2026-11-27",
+    "city": "Collingwood, ON",
+    "venue": "SIMCOE STREET THEATRE",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-stand-up-comedy-live-in-collingwood-simcoe-street-theatre-tickets-1988930483617?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale"
   }
