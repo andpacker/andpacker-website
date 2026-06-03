@@ -48,6 +48,35 @@ function parsePunchupDate(raw) {
   return cleaned;
 }
 
+// Build a URL-safe slug from a venue name.
+// Verified byte-for-byte against existing slugs (incl. accented Latin and apostrophes).
+function slugify(v) {
+  return v.toLowerCase()
+    .replace(/['’]/g, "")          // drop apostrophes: Yuk Yuk's -> yukyuks
+    .replace(/[^a-z0-9À-ɏ]+/g, "-") // non-alnum (keep Latin accents) -> hyphen
+    .replace(/^-+|-+$/g, "");      // trim
+}
+
+// Punchup applies CSS text-transform:uppercase, so innerText returns ALL-CAPS.
+// textContent (used at extraction) preserves the true casing; this is a defensive
+// fallback that Title-cases an ALL-CAPS string while leaving mixed-case untouched.
+// Punctuation/separators (-, |, etc.) and short connective words stay as-is.
+function titleCaseVenue(v) {
+  if (!v) return v;
+  // Only normalize strings that are effectively all-uppercase (no lowercase letters).
+  if (/[a-z]/.test(v)) return v;
+  const minor = new Set(["and", "of", "the", "or", "a", "an", "for", "to", "in", "on"]);
+  return v
+    .toLowerCase()
+    .split(/\b/)
+    .map((tok) => {
+      if (!/[a-z]/.test(tok)) return tok; // separators, digits
+      if (minor.has(tok)) return tok;
+      return tok.charAt(0).toUpperCase() + tok.slice(1);
+    })
+    .join("");
+}
+
 function timeFromUrl(url) {
   // Decode percent-encoded colons (%3A) before matching
   const decoded = url.replace(/%3A/gi, ":");
@@ -208,13 +237,15 @@ async function main() {
         }
       }
 
-      // Extract venue — punchup styles venue names with "uppercase" in className
+      // Extract venue — punchup styles venue names with "uppercase" in className.
+      // Use textContent (NOT innerText) so we get the source casing rather than the
+      // CSS-uppercased rendering; titleCaseVenue() normalizes any all-caps stragglers.
       let venue = "";
       const allP = Array.from(row.querySelectorAll("p"));
       for (const p of allP) {
         const cls = p.className || "";
         if (cls.includes("uppercase") && cls.includes("semibold")) {
-          const t = (p.innerText || p.textContent || "").trim();
+          const t = (p.textContent || "").trim();
           if (t && t.length < 100) {
             venue = t;
             break;
@@ -225,7 +256,7 @@ async function main() {
       if (!venue) {
         for (const p of allP) {
           if (window.getComputedStyle(p).textTransform === "uppercase") {
-            const t = (p.innerText || p.textContent || "").trim();
+            const t = (p.textContent || "").trim();
             if (t && t.length < 100) {
               venue = t;
               break;
@@ -271,11 +302,13 @@ async function main() {
     seen.add(key);
 
     const resolvedTime = show.timeRaw || timeFromUrl(show.ticketUrl);
+    const venue = titleCaseVenue(show.venue || "");
 
     enriched.push({
+      slug: slugify(venue),
       date: dateStr,
       city: show.city || "TBD",
-      venue: show.venue || "",
+      venue,
       ticketUrl: show.ticketUrl || PUNCHUP_URL,
       status: show.status,
       ...(resolvedTime ? { time: resolvedTime } : {}),
@@ -300,8 +333,10 @@ async function main() {
     : "[]";
   const existing = JSON.parse(existingRaw);
 
-  // Preserve manually-set showType values (e.g. comedy_special_recording) that
-  // the scraper has no auto-detection pattern for.
+  // Preserve manually-set showType values the scraper can't auto-detect.
+  // This includes comedy_special_recording (hand-authored on the trilogy-recording
+  // shows) as well as any other non-derived showType — keyed on date|city|venue|
+  // ticketUrl. Without this, a green cron run would silently re-strip the flag.
   const existingByKey = {};
   for (const s of existing) {
     existingByKey[`${s.date}|${s.city}|${s.venue}|${s.ticketUrl}`] = s;
@@ -312,6 +347,29 @@ async function main() {
     if (prev?.showType && !show.showType) {
       show.showType = prev.showType;
     }
+  }
+
+  // Inline schema gate — every entry MUST have these as non-empty strings.
+  // (time/showType are optional and intentionally excluded.) On any failure, log
+  // the offending entry and exit non-zero WITHOUT writing, so the Action's commit
+  // step is skipped (red check) rather than freezing the site on broken data.
+  const REQUIRED_STRING_FIELDS = ["date", "city", "venue", "ticketUrl", "status", "slug"];
+  for (const entry of future) {
+    for (const field of REQUIRED_STRING_FIELDS) {
+      const val = entry[field];
+      if (typeof val !== "string" || val.trim() === "") {
+        console.error(
+          `SCHEMA GATE FAILED: entry missing non-empty string "${field}". Offending entry:`
+        );
+        console.error(JSON.stringify(entry, null, 2));
+        await browser.close();
+        process.exit(1);
+      }
+    }
+  }
+  console.log("Schema gate passed. venue -> slug map:");
+  for (const entry of future) {
+    console.log(`  ${entry.venue} -> ${entry.slug}`);
   }
 
   if (JSON.stringify(future) === JSON.stringify(existing)) {
