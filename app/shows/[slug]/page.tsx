@@ -1,9 +1,17 @@
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
+import Image from "next/image"
 import { tourDates } from "@/lib/tour"
 import VenueShowList from "./VenueShowList"
 
 export const revalidate = 3600
+
+const VENUE_BANNERS: Record<string, { src: string; alt: string }> = {
+  "the-corner-comedy-club": {
+    src: "/trilogy-banner.png",
+    alt: "Trilogy — Andrew Packer's comedy special recording, June 25–26 at The Corner Comedy Club, exclusive 40-person seating",
+  },
+}
 
 function getTodayYMD(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "America/Toronto" })
@@ -33,6 +41,7 @@ export default async function VenuePage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
+  const banner = VENUE_BANNERS[slug]
   const today = getTodayYMD()
   const upcoming = tourDates
     .filter((s) => s.slug === slug && s.date >= today)
@@ -58,6 +67,17 @@ export default async function VenuePage({
         </h1>
         <p className="text-[#888] mb-12">{upcoming[0].city.split(",")[0]}</p>
         <VenueShowList shows={upcoming} venue={upcoming[0].venue} />
+        {banner && (
+          <div className="mt-12 flex justify-center">
+            <Image
+              src={banner.src}
+              alt={banner.alt}
+              width={600}
+              height={200}
+              className="h-auto w-full max-w-xl rounded-lg"
+            />
+          </div>
+        )}
       </div>
     </main>
   )
