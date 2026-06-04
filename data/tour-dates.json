@@ -2,7 +2,7 @@
   {
     "slug": "campfire-comedy-club",
     "date": "2026-06-05",
-    "city": "Thunder Bay, Ontario",
+    "city": "Thunder Bay, ON",
     "venue": "Campfire Comedy Club",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-live-campfire-comedy-tickets-1983927468464?aff=oddtdtcreator",
     "status": "on_sale"
@@ -10,7 +10,7 @@
   {
     "slug": "campfire-comedy-club",
     "date": "2026-06-06",
-    "city": "Thunder Bay, Ontario",
+    "city": "Thunder Bay, ON",
     "venue": "Campfire Comedy Club",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-live-campfire-comedy-tickets-1983927468464?aff=oddtdtcreator",
     "status": "on_sale"
@@ -48,8 +48,8 @@
     "venue": "Comedy Bar - Toronto",
     "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
     "status": "on_sale",
-    "time": "7 PM",
-    "showType": "laugh_it_off"
+    "showType": "laugh_it_off",
+    "time": "7 PM"
   },
   {
     "slug": "spotlight-comedy-club",
@@ -82,8 +82,8 @@
     "venue": "Comedy Bar - Toronto",
     "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
     "status": "on_sale",
-    "time": "7 PM",
-    "showType": "laugh_it_off"
+    "showType": "laugh_it_off",
+    "time": "7 PM"
   },
   {
     "slug": "chefs-hall",
@@ -100,8 +100,8 @@
     "venue": "Comedy Bar - Toronto",
     "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
     "status": "on_sale",
-    "time": "7 PM",
-    "showType": "laugh_it_off"
+    "showType": "laugh_it_off",
+    "time": "7 PM"
   },
   {
     "slug": "dallas-comedy-club",

@@ -57,6 +57,41 @@ function slugify(v) {
     .replace(/^-+|-+$/g, "");      // trim
 }
 
+// Province/state full-name -> 2-letter abbreviation. Punchup sometimes renders
+// the full region name (e.g. "Thunder Bay, Ontario") while the site convention is
+// the abbreviation ("Thunder Bay, ON"). Normalizing here stops the daily cron from
+// silently reverting hand-abbreviated cities. Mirrors _PROVINCE_STATE_ABBR in
+// .claude/skills/meta-ads/scripts/analyze_history.py — keep the two in sync.
+const PROVINCE_STATE_ABBR = {
+  // Canadian provinces + territories
+  Ontario: "ON", "British Columbia": "BC", Alberta: "AB", Quebec: "QC", "Québec": "QC",
+  Manitoba: "MB", Saskatchewan: "SK", "Nova Scotia": "NS", "New Brunswick": "NB",
+  "Newfoundland and Labrador": "NL", Newfoundland: "NL", Labrador: "NL",
+  "Prince Edward Island": "PE", "Northwest Territories": "NT", Nunavut: "NU", Yukon: "YT",
+  // US states + DC
+  Alabama: "AL", Alaska: "AK", Arizona: "AZ", Arkansas: "AR", California: "CA",
+  Colorado: "CO", Connecticut: "CT", Delaware: "DE", "District of Columbia": "DC",
+  Florida: "FL", Georgia: "GA", Hawaii: "HI", Idaho: "ID", Illinois: "IL",
+  Indiana: "IN", Iowa: "IA", Kansas: "KS", Kentucky: "KY", Louisiana: "LA",
+  Maine: "ME", Maryland: "MD", Massachusetts: "MA", Michigan: "MI", Minnesota: "MN",
+  Mississippi: "MS", Missouri: "MO", Montana: "MT", Nebraska: "NE", Nevada: "NV",
+  "New Hampshire": "NH", "New Jersey": "NJ", "New Mexico": "NM", "New York": "NY",
+  "North Carolina": "NC", "North Dakota": "ND", Ohio: "OH", Oklahoma: "OK", Oregon: "OR",
+  Pennsylvania: "PA", "Rhode Island": "RI", "South Carolina": "SC", "South Dakota": "SD",
+  Tennessee: "TN", Texas: "TX", Utah: "UT", Vermont: "VT", Virginia: "VA",
+  Washington: "WA", "West Virginia": "WV", Wisconsin: "WI", Wyoming: "WY",
+};
+
+// Convert "City, <full region>" -> "City, <abbr>"; leave anything else untouched.
+function normalizeCity(cityStr) {
+  if (!cityStr || !cityStr.includes(", ")) return cityStr;
+  const idx = cityStr.lastIndexOf(", ");
+  const cityPart = cityStr.slice(0, idx);
+  const region = cityStr.slice(idx + 2).trim();
+  const abbr = PROVINCE_STATE_ABBR[region];
+  return abbr ? `${cityPart}, ${abbr}` : cityStr;
+}
+
 // Punchup applies CSS text-transform:uppercase, so innerText returns ALL-CAPS.
 // textContent (used at extraction) preserves the true casing; this is a defensive
 // fallback that Title-cases an ALL-CAPS string while leaving mixed-case untouched.
@@ -307,7 +342,7 @@ async function main() {
     enriched.push({
       slug: slugify(venue),
       date: dateStr,
-      city: show.city || "TBD",
+      city: normalizeCity(show.city || "TBD"),
       venue,
       ticketUrl: show.ticketUrl || PUNCHUP_URL,
       status: show.status,
@@ -333,19 +368,41 @@ async function main() {
     : "[]";
   const existing = JSON.parse(existingRaw);
 
-  // Preserve manually-set showType values the scraper can't auto-detect.
-  // This includes comedy_special_recording (hand-authored on the trilogy-recording
-  // shows) as well as any other non-derived showType — keyed on date|city|venue|
-  // ticketUrl. Without this, a green cron run would silently re-strip the flag.
+  // Non-destructive merge: carry forward any field on the prior entry that this
+  // run did NOT (re)produce. This generically defeats the recurring "field-strip"
+  // pattern — the scraper rebuilds the file from scratch and only writes fields it
+  // authors, so any field added by another feature (or hand-set) would otherwise be
+  // silently dropped on the next cron run. It protects:
+  //   - hand-set showType the scraper can't auto-detect (comedy_special_recording)
+  //   - a `time` the scraper could derive before but can't from a changed ticket URL
+  //   - any field a future feature adds to tour-dates.json
+  // A field the scraper DID produce (ticketUrl, city, venue, status, slug, date, and
+  // time-when-derivable) is always present, so the fresh value wins — venue casing
+  // and city normalization are not reverted.
+  //
+  // Keyed on date|slug — stable across the casing/region reformatting the scraper
+  // applies to venue/city (slug is casing-independent) AND across ticketUrl changes,
+  // both of which broke the old date|city|venue|ticketUrl key. Same-venue/same-date
+  // double-headers (e.g. two Dallas shows on one night) collide on this key; for
+  // those we skip carry-forward (their distinguishing fields — time, ticketUrl — are
+  // always re-derived fresh, so nothing is lost).
+  const stableKey = (s) => `${s.date}|${s.slug || slugify(s.venue || "")}`;
   const existingByKey = {};
+  const keyCounts = {};
   for (const s of existing) {
-    existingByKey[`${s.date}|${s.city}|${s.venue}|${s.ticketUrl}`] = s;
+    const k = stableKey(s);
+    keyCounts[k] = (keyCounts[k] || 0) + 1;
+    existingByKey[k] = s;
   }
   for (const show of future) {
-    const key = `${show.date}|${show.city}|${show.venue}|${show.ticketUrl}`;
-    const prev = existingByKey[key];
-    if (prev?.showType && !show.showType) {
-      show.showType = prev.showType;
+    const k = stableKey(show);
+    if (keyCounts[k] !== 1) continue; // ambiguous double-header — keep fresh data only
+    const prev = existingByKey[k];
+    for (const [field, value] of Object.entries(prev)) {
+      const cur = show[field];
+      if (cur === undefined || cur === null || cur === "") {
+        show[field] = value;
+      }
     }
   }
 
