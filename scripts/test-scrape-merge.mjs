@@ -9,12 +9,19 @@
 const PROVINCE_STATE_ABBR = {
   Ontario: "ON", "British Columbia": "BC", Alberta: "AB", Quebec: "QC", "Québec": "QC",
   Manitoba: "MB", Saskatchewan: "SK", "Nova Scotia": "NS", "New Brunswick": "NB",
-  "Newfoundland and Labrador": "NL", Newfoundland: "NL", "Prince Edward Island": "PE",
-  "Northwest Territories": "NT", Nunavut: "NU", Yukon: "YT",
-  California: "CA", Texas: "TX", "New York": "NY", Florida: "FL",
-  Massachusetts: "MA", Illinois: "IL", Washington: "WA", Colorado: "CO",
-  Georgia: "GA", Arizona: "AZ", Tennessee: "TN", Oregon: "OR",
-  Nevada: "NV", Minnesota: "MN", Wisconsin: "WI", Michigan: "MI",
+  "Newfoundland and Labrador": "NL", Newfoundland: "NL", Labrador: "NL",
+  "Prince Edward Island": "PE", "Northwest Territories": "NT", Nunavut: "NU", Yukon: "YT",
+  Alabama: "AL", Alaska: "AK", Arizona: "AZ", Arkansas: "AR", California: "CA",
+  Colorado: "CO", Connecticut: "CT", Delaware: "DE", "District of Columbia": "DC",
+  Florida: "FL", Georgia: "GA", Hawaii: "HI", Idaho: "ID", Illinois: "IL",
+  Indiana: "IN", Iowa: "IA", Kansas: "KS", Kentucky: "KY", Louisiana: "LA",
+  Maine: "ME", Maryland: "MD", Massachusetts: "MA", Michigan: "MI", Minnesota: "MN",
+  Mississippi: "MS", Missouri: "MO", Montana: "MT", Nebraska: "NE", Nevada: "NV",
+  "New Hampshire": "NH", "New Jersey": "NJ", "New Mexico": "NM", "New York": "NY",
+  "North Carolina": "NC", "North Dakota": "ND", Ohio: "OH", Oklahoma: "OK", Oregon: "OR",
+  Pennsylvania: "PA", "Rhode Island": "RI", "South Carolina": "SC", "South Dakota": "SD",
+  Tennessee: "TN", Texas: "TX", Utah: "UT", Vermont: "VT", Virginia: "VA",
+  Washington: "WA", "West Virginia": "WV", Wisconsin: "WI", Wyoming: "WY",
 };
 
 // ─── Exact copy: normalizeCity ───────────────────────────────────────────────
@@ -33,6 +40,24 @@ function slugify(v) {
     .replace(/['']/g, "")           // drop apostrophes: Yuk Yuk's -> yukyuks
     .replace(/[^a-z0-9À-ɏ]+/g, "-") // non-alnum (keep Latin accents) -> hyphen
     .replace(/^-+|-+$/g, "");       // trim
+}
+
+// ─── Exact copy: titleCaseVenue ──────────────────────────────────────────────
+function titleCaseVenue(v) {
+  if (!v) return v;
+  const minor = new Set(["and", "of", "the", "or", "a", "an", "for", "to", "in", "on", "at", "by", "with"]);
+  const allCaps = !/[a-zà-ÿ]/.test(v);
+  const base = allCaps ? v.toLowerCase() : v;
+  return base
+    .split(" ")
+    .map((word, i) => {
+      if (!word) return word;
+      if (/[A-ZÀ-Þ]/.test(word)) return word;
+      if (!/[a-zà-ÿ]/.test(word)) return word;
+      if (i > 0 && minor.has(word)) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
 }
 
 // ─── Exact copy: merge block, wrapped for testing ───────────────────────────
@@ -360,6 +385,27 @@ console.log("\n=== mergeForward: slug fallback via slugify(venue) ===");
     "comedy_special_recording",
     future[0].showType
   );
+}
+
+// ─── Suite 7: titleCaseVenue ─────────────────────────────────────────────────
+console.log("\n=== titleCaseVenue ===");
+{
+  const cases = [
+    ["Simcoe Street theatre", "Simcoe Street Theatre", "fixes mid-name lowercase content word"],
+    ["CAMPFIRE COMEDY CLUB", "Campfire Comedy Club", "ALL-CAPS fallback title-cases every word"],
+    ["ROYAL GARDEN | CHINESE RESTAURANT", "Royal Garden | Chinese Restaurant", "ALL-CAPS keeps | separator"],
+    ["YUK YUK'S COMEDY CLUB - CALGARY", "Yuk Yuk's Comedy Club - Calgary", "ALL-CAPS possessive + hyphen"],
+    ["Naukabout Brewery and Taproom", "Naukabout Brewery and Taproom", "mid-name minor word stays lowercase"],
+    ["Théâtre Sainte-Catherine", "Théâtre Sainte-Catherine", "accented mixed case preserved"],
+    ["Yuk Yuk's Comedy Club - Calgary", "Yuk Yuk's Comedy Club - Calgary", "already-correct mixed case unchanged"],
+    ["the comedy spot", "The Comedy Spot", "leading minor word is capitalized"],
+    ["The BMO Centre", "The BMO Centre", "acronym preserved"],
+    ["", "", "empty string unchanged"],
+  ];
+  for (const [input, expected, desc] of cases) {
+    const got = titleCaseVenue(input);
+    assert(`${desc}: ${JSON.stringify(input)} -> ${JSON.stringify(expected)}`, got === expected, expected, got);
+  }
 }
 
 // ─── Results summary ─────────────────────────────────────────────────────────

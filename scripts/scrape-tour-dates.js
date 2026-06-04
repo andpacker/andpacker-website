@@ -92,24 +92,29 @@ function normalizeCity(cityStr) {
   return abbr ? `${cityPart}, ${abbr}` : cityStr;
 }
 
-// Punchup applies CSS text-transform:uppercase, so innerText returns ALL-CAPS.
-// textContent (used at extraction) preserves the true casing; this is a defensive
-// fallback that Title-cases an ALL-CAPS string while leaving mixed-case untouched.
-// Punctuation/separators (-, |, etc.) and short connective words stay as-is.
+// Title-case a venue name for display. Two cases:
+//   1. Fully ALL-CAPS (punchup's CSS text-transform leaking through textContent,
+//      e.g. "CAMPFIRE COMEDY CLUB"): lowercase first, then title-case every word.
+//   2. Normal mixed case: leave existing capitals alone so acronyms, possessives
+//      (Yuk Yuk's), and accented names (Théâtre) survive — only fix all-lowercase
+//      content words punchup sometimes emits (e.g. "Simcoe Street theatre").
+// Either way: words that already contain a capital are preserved, separators/digits
+// are left as-is, and minor connective words stay lowercase unless they lead.
 function titleCaseVenue(v) {
   if (!v) return v;
-  // Only normalize strings that are effectively all-uppercase (no lowercase letters).
-  if (/[a-z]/.test(v)) return v;
-  const minor = new Set(["and", "of", "the", "or", "a", "an", "for", "to", "in", "on"]);
-  return v
-    .toLowerCase()
-    .split(/\b/)
-    .map((tok) => {
-      if (!/[a-z]/.test(tok)) return tok; // separators, digits
-      if (minor.has(tok)) return tok;
-      return tok.charAt(0).toUpperCase() + tok.slice(1);
+  const minor = new Set(["and", "of", "the", "or", "a", "an", "for", "to", "in", "on", "at", "by", "with"]);
+  const allCaps = !/[a-zà-ÿ]/.test(v); // no lowercase letter anywhere
+  const base = allCaps ? v.toLowerCase() : v;
+  return base
+    .split(" ")
+    .map((word, i) => {
+      if (!word) return word;
+      if (/[A-ZÀ-Þ]/.test(word)) return word;   // already capitalized (acronym, proper, accented)
+      if (!/[a-zà-ÿ]/.test(word)) return word;  // separators (-, |), digits
+      if (i > 0 && minor.has(word)) return word; // mid-name minor word stays lowercase
+      return word.charAt(0).toUpperCase() + word.slice(1);
     })
-    .join("");
+    .join(" ");
 }
 
 function timeFromUrl(url) {
