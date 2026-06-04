@@ -6,10 +6,21 @@ import VenueShowList from "./VenueShowList"
 
 export const revalidate = 3600
 
-const VENUE_BANNERS: Record<string, { src: string; alt: string }> = {
+const VENUE_BANNERS: Record<
+  string,
+  { src: string; alt: string; width: number; height: number }
+> = {
   "the-corner-comedy-club": {
     src: "/trilogy-banner.png",
     alt: "Trilogy — Andrew Packer's comedy special recording, June 25–26 at The Corner Comedy Club, exclusive 40-person seating",
+    width: 600,
+    height: 200,
+  },
+  "comedy-bar-toronto": {
+    src: "/laugh-it-off-poster.jpg",
+    alt: "Laugh It Off — Andrew Packer's group therapy comedy show with his therapist dad, June 27 at Comedy Bar Toronto",
+    width: 1920,
+    height: 1080,
   },
 }
 
@@ -72,8 +83,8 @@ export default async function VenuePage({
             <Image
               src={banner.src}
               alt={banner.alt}
-              width={600}
-              height={200}
+              width={banner.width}
+              height={banner.height}
               className="h-auto w-full max-w-xl rounded-lg"
             />
           </div>
