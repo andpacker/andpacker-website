@@ -17,11 +17,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Andrew Packer — Stand-Up Comedian",
+  title: "Andrew Packer: Stand-Up Comedian",
   description:
-    "Official website of Andrew Packer — stand-up comedian. Tour dates, specials, and more.",
+    "Official website of Andrew Packer, stand-up comedian. Tour dates, specials, and more.",
   openGraph: {
-    title: "Andrew Packer — Stand-Up Comedian",
+    title: "Andrew Packer: Stand-Up Comedian",
     description: "Tour dates, comedy specials, and more.",
     url: "https://andpacker.com",
     siteName: "Andrew Packer",

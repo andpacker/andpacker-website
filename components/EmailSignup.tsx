@@ -64,7 +64,7 @@ export default function EmailSignup() {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, city }),
+        body: JSON.stringify({ firstName, lastName, email, city, source: "website" }),
       });
       const data = await res.json();
 
@@ -83,20 +83,23 @@ export default function EmailSignup() {
   return (
     <section id="email" className="py-24 px-6 bg-[#0D41CB]">
       <div className="max-w-2xl mx-auto text-center">
-        <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,3.5rem)] leading-none tracking-tight text-white mb-4">
-          Stay in the Loop
+        <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,3.5rem)] leading-none tracking-tight text-white mb-3">
+          Don&apos;t See Your City?
         </h2>
-        <p className="text-white/70 text-lg mb-10">
-          Get notified when Andrew is performing near you.
+        <p className="text-white/70 text-lg mb-2">
+          Join The Pack and I&apos;ll let you know the second I add a show near you, plus an early heads-up before tickets go on sale.
+        </p>
+        <p className="text-white/50 text-sm mb-10">
+          Already see your town? Join anyway and get the early heads-up before tickets go on sale.
         </p>
 
         {status === "success" ? (
           <div className="py-8">
             <p className="text-white font-[family-name:var(--font-display)] font-bold text-2xl uppercase tracking-wide">
-              You&apos;re in!
+              You&apos;re in the Pack.
             </p>
             <p className="text-white/70 mt-2">
-              We&apos;ll let you know when Andrew is near {city}.
+              You&apos;ll be first to know when I&apos;m near {city}.
             </p>
           </div>
         ) : (
@@ -187,7 +190,7 @@ export default function EmailSignup() {
               disabled={status === "loading"}
               className="w-full bg-white text-[#0D41CB] hover:bg-white/90 disabled:opacity-60 disabled:cursor-not-allowed font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-sm px-8 py-4 transition-colors"
             >
-              {status === "loading" ? "Saving..." : "Notify Me"}
+              {status === "loading" ? "Saving..." : "Join The Pack"}
             </button>
           </form>
         )}

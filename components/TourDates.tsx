@@ -65,7 +65,7 @@ export default function TourDates() {
         {upcomingShows.length === 0 ? (
           <div className="border border-[#222] py-16 text-center">
             <p className="text-[#888] tracking-widest uppercase text-sm">
-              No upcoming dates right now — check back soon.
+              No upcoming dates right now. Check back soon.
             </p>
           </div>
         ) : (

@@ -19,7 +19,7 @@ const SPECIALS: Special[] = [
     year: "2026",
     youtubeId: null,
     angelUrl: "https://www.angel.com/shareandrewp",
-    description: "Andrew's first clean comedy special — put it on when family's over and not worry about who's in the room. Streaming now on Angel — watch it for free using the link below.",
+    description: "Andrew's first clean comedy special. Put it on when family's over and not worry about who's in the room. Streaming now on Angel, watch it for free using the link below.",
     image: "/images/never-call-her-crazy.png",
   },
   {
@@ -27,7 +27,7 @@ const SPECIALS: Special[] = [
     year: "2023",
     youtubeId: "wBo6-8DoiRU",
     angelUrl: null,
-    description: "Andrew Packer's debut comedy special — streaming now on YouTube.",
+    description: "Andrew Packer's debut comedy special, streaming now on YouTube.",
   },
   {
     title: "Laugh It Off w/ Andrew Packer",

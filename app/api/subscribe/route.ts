@@ -1,7 +1,7 @@
 const KIT_TAG_ID = "19482127";
 
 export async function POST(req: Request) {
-  const { firstName, lastName, email, city } = await req.json();
+  const { firstName, lastName, email, city, source } = await req.json();
 
   if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !city?.trim()) {
     return Response.json({ error: "All fields are required." }, { status: 400 });
@@ -25,6 +25,7 @@ export async function POST(req: Request) {
           fields: {
             last_name: lastName.trim(),
             city: city.trim(),
+            source: typeof source === "string" && source.trim() ? source.trim() : "website",
           },
         }),
       }

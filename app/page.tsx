@@ -13,8 +13,8 @@ export default function Home() {
       <main>
         <Hero />
         <TourDates />
-        <Specials />
         <EmailSignup />
+        <Specials />
         <SocialLinks />
       </main>
       <Footer />
