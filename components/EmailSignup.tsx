@@ -13,7 +13,25 @@ const CITIES = [
 
 const VALID_CITIES = new Set(CITIES.flatMap((g) => g.cities));
 
-export default function EmailSignup() {
+type EmailSignupProps = {
+  /** Hide the first/last name fields (email + city only). For mobile bio-link traffic. */
+  compact?: boolean;
+  /** Channel attribution value sent to Kit. */
+  source?: string;
+  heading?: string;
+  secondLine?: string;
+  subhead?: string;
+  buttonLabel?: string;
+};
+
+export default function EmailSignup({
+  compact = false,
+  source = "website",
+  heading = "Don't See Your City?",
+  subhead = "Join The Pack and I'll let you know the second I add a show near you, plus an early heads-up before tickets go on sale.",
+  secondLine = "Already see your town? Join anyway and get the early heads-up before tickets go on sale.",
+  buttonLabel = "Join The Pack",
+}: EmailSignupProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -60,11 +78,17 @@ export default function EmailSignup() {
       return;
     }
 
+    const payload: Record<string, string> = { email, city, source };
+    if (!compact) {
+      payload.firstName = firstName;
+      payload.lastName = lastName;
+    }
+
     try {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, lastName, email, city, source: "website" }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
 
@@ -83,15 +107,21 @@ export default function EmailSignup() {
   return (
     <section id="email" className="py-24 px-6 bg-[#0D41CB]">
       <div className="max-w-2xl mx-auto text-center">
-        <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,3.5rem)] leading-none tracking-tight text-white mb-3">
-          Don&apos;t See Your City?
-        </h2>
-        <p className="text-white/70 text-lg mb-2">
-          Join The Pack and I&apos;ll let you know the second I add a show near you, plus an early heads-up before tickets go on sale.
-        </p>
-        <p className="text-white/50 text-sm mb-10">
-          Already see your town? Join anyway and get the early heads-up before tickets go on sale.
-        </p>
+        {heading && (
+          <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,3.5rem)] leading-none tracking-tight text-white mb-3">
+            {heading}
+          </h2>
+        )}
+        {subhead && (
+          <p className="text-white/70 text-lg mb-2">
+            {subhead}
+          </p>
+        )}
+        {secondLine && (
+          <p className="text-white/50 text-sm mb-10">
+            {secondLine}
+          </p>
+        )}
 
         {status === "success" ? (
           <div className="py-8">
@@ -104,24 +134,26 @@ export default function EmailSignup() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-md mx-auto">
-            <div className="flex gap-3">
-              <input
-                type="text"
-                placeholder="First name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                className="flex-1 bg-white/10 border border-white/30 text-white placeholder-white/50 px-5 py-4 outline-none focus:border-white transition-colors text-sm min-w-0"
-              />
-              <input
-                type="text"
-                placeholder="Last name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-                className="flex-1 bg-white/10 border border-white/30 text-white placeholder-white/50 px-5 py-4 outline-none focus:border-white transition-colors text-sm min-w-0"
-              />
-            </div>
+            {!compact && (
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  className="flex-1 bg-white/10 border border-white/30 text-white placeholder-white/50 px-5 py-4 outline-none focus:border-white transition-colors text-sm min-w-0"
+                />
+                <input
+                  type="text"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  className="flex-1 bg-white/10 border border-white/30 text-white placeholder-white/50 px-5 py-4 outline-none focus:border-white transition-colors text-sm min-w-0"
+                />
+              </div>
+            )}
             <input
               type="email"
               placeholder="Your email address"
@@ -190,7 +222,7 @@ export default function EmailSignup() {
               disabled={status === "loading"}
               className="w-full bg-white text-[#0D41CB] hover:bg-white/90 disabled:opacity-60 disabled:cursor-not-allowed font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-sm px-8 py-4 transition-colors"
             >
-              {status === "loading" ? "Saving..." : "Join The Pack"}
+              {status === "loading" ? "Saving..." : buttonLabel}
             </button>
           </form>
         )}
