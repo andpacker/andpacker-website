@@ -23,10 +23,10 @@ const VENUE_BANNERS: Record<
     height: 1080,
   },
   "spotlight-comedy-club": {
-    src: "/spotlight-banner.png",
+    src: "/spotlight-banner.jpg",
     alt: "Andrew Packer live at Spotlight Comedy Club in St. Catharines, July 17 & 18, 2026",
-    width: 1900,
-    height: 864,
+    width: 1400,
+    height: 636,
   },
 }
 
