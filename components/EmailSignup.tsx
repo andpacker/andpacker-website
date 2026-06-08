@@ -16,6 +16,8 @@ const VALID_CITIES = new Set(CITIES.flatMap((g) => g.cities));
 type EmailSignupProps = {
   /** Hide the first/last name fields (email + city only). For mobile bio-link traffic. */
   compact?: boolean;
+  /** Render only the form (no blue section wrapper / heading) so the page owns layout + background. */
+  bare?: boolean;
   /** Channel attribution value sent to Kit. */
   source?: string;
   heading?: string;
@@ -26,6 +28,7 @@ type EmailSignupProps = {
 
 export default function EmailSignup({
   compact = false,
+  bare = false,
   source = "website",
   heading = "Don't See Your City?",
   subhead = "Join The Pack and I'll let you know the second I add a show near you, plus an early heads-up before tickets go on sale.",
@@ -105,19 +108,19 @@ export default function EmailSignup({
   }
 
   return (
-    <section id="email" className="py-24 px-6 bg-[#0D41CB]">
-      <div className="max-w-2xl mx-auto text-center">
-        {heading && (
+    <section id="email" className={bare ? "w-full" : "py-24 px-6 bg-[#0D41CB]"}>
+      <div className={bare ? "w-full max-w-md mx-auto text-center" : "max-w-2xl mx-auto text-center"}>
+        {!bare && heading && (
           <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,3.5rem)] leading-none tracking-tight text-white mb-3">
             {heading}
           </h2>
         )}
-        {subhead && (
+        {!bare && subhead && (
           <p className="text-white/70 text-lg mb-2">
             {subhead}
           </p>
         )}
-        {secondLine && (
+        {!bare && secondLine && (
           <p className="text-white/50 text-sm mb-10">
             {secondLine}
           </p>
@@ -157,6 +160,7 @@ export default function EmailSignup({
             <input
               type="email"
               placeholder="Your email address"
+              aria-label="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -166,6 +170,7 @@ export default function EmailSignup({
               <input
                 type="text"
                 placeholder="Closest city to you..."
+                aria-label="Closest city to you"
                 value={cityInput}
                 onChange={(e) => {
                   setCityInput(e.target.value);

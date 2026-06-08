@@ -3,7 +3,7 @@ const KIT_TAG_ID = "19482127";
 export async function POST(req: Request) {
   const { firstName, lastName, email, city, source } = await req.json();
 
-  // email + city are required; names are optional (trimmed /pack form omits them).
+  // email + city are required; names are optional (trimmed /thepack form omits them).
   if (!email?.trim() || !city?.trim()) {
     return Response.json({ error: "Email and city are required." }, { status: 400 });
   }
