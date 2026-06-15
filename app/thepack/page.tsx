@@ -4,11 +4,11 @@ import EmailSignup from "@/components/EmailSignup";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Join The Pack | Andrew Packer",
+  title: "Join the Pack | Andrew Packer",
   description:
     "Tell me your city and I'll let you know the moment I add a show near you, with an early heads-up before tickets go on sale.",
   openGraph: {
-    title: "Join The Pack | Andrew Packer",
+    title: "Join the Pack | Andrew Packer",
     description:
       "Tell me your city and I'll let you know the moment I add a show near you, with an early heads-up before tickets go on sale.",
     url: "https://andpacker.com/thepack",
@@ -41,13 +41,13 @@ export default function ThePackPage() {
               The Pack
             </p>
             <h1 className="font-[family-name:var(--font-display)] font-extrabold text-white uppercase leading-none text-[clamp(3rem,12vw,6rem)] tracking-tight mb-5">
-              Join The Pack
+              Join the Pack
             </h1>
             <p className="text-white/85 text-lg md:text-xl leading-relaxed mb-8 max-w-md mx-auto">
               Tell me your city and I&apos;ll let you know the moment I add a show near you.
             </p>
 
-            <EmailSignup bare compact source="thepack" buttonLabel="Join The Pack" />
+            <EmailSignup bare compact source="thepack" buttonLabel="Join the Pack" />
 
             <p className="text-white/45 text-xs uppercase tracking-widest mt-6">
               Seen on Netflix, Just For Laughs, and Kill Tony

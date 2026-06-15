@@ -64,8 +64,8 @@ export default function Nav() {
           <Link href="#watch" className="text-sm tracking-widest uppercase text-[#888] hover:text-white transition-colors">
             Watch
           </Link>
-          <Link href="#email" className="text-sm tracking-widest uppercase text-[#888] hover:text-white transition-colors">
-            Contact
+          <Link href="#jointhepack" className="text-sm tracking-widest uppercase text-[#888] hover:text-white transition-colors">
+            Join the Pack
           </Link>
         </div>
 
@@ -108,7 +108,7 @@ export default function Nav() {
           {[
             { label: "tour", href: "#tour" },
             { label: "watch", href: "#watch" },
-            { label: "contact", href: "#email" },
+            { label: "Join the Pack", href: "#jointhepack" },
           ].map(({ label, href }) => (
             <a
               key={label}

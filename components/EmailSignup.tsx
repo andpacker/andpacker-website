@@ -30,10 +30,10 @@ export default function EmailSignup({
   compact = false,
   bare = false,
   source = "website",
-  heading = "Don't See Your City?",
-  subhead = "Join The Pack and I'll let you know the second I add a show near you, plus an early heads-up before tickets go on sale.",
+  heading = "Join the Pack",
+  subhead = "I'll let you know the second I add a show near you, plus an early heads-up before tickets go on sale.",
   secondLine = "Already see your town? Join anyway and get the early heads-up before tickets go on sale.",
-  buttonLabel = "Join The Pack",
+  buttonLabel = "Join the Pack",
 }: EmailSignupProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -108,7 +108,7 @@ export default function EmailSignup({
   }
 
   return (
-    <section id="email" className={bare ? "w-full" : "py-24 px-6 bg-[#0D41CB]"}>
+    <section id="jointhepack" className={bare ? "w-full" : "py-24 px-6 bg-[#0D41CB]"}>
       <div className={bare ? "w-full max-w-md mx-auto text-center" : "max-w-2xl mx-auto text-center"}>
         {!bare && heading && (
           <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,3.5rem)] leading-none tracking-tight text-white mb-3">
