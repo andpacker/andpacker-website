@@ -1,14 +1,5 @@
 [
   {
-    "slug": "the-corner-comedy-club",
-    "date": "2026-06-25",
-    "city": "Toronto, ON",
-    "venue": "The Corner Comedy Club",
-    "ticketUrl": "https://thecornercomedy.com/tickets/saturday-showcase-gbf8m-mrn63",
-    "status": "on_sale",
-    "showType": "comedy_special_recording"
-  },
-  {
     "slug": "chefs-hall",
     "date": "2026-06-26",
     "city": "Toronto, ON",
