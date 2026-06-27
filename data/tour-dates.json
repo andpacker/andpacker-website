@@ -1,22 +1,5 @@
 [
   {
-    "slug": "chefs-hall",
-    "date": "2026-06-26",
-    "city": "Toronto, ON",
-    "venue": "Chefs Hall",
-    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317",
-    "status": "on_sale"
-  },
-  {
-    "slug": "the-corner-comedy-club",
-    "date": "2026-06-26",
-    "city": "Toronto, ON",
-    "venue": "The Corner Comedy Club",
-    "ticketUrl": "https://thecornercomedy.com/tickets/saturday-showcase-gbf8m-mrn63",
-    "status": "on_sale",
-    "showType": "comedy_special_recording"
-  },
-  {
     "slug": "comedy-bar-toronto",
     "date": "2026-06-27",
     "city": "Toronto, ON",
