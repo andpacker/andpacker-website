@@ -1,15 +1,5 @@
 [
   {
-    "slug": "comedy-bar-toronto",
-    "date": "2026-06-27",
-    "city": "Toronto, ON",
-    "venue": "Comedy Bar - Toronto",
-    "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
-    "status": "on_sale",
-    "showType": "laugh_it_off",
-    "time": "7 PM"
-  },
-  {
     "slug": "spotlight-comedy-club",
     "date": "2026-07-17",
     "city": "St. Catharines, ON",
