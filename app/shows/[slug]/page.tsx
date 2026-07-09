@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"
+import { redirect } from "next/navigation"
 import type { Metadata } from "next"
 import Image from "next/image"
 import { tourDates } from "@/lib/tour"
@@ -68,7 +68,10 @@ export default async function VenuePage({
         (a.time ?? "").localeCompare(b.time ?? "")
     )
 
-  if (!upcoming.length) notFound()
+  // Unknown slug, or a venue whose shows are all in the past: fall back to
+  // the homepage tour section instead of 404ing. Temporary (307) on purpose —
+  // tour-dates.json revalidates hourly, so a venue can gain new dates later.
+  if (!upcoming.length) redirect("/#tour")
 
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-white">
