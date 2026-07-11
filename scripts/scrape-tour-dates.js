@@ -16,6 +16,32 @@ const PUNCHUP_URL = "https://punchup.live/AndrewPacker";
 const OUTPUT_PATH = path.join(__dirname, "..", "data", "tour-dates.json");
 const CHECK_TODAY = process.argv.includes("--check-today");
 
+// Ticket-URL overrides, keyed by `${date}|${slug}`.
+//
+// WHY THIS EXISTS: the scraper copies each show's ticket URL verbatim from the
+// "Buy Tickets" button on punchup.live. When punchup's button points at the WRONG
+// Eventbrite listing, that bad URL flows straight into tour-dates.json and every
+// daily scrape re-copies it — so a hand-edit here is clobbered within 24h. This map
+// is applied AFTER scrape + merge and forces the correct live listing regardless of
+// what punchup serves, making the fix durable across cron runs.
+//
+// Each override is a stopgap for a punchup data error. The REAL fix is in punchup's
+// admin (Andrew's action): repoint the Buy Tickets button to the correct listing.
+// Once punchup is corrected AND a daily scrape has confirmed the right URL flows
+// through on its own, the matching line below can be deleted.
+//
+// 2026-07-11: punchup's Buy Tickets for BOTH recurring "Friday Pro Stand Up Comedy
+// @ Chefs Hall" shows points at Eventbrite 798883922317 — a PAST Feb 16 2024 show
+// (verified live via the Eventbrite API). Repointed to the correct live listings:
+//   Jul 24 2026 -> event 1987789780744 (status "live")
+//   Aug 28 2026 -> event 1987789785759 (status "live")
+const TICKET_URL_OVERRIDES = {
+  "2026-07-24|chefs-hall":
+    "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-1987789780744",
+  "2026-08-28|chefs-hall":
+    "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-1987789785759",
+};
+
 function todayUTC() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -408,6 +434,23 @@ async function main() {
       if (cur === undefined || cur === null || cur === "") {
         show[field] = value;
       }
+    }
+  }
+
+  // Apply ticket-URL overrides (see TICKET_URL_OVERRIDES above). Runs AFTER scrape +
+  // merge so it wins over whatever punchup served, keeping the corrected URL stable
+  // across every daily cron run. A key that matches nothing is a silent no-op.
+  // Like the merge block, the date|slug key can't disambiguate a same-venue/same-date
+  // double-header — both rows would take the same override URL. Not a risk today
+  // (one entry per key); add time to the key if such a collision ever arises.
+  for (const show of future) {
+    const overrideKey = `${show.date}|${show.slug || slugify(show.venue || "")}`;
+    const override = TICKET_URL_OVERRIDES[overrideKey];
+    if (override && show.ticketUrl !== override) {
+      console.log(
+        `Ticket URL override: ${overrideKey}\n    ${show.ticketUrl}\n -> ${override}`
+      );
+      show.ticketUrl = override;
     }
   }
 
