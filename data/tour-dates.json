@@ -124,5 +124,21 @@
     "venue": "Simcoe Street Theatre",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-stand-up-comedy-live-in-collingwood-simcoe-street-theatre-tickets-1988930483617?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale"
+  },
+  {
+    "slug": "mic-drop-comedy-chandler",
+    "date": "2027-02-19",
+    "city": "Chandler, AZ",
+    "venue": "Mic Drop Comedy Chandler",
+    "ticketUrl": "https://www.micdropcomedychandler.com/events/140957",
+    "status": "on_sale"
+  },
+  {
+    "slug": "mic-drop-comedy-chandler",
+    "date": "2027-02-20",
+    "city": "Chandler, AZ",
+    "venue": "Mic Drop Comedy Chandler",
+    "ticketUrl": "https://www.micdropcomedychandler.com/events/140957",
+    "status": "on_sale"
   }
 ]
