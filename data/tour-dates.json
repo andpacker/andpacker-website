@@ -18,6 +18,14 @@
     "time": "7 PM"
   },
   {
+    "slug": "chefs-hall",
+    "date": "2026-09-25",
+    "city": "Toronto, ON",
+    "venue": "Chefs Hall",
+    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator&keep_tld=true",
+    "status": "on_sale"
+  },
+  {
     "slug": "dallas-comedy-club",
     "date": "2026-10-09",
     "city": "Dallas, TX",
@@ -41,6 +49,14 @@
     "city": "San Luis Obispo, CA",
     "venue": "Libertine Brewing Company",
     "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-san-luis-opbispo-tickets-1987786559108?aff=oddtdtcreator&keep_tld=true",
+    "status": "on_sale"
+  },
+  {
+    "slug": "chefs-hall",
+    "date": "2026-10-23",
+    "city": "Toronto, ON",
+    "venue": "Chefs Hall",
+    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale"
   },
   {
@@ -84,6 +100,14 @@
     "status": "on_sale"
   },
   {
+    "slug": "chefs-hall",
+    "date": "2026-11-20",
+    "city": "Toronto, ON",
+    "venue": "Chefs Hall",
+    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator&keep_tld=true",
+    "status": "on_sale"
+  },
+  {
     "slug": "scituate-veterans-of-foreign-wars-post-3169",
     "date": "2026-11-20",
     "city": "Scituate, MA",
@@ -105,6 +129,14 @@
     "city": "Collingwood, ON",
     "venue": "Simcoe Street Theatre",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-stand-up-comedy-live-in-collingwood-simcoe-street-theatre-tickets-1988930483617?aff=oddtdtcreator&keep_tld=true",
+    "status": "on_sale"
+  },
+  {
+    "slug": "chefs-hall",
+    "date": "2026-12-11",
+    "city": "Toronto, ON",
+    "venue": "Chefs Hall",
+    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale"
   },
   {
