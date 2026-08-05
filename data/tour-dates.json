@@ -132,14 +132,6 @@
     "status": "on_sale"
   },
   {
-    "slug": "chefs-hall",
-    "date": "2026-12-11",
-    "city": "Toronto, ON",
-    "venue": "Chefs Hall",
-    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale"
-  },
-  {
     "slug": "mic-drop-comedy-chandler",
     "date": "2027-02-19",
     "city": "Chandler, AZ",
