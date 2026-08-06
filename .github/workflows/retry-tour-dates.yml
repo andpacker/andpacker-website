@@ -1,0 +1,45 @@
+name: Retry Update Tour Dates
+
+# GitHub hosted-runner allocation occasionally fails outright:
+#   "The job was not acquired by Runner of type hosted even after multiple attempts"
+# The job never starts (no runner, zero steps, cancelled after ~15 min), so no
+# timeout-minutes or step-level guard inside Update Tour Dates can catch it.
+# Seen on runs #100 (2026-07-24) and #113 (2026-08-06) — ~2 in 113 runs.
+# Re-running is the only remedy, so do it automatically.
+
+on:
+  workflow_run:
+    workflows: ["Update Tour Dates"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Workflow run ID to re-run (manual test path)"
+        required: true
+
+permissions:
+  actions: write
+
+jobs:
+  retry:
+    # The run_attempt guard is load-bearing: a re-run emits another workflow_run
+    # event, so without it a genuinely broken scraper would retry forever.
+    # attempts 1 and 2 may trigger a retry -> 3 total attempts, then it stops.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'failure' &&
+       github.event.workflow_run.run_attempt < 3)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Back off so runner capacity can recover
+        if: github.event_name != 'workflow_dispatch'
+        run: sleep 300
+
+      - name: Re-run the failed run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # /rerun (all jobs), not /rerun-failed-jobs: a runner-acquisition
+          # failure leaves the job with conclusion "cancelled", not "failure".
+          RUN_ID: ${{ github.event.inputs.run_id || github.event.workflow_run.id }}
+        run: gh api -X POST "repos/${{ github.repository }}/actions/runs/$RUN_ID/rerun"

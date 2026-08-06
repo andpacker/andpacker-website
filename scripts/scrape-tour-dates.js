@@ -185,12 +185,16 @@ async function main() {
     console.log("Show today detected — running full scrape.");
   }
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({ headless: true, timeout: 30000 });
   const context = await browser.newContext({
     userAgent:
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
   });
   const page = await context.newPage();
+  // Bound every page.* op so a hung SPA/network fails fast instead of stalling the
+  // CI job for minutes (the workflow also has a job-level timeout-minutes ceiling).
+  page.setDefaultTimeout(20000);
+  page.setDefaultNavigationTimeout(60000);
 
   console.log(`Navigating to ${PUNCHUP_URL}...`);
   await page.goto(PUNCHUP_URL, { waitUntil: "domcontentloaded", timeout: 60000 });

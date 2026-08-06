@@ -11,6 +11,10 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    # Cap a genuinely hung run (e.g. punchup.live stops responding) so it fails
+    # fast with one clear error instead of stalling ~15 min before GitHub kills it.
+    # (Does not affect a queued/unacquired-runner cancel — that's a GitHub-side wait.)
+    timeout-minutes: 8
 
     steps:
       - name: Checkout repo
@@ -18,15 +22,17 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Node 20
+      - name: Set up Node 24
         uses: actions/setup-node@v4
         with:
           node-version: "24"
 
       - name: Install Playwright + Chromium
+        timeout-minutes: 5
         run: npm install playwright && npx playwright install --with-deps chromium
 
       - name: Run tour date scraper
+        timeout-minutes: 3
         run: node scripts/scrape-tour-dates.js
 
       - name: Commit updated tour dates if changed
