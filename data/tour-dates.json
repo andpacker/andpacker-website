@@ -132,6 +132,14 @@
     "status": "on_sale"
   },
   {
+    "slug": "the-comedy-store-west-hollywood",
+    "date": "2027-02-17",
+    "city": "West Hollywood, CA",
+    "venue": "The Comedy Store - West Hollywood",
+    "ticketUrl": "https://events.leapevents.com/event/andrew-packer-2027-february17th",
+    "status": "on_sale"
+  },
+  {
     "slug": "mic-drop-comedy-chandler",
     "date": "2027-02-19",
     "city": "Chandler, AZ",
