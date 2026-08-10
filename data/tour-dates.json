@@ -44,14 +44,6 @@
     "time": "9:30 PM"
   },
   {
-    "slug": "libertine-brewing-company",
-    "date": "2026-10-10",
-    "city": "San Luis Obispo, CA",
-    "venue": "Libertine Brewing Company",
-    "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-san-luis-opbispo-tickets-1987786559108?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale"
-  },
-  {
     "slug": "chefs-hall",
     "date": "2026-10-23",
     "city": "Toronto, ON",
