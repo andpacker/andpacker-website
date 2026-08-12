@@ -18,6 +18,14 @@
     "time": "7 PM"
   },
   {
+    "slug": "the-bodega-by-city-cottage",
+    "date": "2026-09-12",
+    "city": "Toronto, ON",
+    "venue": "The Bodega by City Cottage",
+    "ticketUrl": "https://www.jumpcomedy.com/e/the-packer-experience",
+    "status": "on_sale"
+  },
+  {
     "slug": "chefs-hall",
     "date": "2026-09-25",
     "city": "Toronto, ON",
