@@ -76,6 +76,23 @@
     "status": "on_sale"
   },
   {
+    "slug": "top-secret-comedy-club-new-york",
+    "date": "2026-11-08",
+    "city": "New York, NY",
+    "venue": "Top Secret Comedy Club - New York",
+    "ticketUrl": "https://topsecretcomedyclub.com/events-listings/day-care-comedy-with-andrew-packer/",
+    "status": "on_sale"
+  },
+  {
+    "slug": "top-secret-comedy-club-new-york",
+    "date": "2026-11-08",
+    "city": "New York, NY",
+    "venue": "Top Secret Comedy Club - New York",
+    "ticketUrl": "https://topsecretcomedyclub.com/events-listings/laugh-it-off-with-andrew-packer/",
+    "status": "on_sale",
+    "showType": "laugh_it_off"
+  },
+  {
     "slug": "the-bus-stop-theatre",
     "date": "2026-11-13",
     "city": "Halifax, NS",
