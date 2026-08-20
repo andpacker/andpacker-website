@@ -2,6 +2,7 @@
 
 import { useEffect } from "react"
 import type { Show } from "@/lib/tour"
+import ShowTypeBadge, { showTypeRing } from "@/components/ShowTypeBadge"
 
 declare global {
   interface Window {
@@ -61,6 +62,7 @@ export default function VenueShowList({
               {show.time && (
                 <div className="text-[#888] text-sm">{show.time}</div>
               )}
+              <ShowTypeBadge showType={show.showType} />
             </div>
             <div className="flex-shrink-0">
               {isSoldOut ? (
@@ -78,7 +80,9 @@ export default function VenueShowList({
                       show_date: show.date,
                     })
                   }
-                  className="inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 bg-[#0D41CB] hover:bg-[#0b35a8] text-white transition-colors"
+                  className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 bg-[#0D41CB] hover:bg-[#0b35a8] text-white transition-colors${showTypeRing(
+                    show.showType
+                  )}`}
                 >
                   {show.status === "low_tickets" ? "Low Tickets" : "Get Tickets"}
                 </a>

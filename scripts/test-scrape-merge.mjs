@@ -408,6 +408,241 @@ console.log("\n=== titleCaseVenue ===");
   }
 }
 
+// ─── Exact copy: TIME_OVERRIDES ──────────────────────────────────────────────
+const TIME_OVERRIDES = {
+  "day-care-comedy-with-andrew-packer": "11:30 AM",
+  "laugh-it-off-with-andrew-packer": "6:30 PM",
+};
+
+// ─── Exact copy: showTypeFor ─────────────────────────────────────────────────
+function showTypeFor(ticketUrl, venue) {
+  const url = (ticketUrl || "").toLowerCase();
+  const v = (venue || "").toLowerCase();
+  if (url.includes("day-care")) return { showType: "day_care_comedy" };
+  if (url.includes("laugh-it-off")) return { showType: "laugh_it_off" };
+  if (v.includes("othership")) return { showType: "sauna_comedy" };
+  if (v.includes("chefs hall")) return { showType: "new_material" };
+  return {};
+}
+
+// ─── Exact copy: the TIME_OVERRIDES application loop ─────────────────────────
+function applyTimeOverrides(shows) {
+  for (const show of shows) {
+    const url = (show.ticketUrl || "").toLowerCase();
+    for (const [needle, time] of Object.entries(TIME_OVERRIDES)) {
+      if (url.includes(needle)) {
+        show.time = time;
+        break;
+      }
+    }
+  }
+  return shows;
+}
+
+// ─── Suite 8: showTypeFor ────────────────────────────────────────────────────
+console.log("\n=== showTypeFor ===");
+{
+  const cases = [
+    [
+      "https://topsecretcomedyclub.com/events-listings/day-care-comedy-with-andrew-packer/",
+      "Top Secret Comedy Club - New York",
+      { showType: "day_care_comedy" },
+      "Day Care ticket URL -> day_care_comedy",
+    ],
+    [
+      "https://topsecretcomedyclub.com/events-listings/laugh-it-off-with-andrew-packer/",
+      "Top Secret Comedy Club - New York",
+      { showType: "laugh_it_off" },
+      "same-venue/same-date sibling URL -> laugh_it_off (double-header disambiguated)",
+    ],
+    [
+      "https://comedybar.ca/shows/laugh-it-off",
+      "Comedy Bar - Toronto",
+      { showType: "laugh_it_off" },
+      "Toronto LIO URL still -> laugh_it_off (unchanged by the new rule)",
+    ],
+    [
+      "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-1987789785759",
+      "Chefs Hall",
+      { showType: "new_material" },
+      "Chefs Hall venue -> new_material",
+    ],
+    [
+      "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator&keep_tld=true",
+      "Chefs Hall",
+      { showType: "new_material" },
+      "Chefs Hall with query string -> new_material",
+    ],
+    [
+      "https://www.othership.us/events/comedy",
+      "Othership Yorkville",
+      { showType: "sauna_comedy" },
+      "Othership venue -> sauna_comedy (unchanged)",
+    ],
+    [
+      "https://www.prekindle.com/event/56327-andrew-packer-730pm-dallas",
+      "Dallas Comedy Club",
+      {},
+      "plain touring date -> no showType key",
+    ],
+    ["", "", {}, "empty inputs -> no showType key"],
+    [
+      "https://topsecretcomedyclub.com/events-listings/DAY-CARE-COMEDY-WITH-ANDREW-PACKER/",
+      "Top Secret Comedy Club - New York",
+      { showType: "day_care_comedy" },
+      "uppercase URL casing still matches (case-insensitive)",
+    ],
+    [
+      "https://www.prekindle.com/event/99999-andrew-packer",
+      "OTHERSHIP TORONTO",
+      { showType: "sauna_comedy" },
+      "uppercase venue still matches othership (case-insensitive)",
+    ],
+    [
+      "https://www.eventbrite.ca/e/some-other-slug-tickets-123",
+      "Friday Pro Stand Up Comedy @ CheFs HAll Toronto",
+      { showType: "new_material" },
+      "mixed-case 'Chefs Hall' embedded in a longer venue string still matches",
+    ],
+    [
+      undefined,
+      "Chefs Hall",
+      { showType: "new_material" },
+      "undefined ticketUrl (not just empty string) falls back to venue rule",
+    ],
+    [
+      "https://topsecretcomedyclub.com/events-listings/day-care-comedy-with-andrew-packer/",
+      undefined,
+      { showType: "day_care_comedy" },
+      "undefined venue does not break a URL-rule match",
+    ],
+    [
+      undefined,
+      undefined,
+      {},
+      "undefined ticketUrl AND undefined venue -> no showType key (not just empty string)",
+    ],
+    [
+      "https://example.com/day-care-comedy-and-laugh-it-off-double-bill-with-andrew-packer",
+      "Top Secret Comedy Club - New York",
+      { showType: "day_care_comedy" },
+      "URL containing BOTH 'day-care' and 'laugh-it-off' -> day_care_comedy wins (checked first)",
+    ],
+    [
+      "https://example.com/day-care-comedy-with-andrew-packer",
+      "Othership Yorkville",
+      { showType: "day_care_comedy" },
+      "URL rule wins over venue rule even when venue independently matches 'othership'",
+    ],
+    [
+      "https://example.com/plain-ticket-link",
+      "Othership Chefs Hall Pop-Up",
+      { showType: "sauna_comedy" },
+      "venue containing BOTH 'othership' and 'chefs hall' -> sauna_comedy wins (checked first)",
+    ],
+    [
+      "https://www.eventbrite.com/e/laugh-it-off-with-andrew-packer-tickets-123456789?aff=ebdssbdestsearch",
+      "Top Secret Comedy Club - New York",
+      { showType: "laugh_it_off" },
+      "laugh-it-off URL with trailing query string -> laugh_it_off",
+    ],
+  ];
+  for (const [url, venue, expected, desc] of cases) {
+    const got = showTypeFor(url, venue);
+    assert(desc, deepEqual(got, expected), expected, got);
+  }
+}
+
+// ─── Suite 9: TIME_OVERRIDES ─────────────────────────────────────────────────
+console.log("\n=== TIME_OVERRIDES ===");
+{
+  const shows = applyTimeOverrides([
+    {
+      date: "2026-11-08",
+      slug: "top-secret-comedy-club-new-york",
+      ticketUrl: "https://topsecretcomedyclub.com/events-listings/day-care-comedy-with-andrew-packer/",
+    },
+    {
+      date: "2026-11-08",
+      slug: "top-secret-comedy-club-new-york",
+      ticketUrl: "https://topsecretcomedyclub.com/events-listings/laugh-it-off-with-andrew-packer/",
+    },
+    {
+      date: "2026-08-29",
+      slug: "comedy-bar-toronto",
+      ticketUrl: "https://comedybar.ca/shows/laugh-it-off",
+      time: "7 PM",
+    },
+    {
+      date: "2026-10-09",
+      slug: "dallas-comedy-club",
+      ticketUrl: "https://www.prekindle.com/event/56327-andrew-packer-730pm-dallas",
+      time: "7:30 PM",
+    },
+    {
+      date: "2026-09-05",
+      slug: "some-club",
+      ticketUrl: "https://EXAMPLE.com/events/DAY-CARE-COMEDY-WITH-ANDREW-PACKER-tickets-5",
+    },
+    {
+      date: "2026-09-06",
+      slug: "unknown-venue",
+      // no ticketUrl at all — must not throw, must not set a time
+    },
+    {
+      date: "2026-09-07",
+      slug: "eventbrite-club",
+      ticketUrl: "https://www.eventbrite.com/e/laugh-it-off-with-andrew-packer-tickets-987654321?aff=x",
+    },
+    {
+      date: "2026-09-08",
+      slug: "hybrid-show",
+      ticketUrl:
+        "https://example.com/day-care-comedy-with-andrew-packer-and-laugh-it-off-with-andrew-packer",
+    },
+  ]);
+
+  assert("Nov 8 Day Care -> 11:30 AM", shows[0].time === "11:30 AM", "11:30 AM", shows[0].time);
+  assert("Nov 8 Laugh It Off -> 6:30 PM", shows[1].time === "6:30 PM", "6:30 PM", shows[1].time);
+  assert(
+    "Toronto Comedy Bar LIO keeps 7 PM (needle requires -with-andrew-packer)",
+    shows[2].time === "7 PM",
+    "7 PM",
+    shows[2].time
+  );
+  assert("unmatched show keeps its derived time", shows[3].time === "7:30 PM", "7:30 PM", shows[3].time);
+  assert(
+    "the two Nov 8 shows get DIFFERENT times despite sharing date|slug",
+    shows[0].time !== shows[1].time,
+    "different times",
+    `${shows[0].time} vs ${shows[1].time}`
+  );
+  assert(
+    "uppercase ticketUrl casing still matches needle -> 11:30 AM",
+    shows[4].time === "11:30 AM",
+    "11:30 AM",
+    shows[4].time
+  );
+  assert(
+    "missing ticketUrl entirely -> no override applied, time stays undefined",
+    shows[5].time === undefined,
+    undefined,
+    shows[5].time
+  );
+  assert(
+    "laugh-it-off needle with trailing query string -> 6:30 PM",
+    shows[6].time === "6:30 PM",
+    "6:30 PM",
+    shows[6].time
+  );
+  assert(
+    "URL matching BOTH needles -> day-care wins (first key in TIME_OVERRIDES insertion order)",
+    shows[7].time === "11:30 AM",
+    "11:30 AM",
+    shows[7].time
+  );
+}
+
 // ─── Results summary ─────────────────────────────────────────────────────────
 console.log(`\n${"─".repeat(60)}`);
 console.log(`Tests run: ${passed + failed} | Passed: ${passed} | Failed: ${failed}`);

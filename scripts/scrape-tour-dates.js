@@ -42,6 +42,23 @@ const TICKET_URL_OVERRIDES = {
     "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-1987789785759",
 };
 
+// Show-time overrides, keyed by a substring of the ticket URL.
+//
+// WHY THIS EXISTS: punchup supplies no time for some shows and `timeFromUrl` can
+// only recover one when the URL encodes it. A hand-set `time` normally survives via
+// the non-destructive merge below — but that merge is SKIPPED for same-venue/same-date
+// double-headers (its `date|slug` key can't tell them apart), so the Nov 8 Top Secret
+// pair would lose a hand-set time on the next cron run. Keying on the ticket URL
+// disambiguates them, since that is the one field unique to each show.
+//
+// Both needles include "-with-andrew-packer" on purpose: the Toronto Comedy Bar show
+// at comedybar.ca/shows/laugh-it-off is 7 PM and must NOT pick up the NYC 6:30 PM.
+// Delete a line once punchup serves the correct time on its own.
+const TIME_OVERRIDES = {
+  "day-care-comedy-with-andrew-packer": "11:30 AM",
+  "laugh-it-off-with-andrew-packer": "6:30 PM",
+};
+
 function todayUTC() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -72,6 +89,21 @@ function parsePunchupDate(raw) {
     return `${y}-${m}-${d}`;
   }
   return cleaned;
+}
+
+// Derive a show's format brand. Ticket-URL rules come first because a URL is unique
+// per show — it is the only signal that can tell a same-venue/same-date double-header
+// apart (the Nov 8 Top Secret pair). Venue rules catch recurring residencies, so any
+// future date punchup adds at that venue is labeled with no further edit here.
+// Returns a spreadable object so an unmatched show adds no `showType` key at all.
+function showTypeFor(ticketUrl, venue) {
+  const url = (ticketUrl || "").toLowerCase();
+  const v = (venue || "").toLowerCase();
+  if (url.includes("day-care")) return { showType: "day_care_comedy" };
+  if (url.includes("laugh-it-off")) return { showType: "laugh_it_off" };
+  if (v.includes("othership")) return { showType: "sauna_comedy" };
+  if (v.includes("chefs hall")) return { showType: "new_material" };
+  return {};
 }
 
 // Build a URL-safe slug from a venue name.
@@ -382,11 +414,7 @@ async function main() {
       ticketUrl: show.ticketUrl || PUNCHUP_URL,
       status: show.status,
       ...(resolvedTime ? { time: resolvedTime } : {}),
-      ...(show.ticketUrl.toLowerCase().includes("laugh-it-off")
-        ? { showType: "laugh_it_off" }
-        : (show.venue || "").toLowerCase().includes("othership")
-        ? { showType: "sauna_comedy" }
-        : {}),
+      ...showTypeFor(show.ticketUrl, venue),
     });
   }
 
@@ -455,6 +483,21 @@ async function main() {
         `Ticket URL override: ${overrideKey}\n    ${show.ticketUrl}\n -> ${override}`
       );
       show.ticketUrl = override;
+    }
+  }
+
+  // Apply show-time overrides (see TIME_OVERRIDES above). Runs after the ticket-URL
+  // overrides so it matches against the corrected URL, and before the schema gate.
+  for (const show of future) {
+    const url = (show.ticketUrl || "").toLowerCase();
+    for (const [needle, time] of Object.entries(TIME_OVERRIDES)) {
+      if (url.includes(needle)) {
+        if (show.time !== time) {
+          console.log(`Time override: ${show.date}|${show.slug} -> ${time}`);
+        }
+        show.time = time;
+        break;
+      }
     }
   }
 
