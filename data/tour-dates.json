@@ -1,14 +1,5 @@
 [
   {
-    "slug": "chefs-hall",
-    "date": "2026-08-28",
-    "city": "Toronto, ON",
-    "venue": "Chefs Hall",
-    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-1987789785759",
-    "status": "on_sale",
-    "showType": "new_material"
-  },
-  {
     "slug": "comedy-bar-toronto",
     "date": "2026-08-29",
     "city": "Toronto, ON",
