@@ -1,15 +1,5 @@
 [
   {
-    "slug": "comedy-bar-toronto",
-    "date": "2026-08-29",
-    "city": "Toronto, ON",
-    "venue": "Comedy Bar - Toronto",
-    "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
-    "status": "on_sale",
-    "showType": "laugh_it_off",
-    "time": "7 PM"
-  },
-  {
     "slug": "the-bodega-by-city-cottage",
     "date": "2026-09-12",
     "city": "Toronto, ON",
