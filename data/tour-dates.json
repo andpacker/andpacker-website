@@ -17,6 +17,15 @@
     "showType": "new_material"
   },
   {
+    "slug": "comedy-bar-toronto",
+    "date": "2026-10-03",
+    "city": "Toronto, ON",
+    "venue": "Comedy Bar - Toronto",
+    "ticketUrl": "https://comedybar.ca/shows/laugh-it-off-jfl",
+    "status": "on_sale",
+    "showType": "laugh_it_off"
+  },
+  {
     "slug": "dallas-comedy-club",
     "date": "2026-10-09",
     "city": "Dallas, TX",
@@ -135,6 +144,24 @@
     "venue": "Simcoe Street Theatre",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-stand-up-comedy-live-in-collingwood-simcoe-street-theatre-tickets-1988930483617?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale"
+  },
+  {
+    "slug": "comedy-bar-toronto",
+    "date": "2026-11-28",
+    "city": "Toronto, ON",
+    "venue": "Comedy Bar - Toronto",
+    "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
+    "status": "on_sale",
+    "showType": "laugh_it_off"
+  },
+  {
+    "slug": "comedy-bar-toronto",
+    "date": "2026-12-20",
+    "city": "Toronto, ON",
+    "venue": "Comedy Bar - Toronto",
+    "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
+    "status": "on_sale",
+    "showType": "laugh_it_off"
   },
   {
     "slug": "the-comedy-store-west-hollywood",
