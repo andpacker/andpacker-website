@@ -831,7 +831,7 @@ export default function MediaKitPage() {
 
             {/* 2. Never Call Her Crazy */}
             <a
-              href="https://www.angel.com/watch/andrew-packer-never-call-her-crazy"
+              href="https://www.youtube.com/watch?v=qC5NNRB5c6Q"
               target="_blank"
               rel="noopener noreferrer"
               className="group block"
@@ -849,7 +849,7 @@ export default function MediaKitPage() {
                 <p className="font-[family-name:var(--font-display)] font-black text-sm uppercase text-[#111111] leading-tight">
                   Never Call Her Crazy
                 </p>
-                <p className="text-xs italic text-gray-500 mt-0.5">2026 · Angel Studios</p>
+                <p className="text-xs italic text-gray-500 mt-0.5">2026 · Dry Bar Comedy</p>
               </div>
             </a>
 

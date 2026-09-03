@@ -17,9 +17,9 @@ const SPECIALS: Special[] = [
   {
     title: "Never Call Her Crazy",
     year: "2026",
-    youtubeId: null,
-    angelUrl: "https://www.angel.com/shareandrewp",
-    description: "Andrew's first clean comedy special. Put it on when family's over and not worry about who's in the room. Streaming now on Angel, watch it for free using the link below.",
+    youtubeId: "qC5NNRB5c6Q",
+    angelUrl: null,
+    description: "Andrew's first clean comedy special. Put it on when family's over and not worry about who's in the room. Watch the whole thing free on YouTube.",
     image: "/images/never-call-her-crazy.png",
   },
   {
@@ -110,9 +110,10 @@ export default function Specials() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {SPECIALS.map((special, i) => {
-            const thumb = special.youtubeId
-              ? `https://img.youtube.com/vi/${special.youtubeId}/maxresdefault.jpg`
-              : special.image ?? null;
+            const thumb = special.image
+              ?? (special.youtubeId
+                ? `https://img.youtube.com/vi/${special.youtubeId}/maxresdefault.jpg`
+                : null);
             const imageLink = special.angelUrl ?? special.playlistUrl ?? null;
 
             const imageArea = (
