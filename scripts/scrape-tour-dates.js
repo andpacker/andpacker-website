@@ -44,20 +44,19 @@ const TICKET_URL_OVERRIDES = {
 
 // Show-time overrides, keyed by a substring of the ticket URL.
 //
-// WHY THIS EXISTS: punchup supplies no time for some shows and `timeFromUrl` can
-// only recover one when the URL encodes it. A hand-set `time` normally survives via
-// the non-destructive merge below — but that merge is SKIPPED for same-venue/same-date
-// double-headers (its `date|slug` key can't tell them apart), so the Nov 8 Top Secret
-// pair would lose a hand-set time on the next cron run. Keying on the ticket URL
-// disambiguates them, since that is the one field unique to each show.
+// WHY THIS EXISTS: when punchup supplies no time for a show and `timeFromUrl` can't
+// recover one from the ticket URL, a hand-set `time` normally survives via the
+// non-destructive merge below — but that merge is SKIPPED for same-venue/same-date
+// double-headers (its `date|slug` key can't tell them apart), so a hand-set time on
+// one would be lost on the next cron run. Keying on the ticket URL disambiguates
+// them, since that is the one field unique to each show.
 //
-// Both needles include "-with-andrew-packer" on purpose: the Toronto Comedy Bar show
-// at comedybar.ca/shows/laugh-it-off is 7 PM and must NOT pick up the NYC 6:30 PM.
-// Delete a line once punchup serves the correct time on its own.
-const TIME_OVERRIDES = {
-  "day-care-comedy-with-andrew-packer": "11:30 AM",
-  "laugh-it-off-with-andrew-packer": "6:30 PM",
-};
+// EMPTY as of 2026-09-08. Both former entries were for the Nov 8 Top Secret pair, and
+// punchup now serves the correct time for each, which the DOM scrape below reads
+// directly. The day-care line was actively HARMFUL by then: it forced the retired
+// 11:30 AM over punchup's corrected 2:00 PM on every nightly rebuild.
+// Add a line only for a show punchup gets wrong; delete it once punchup is fixed.
+const TIME_OVERRIDES = {};
 
 function todayUTC() {
   return new Date().toISOString().slice(0, 10);
@@ -173,6 +172,19 @@ function titleCaseVenue(v) {
       return word.charAt(0).toUpperCase() + word.slice(1);
     })
     .join(" ");
+}
+
+// Normalizes a time scraped from the DOM ("7:00 PM", "9:30 pm") into the exact shape
+// timeFromUrl() emits: uppercase meridiem, and a ":00" dropped so the row renders as
+// "VENUE – 7 PM". Returns "" for anything that isn't a time.
+function normalizeTime(raw) {
+  if (!raw) return "";
+  const m = String(raw).match(/(\d{1,2}):(\d{2})\s*([APap][Mm])/);
+  if (!m) return "";
+  const h = parseInt(m[1], 10);
+  const min = m[2];
+  const ampm = m[3].toUpperCase();
+  return min === "00" ? `${h} ${ampm}` : `${h}:${min} ${ampm}`;
 }
 
 function timeFromUrl(url) {
@@ -312,18 +324,21 @@ async function main() {
       if (eventLinks.length >= 1) {
         const allPs = Array.from(eventLinks[0].querySelectorAll("p"));
         dateRaw = allPs[0] ? (allPs[0].innerText || allPs[0].textContent || "").trim() : "";
-        // Look for a time string (e.g. "7:00 PM") in remaining <p> elements
-        const timeRe = /\d{1,2}:\d{2}\s*[APap][Mm]/;
-        for (let j = 1; j < allPs.length; j++) {
-          const t = (allPs[j].innerText || allPs[j].textContent || "").trim();
-          if (timeRe.test(t)) { timeRaw = t; break; }
-        }
-        // Fallback: scan full innerText of the first event link
-        if (!timeRaw) {
-          const linkText = eventLinks[0].innerText || "";
-          const m = linkText.match(timeRe);
-          if (m) timeRaw = m[0].trim();
-        }
+      }
+
+      // Time (e.g. "Friday – 7:00 PM"). punchup renders it in a SIBLING event link
+      // alongside the venue, not inside the date link, so a scan limited to
+      // eventLinks[0] found a time on almost no row — only the handful whose ticket
+      // URL happened to encode one survived. Scan every event link, then fall back to
+      // the whole row, and take the first match.
+      const timeRe = /\d{1,2}:\d{2}\s*[APap][Mm]/;
+      for (const link of eventLinks) {
+        const m = (link.innerText || link.textContent || "").match(timeRe);
+        if (m) { timeRaw = m[0].trim(); break; }
+      }
+      if (!timeRaw) {
+        const m = rowText.match(timeRe);
+        if (m) timeRaw = m[0].trim();
       }
       if (eventLinks.length >= 2) {
         const secondP = eventLinks[1].querySelector("p");
@@ -397,13 +412,20 @@ async function main() {
 
   for (const show of shows) {
     const dateStr = parsePunchupDate(show.dateRaw);
-    const key = `${dateStr}|${show.city}|${show.venue}|${show.ticketUrl}`;
+    const resolvedTime = normalizeTime(show.timeRaw) || timeFromUrl(show.ticketUrl);
 
-    // Skip duplicates (punchup renders desktop + mobile copies of each row)
+    // The time is part of the key so a same-venue/same-date double-header sold off a
+    // SINGLE ticket listing survives. Mic Drop Comedy Chandler runs 7 PM + 9:30 PM on
+    // both Feb 19 and Feb 20 2027 through one URL, and the old
+    // date|city|venue|ticketUrl key silently dropped the late show on each night —
+    // two real dates missing from the site with nothing in the log to say so.
+    // The desktop/mobile copies punchup renders of one row carry the same time, so
+    // they still collapse.
+    const key = `${dateStr}|${show.city}|${show.venue}|${show.ticketUrl}|${resolvedTime}`;
+
     if (seen.has(key)) continue;
     seen.add(key);
 
-    const resolvedTime = show.timeRaw || timeFromUrl(show.ticketUrl);
     const venue = titleCaseVenue(show.venue || "");
 
     enriched.push({

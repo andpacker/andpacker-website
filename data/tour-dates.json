@@ -5,7 +5,18 @@
     "city": "Toronto, ON",
     "venue": "The Bodega by City Cottage",
     "ticketUrl": "https://www.jumpcomedy.com/e/the-packer-experience",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "8 PM"
+  },
+  {
+    "slug": "othership-yorkville",
+    "date": "2026-09-14",
+    "city": "Toronto, ON",
+    "venue": "Othership Yorkville",
+    "ticketUrl": "https://www.othership.us/schedule?_mt=%2Fclasses%2F87120%2Freserve&_bookoClass=87120",
+    "status": "on_sale",
+    "time": "9 PM",
+    "showType": "sauna_comedy"
   },
   {
     "slug": "chefs-hall",
@@ -14,6 +25,7 @@
     "venue": "Chefs Hall",
     "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale",
+    "time": "7 PM",
     "showType": "new_material"
   },
   {
@@ -23,6 +35,7 @@
     "venue": "Comedy Bar - Toronto",
     "ticketUrl": "https://comedybar.ca/shows/laugh-it-off-jfl",
     "status": "on_sale",
+    "time": "5 PM",
     "showType": "laugh_it_off"
   },
   {
@@ -50,6 +63,7 @@
     "venue": "Chefs Hall",
     "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator",
     "status": "on_sale",
+    "time": "7 PM",
     "showType": "new_material"
   },
   {
@@ -58,7 +72,8 @@
     "city": "Calgary, AB",
     "venue": "Yuk Yuk's Comedy Club - Calgary",
     "ticketUrl": "https://www.yukyuks.com/calgary/show/andrew-packer-live-in-calgary-44017",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "9:30 PM"
   },
   {
     "slug": "kings-head-pub",
@@ -66,7 +81,8 @@
     "city": "Winnipeg, MB",
     "venue": "King's Head Pub",
     "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-winnipeg-kings-head-pub-tickets-1987789006428?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "7:30 PM"
   },
   {
     "slug": "top-secret-comedy-club-new-york",
@@ -75,8 +91,8 @@
     "venue": "Top Secret Comedy Club - New York",
     "ticketUrl": "https://topsecretcomedyclub.com/events-listings/day-care-comedy-with-andrew-packer/",
     "status": "on_sale",
-    "showType": "day_care_comedy",
-    "time": "11:30 AM"
+    "time": "2 PM",
+    "showType": "day_care_comedy"
   },
   {
     "slug": "top-secret-comedy-club-new-york",
@@ -85,8 +101,8 @@
     "venue": "Top Secret Comedy Club - New York",
     "ticketUrl": "https://topsecretcomedyclub.com/events-listings/laugh-it-off-with-andrew-packer/",
     "status": "on_sale",
-    "showType": "laugh_it_off",
-    "time": "6:30 PM"
+    "time": "6:30 PM",
+    "showType": "laugh_it_off"
   },
   {
     "slug": "the-bus-stop-theatre",
@@ -94,7 +110,8 @@
     "city": "Halifax, NS",
     "venue": "The Bus Stop Theatre",
     "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-halifax-tickets-1987791634288?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "7 PM"
   },
   {
     "slug": "théâtre-sainte-catherine",
@@ -102,7 +119,8 @@
     "city": "Montréal, QC",
     "venue": "Théâtre Sainte-Catherine",
     "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-montreal-tickets-1987787385580?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "7 PM"
   },
   {
     "slug": "naukabout-brewery-and-taproom",
@@ -110,7 +128,8 @@
     "city": "Mashpee, MA",
     "venue": "Naukabout Brewery and Taproom",
     "ticketUrl": "https://mannewsmashpee.eventbrite.com/",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "8 PM"
   },
   {
     "slug": "chefs-hall",
@@ -119,6 +138,7 @@
     "venue": "Chefs Hall",
     "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator&keep_tld=true",
     "status": "on_sale",
+    "time": "7 PM",
     "showType": "new_material"
   },
   {
@@ -127,7 +147,8 @@
     "city": "Scituate, MA",
     "venue": "Scituate Veterans of Foreign Wars Post 3169",
     "ticketUrl": "https://andrewscituate.eventbrite.com/",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "8 PM"
   },
   {
     "slug": "royal-garden-chinese-restaurant",
@@ -135,7 +156,8 @@
     "city": "Kingston, MA",
     "venue": "Royal Garden | Chinese Restaurant",
     "ticketUrl": "http://sweetandsourap.eventbrite.com/",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "8 PM"
   },
   {
     "slug": "simcoe-street-theatre",
@@ -143,7 +165,8 @@
     "city": "Collingwood, ON",
     "venue": "Simcoe Street Theatre",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-stand-up-comedy-live-in-collingwood-simcoe-street-theatre-tickets-1988930483617?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "8 PM"
   },
   {
     "slug": "comedy-bar-toronto",
@@ -152,6 +175,7 @@
     "venue": "Comedy Bar - Toronto",
     "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
     "status": "on_sale",
+    "time": "7 PM",
     "showType": "laugh_it_off"
   },
   {
@@ -161,6 +185,7 @@
     "venue": "Comedy Bar - Toronto",
     "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
     "status": "on_sale",
+    "time": "7 PM",
     "showType": "laugh_it_off"
   },
   {
@@ -169,7 +194,8 @@
     "city": "West Hollywood, CA",
     "venue": "The Comedy Store - West Hollywood",
     "ticketUrl": "https://events.leapevents.com/event/andrew-packer-2027-february17th",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "8 PM"
   },
   {
     "slug": "mic-drop-comedy-chandler",
@@ -177,7 +203,17 @@
     "city": "Chandler, AZ",
     "venue": "Mic Drop Comedy Chandler",
     "ticketUrl": "https://www.micdropcomedychandler.com/events/140957",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "7 PM"
+  },
+  {
+    "slug": "mic-drop-comedy-chandler",
+    "date": "2027-02-19",
+    "city": "Chandler, AZ",
+    "venue": "Mic Drop Comedy Chandler",
+    "ticketUrl": "https://www.micdropcomedychandler.com/events/140957",
+    "status": "on_sale",
+    "time": "9:30 PM"
   },
   {
     "slug": "mic-drop-comedy-chandler",
@@ -185,6 +221,16 @@
     "city": "Chandler, AZ",
     "venue": "Mic Drop Comedy Chandler",
     "ticketUrl": "https://www.micdropcomedychandler.com/events/140957",
-    "status": "on_sale"
+    "status": "on_sale",
+    "time": "7 PM"
+  },
+  {
+    "slug": "mic-drop-comedy-chandler",
+    "date": "2027-02-20",
+    "city": "Chandler, AZ",
+    "venue": "Mic Drop Comedy Chandler",
+    "ticketUrl": "https://www.micdropcomedychandler.com/events/140957",
+    "status": "on_sale",
+    "time": "9:30 PM"
   }
 ]

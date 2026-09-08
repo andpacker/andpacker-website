@@ -409,7 +409,13 @@ console.log("\n=== titleCaseVenue ===");
 }
 
 // ─── Exact copy: TIME_OVERRIDES ──────────────────────────────────────────────
-const TIME_OVERRIDES = {
+// Empty since 2026-09-08 — punchup now serves both Nov 8 times correctly and the DOM
+// scrape reads them directly. The suites below still exercise the override MECHANISM
+// through a local fixture map, so it stays covered for the next time punchup is wrong.
+const TIME_OVERRIDES = {};
+
+// Fixture standing in for a populated map (shape identical to the retired real one).
+const FIXTURE_OVERRIDES = {
   "day-care-comedy-with-andrew-packer": "11:30 AM",
   "laugh-it-off-with-andrew-packer": "6:30 PM",
 };
@@ -426,10 +432,12 @@ function showTypeFor(ticketUrl, venue) {
 }
 
 // ─── Exact copy: the TIME_OVERRIDES application loop ─────────────────────────
-function applyTimeOverrides(shows) {
+// `overrides` is a test seam only: called with one argument it is byte-for-byte the
+// source loop over the shipped map.
+function applyTimeOverrides(shows, overrides = TIME_OVERRIDES) {
   for (const show of shows) {
     const url = (show.ticketUrl || "").toLowerCase();
-    for (const [needle, time] of Object.entries(TIME_OVERRIDES)) {
+    for (const [needle, time] of Object.entries(overrides)) {
       if (url.includes(needle)) {
         show.time = time;
         break;
@@ -437,6 +445,31 @@ function applyTimeOverrides(shows) {
     }
   }
   return shows;
+}
+
+// ─── Exact copy: normalizeTime ───────────────────────────────────────────────
+function normalizeTime(raw) {
+  if (!raw) return "";
+  const m = String(raw).match(/(\d{1,2}):(\d{2})\s*([APap][Mm])/);
+  if (!m) return "";
+  const h = parseInt(m[1], 10);
+  const min = m[2];
+  const ampm = m[3].toUpperCase();
+  return min === "00" ? `${h} ${ampm}` : `${h}:${min} ${ampm}`;
+}
+
+// ─── Exact copy: the scrape-loop dedup key + skip ────────────────────────────
+function dedupe(rows) {
+  const seen = new Set();
+  const out = [];
+  for (const row of rows) {
+    const resolvedTime = normalizeTime(row.timeRaw) || "";
+    const key = `${row.date}|${row.city}|${row.venue}|${row.ticketUrl}|${resolvedTime}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ ...row, time: resolvedTime });
+  }
+  return out;
 }
 
 // ─── Suite 8: showTypeFor ────────────────────────────────────────────────────
@@ -554,56 +587,76 @@ console.log("\n=== showTypeFor ===");
 }
 
 // ─── Suite 9: TIME_OVERRIDES ─────────────────────────────────────────────────
-console.log("\n=== TIME_OVERRIDES ===");
+console.log("\n=== TIME_OVERRIDES (shipped map) ===");
 {
+  // The shipped map is empty, so the loop must be a pure no-op: it may not invent a
+  // time, and it may not disturb one the scrape already derived. This is the
+  // regression guard for the bug it replaced — a stale 11:30 AM override overwriting
+  // punchup's corrected 2 PM on every nightly rebuild.
+  assert(
+    "shipped TIME_OVERRIDES is empty",
+    Object.keys(TIME_OVERRIDES).length === 0,
+    0,
+    Object.keys(TIME_OVERRIDES).length
+  );
+
   const shows = applyTimeOverrides([
     {
       date: "2026-11-08",
       slug: "top-secret-comedy-club-new-york",
       ticketUrl: "https://topsecretcomedyclub.com/events-listings/day-care-comedy-with-andrew-packer/",
+      time: "2 PM",
     },
     {
       date: "2026-11-08",
       slug: "top-secret-comedy-club-new-york",
       ticketUrl: "https://topsecretcomedyclub.com/events-listings/laugh-it-off-with-andrew-packer/",
-    },
-    {
-      date: "2026-08-29",
-      slug: "comedy-bar-toronto",
-      ticketUrl: "https://comedybar.ca/shows/laugh-it-off",
-      time: "7 PM",
-    },
-    {
-      date: "2026-10-09",
-      slug: "dallas-comedy-club",
-      ticketUrl: "https://www.prekindle.com/event/56327-andrew-packer-730pm-dallas",
-      time: "7:30 PM",
-    },
-    {
-      date: "2026-09-05",
-      slug: "some-club",
-      ticketUrl: "https://EXAMPLE.com/events/DAY-CARE-COMEDY-WITH-ANDREW-PACKER-tickets-5",
+      time: "6:30 PM",
     },
     {
       date: "2026-09-06",
       slug: "unknown-venue",
       // no ticketUrl at all — must not throw, must not set a time
     },
-    {
-      date: "2026-09-07",
-      slug: "eventbrite-club",
-      ticketUrl: "https://www.eventbrite.com/e/laugh-it-off-with-andrew-packer-tickets-987654321?aff=x",
-    },
-    {
-      date: "2026-09-08",
-      slug: "hybrid-show",
-      ticketUrl:
-        "https://example.com/day-care-comedy-with-andrew-packer-and-laugh-it-off-with-andrew-packer",
-    },
   ]);
 
-  assert("Nov 8 Day Care -> 11:30 AM", shows[0].time === "11:30 AM", "11:30 AM", shows[0].time);
-  assert("Nov 8 Laugh It Off -> 6:30 PM", shows[1].time === "6:30 PM", "6:30 PM", shows[1].time);
+  assert("Nov 8 Day Care keeps punchup's 2 PM", shows[0].time === "2 PM", "2 PM", shows[0].time);
+  assert("Nov 8 Laugh It Off keeps 6:30 PM", shows[1].time === "6:30 PM", "6:30 PM", shows[1].time);
+  assert(
+    "empty map invents no time for an entry that has none",
+    shows[2].time === undefined,
+    undefined,
+    shows[2].time
+  );
+}
+
+// ─── Suite 10: TIME_OVERRIDES mechanism (fixture-driven) ─────────────────────
+console.log("\n=== TIME_OVERRIDES (mechanism) ===");
+{
+  const shows = applyTimeOverrides(
+    [
+      {
+        ticketUrl: "https://topsecretcomedyclub.com/events-listings/day-care-comedy-with-andrew-packer/",
+      },
+      {
+        ticketUrl: "https://topsecretcomedyclub.com/events-listings/laugh-it-off-with-andrew-packer/",
+      },
+      { ticketUrl: "https://comedybar.ca/shows/laugh-it-off", time: "7 PM" },
+      { ticketUrl: "https://www.prekindle.com/event/56327-andrew-packer-730pm-dallas", time: "7:30 PM" },
+      { ticketUrl: "https://EXAMPLE.com/events/DAY-CARE-COMEDY-WITH-ANDREW-PACKER-tickets-5" },
+      {}, // no ticketUrl at all
+      { ticketUrl: "https://www.eventbrite.com/e/laugh-it-off-with-andrew-packer-tickets-987654321?aff=x" },
+      {
+        ticketUrl:
+          "https://example.com/day-care-comedy-with-andrew-packer-and-laugh-it-off-with-andrew-packer",
+      },
+      { ticketUrl: "https://topsecretcomedyclub.com/day-care-comedy-with-andrew-packer/", time: "9 PM" },
+    ],
+    FIXTURE_OVERRIDES
+  );
+
+  assert("matching needle sets the time", shows[0].time === "11:30 AM", "11:30 AM", shows[0].time);
+  assert("second needle sets its own time", shows[1].time === "6:30 PM", "6:30 PM", shows[1].time);
   assert(
     "Toronto Comedy Bar LIO keeps 7 PM (needle requires -with-andrew-packer)",
     shows[2].time === "7 PM",
@@ -612,13 +665,13 @@ console.log("\n=== TIME_OVERRIDES ===");
   );
   assert("unmatched show keeps its derived time", shows[3].time === "7:30 PM", "7:30 PM", shows[3].time);
   assert(
-    "the two Nov 8 shows get DIFFERENT times despite sharing date|slug",
+    "two shows sharing date|slug can get DIFFERENT times",
     shows[0].time !== shows[1].time,
     "different times",
     `${shows[0].time} vs ${shows[1].time}`
   );
   assert(
-    "uppercase ticketUrl casing still matches needle -> 11:30 AM",
+    "uppercase ticketUrl casing still matches needle",
     shows[4].time === "11:30 AM",
     "11:30 AM",
     shows[4].time
@@ -630,16 +683,93 @@ console.log("\n=== TIME_OVERRIDES ===");
     shows[5].time
   );
   assert(
-    "laugh-it-off needle with trailing query string -> 6:30 PM",
+    "needle with trailing query string still matches",
     shows[6].time === "6:30 PM",
     "6:30 PM",
     shows[6].time
   );
   assert(
-    "URL matching BOTH needles -> day-care wins (first key in TIME_OVERRIDES insertion order)",
+    "URL matching BOTH needles -> first key in insertion order wins",
     shows[7].time === "11:30 AM",
     "11:30 AM",
     shows[7].time
+  );
+  assert(
+    "an override BEATS an already-derived time (that is the point of the map)",
+    shows[8].time === "11:30 AM",
+    "11:30 AM",
+    shows[8].time
+  );
+}
+
+// ─── Suite 11: normalizeTime ─────────────────────────────────────────────────
+console.log("\n=== normalizeTime ===");
+{
+  const cases = [
+    ["7:00 PM", "7 PM", "on-the-hour drops :00"],
+    ["9:30 PM", "9:30 PM", "half past keeps its minutes"],
+    ["2:00 PM", "2 PM", "Nov 8 Day Care, punchup's corrected time"],
+    ["11:30 AM", "11:30 AM", "AM preserved"],
+    ["9:30 pm", "9:30 PM", "lowercase meridiem uppercased"],
+    ["7:00pm", "7 PM", "no space before meridiem"],
+    ["Friday – 7:00 PM", "7 PM", "time pulled out of the punchup day-and-time line"],
+    ["Saturday – 8:00 PM\n\nTHE BODEGA BY CITY COTTAGE", "8 PM", "time pulled out of a full row blob"],
+    ["12:00 AM", "12 AM", "midnight keeps its 12"],
+    ["12:15 PM", "12:15 PM", "noon-hour with minutes"],
+    ["", "", "empty string -> empty"],
+    [undefined, "", "undefined -> empty, no throw"],
+    [null, "", "null -> empty, no throw"],
+    ["doors at 7", "", "hour with no minutes is not a time"],
+    ["TOP SECRET COMEDY CLUB", "", "venue name yields no time"],
+  ];
+  for (const [input, expected, desc] of cases) {
+    const got = normalizeTime(input);
+    assert(`${desc}: ${JSON.stringify(input)} -> ${JSON.stringify(expected)}`, got === expected, expected, got);
+  }
+}
+
+// ─── Suite 12: dedup key ─────────────────────────────────────────────────────
+console.log("\n=== dedup key ===");
+{
+  // The regression this guards: Mic Drop Comedy Chandler runs 7 PM and 9:30 PM on one
+  // night off a SINGLE ticket listing. Keyed on date|city|venue|ticketUrl the late show
+  // collided with the early one and was dropped silently — a real date missing from
+  // the site with nothing in the log to say so.
+  const chandler = dedupe([
+    { date: "2027-02-19", city: "Chandler, AZ", venue: "MIC DROP COMEDY CHANDLER", ticketUrl: "https://micdropcomedy.com/chandler", timeRaw: "Friday – 7:00 PM" },
+    { date: "2027-02-19", city: "Chandler, AZ", venue: "MIC DROP COMEDY CHANDLER", ticketUrl: "https://micdropcomedy.com/chandler", timeRaw: "Friday – 9:30 PM" },
+    { date: "2027-02-20", city: "Chandler, AZ", venue: "MIC DROP COMEDY CHANDLER", ticketUrl: "https://micdropcomedy.com/chandler", timeRaw: "Saturday – 7:00 PM" },
+    { date: "2027-02-20", city: "Chandler, AZ", venue: "MIC DROP COMEDY CHANDLER", ticketUrl: "https://micdropcomedy.com/chandler", timeRaw: "Saturday – 9:30 PM" },
+  ]);
+  assert("one-listing double-header on 2 nights -> all 4 shows kept", chandler.length === 4, 4, chandler.length);
+  assert(
+    "the 4 Chandler shows keep their own times",
+    deepEqual(chandler.map((s) => s.time), ["7 PM", "9:30 PM", "7 PM", "9:30 PM"]),
+    ["7 PM", "9:30 PM", "7 PM", "9:30 PM"],
+    chandler.map((s) => s.time)
+  );
+
+  const mirrored = dedupe([
+    { date: "2026-09-12", city: "Toronto, ON", venue: "THE BODEGA BY CITY COTTAGE", ticketUrl: "https://www.jumpcomedy.com/e/the-packer-experience", timeRaw: "Saturday – 8:00 PM" },
+    { date: "2026-09-12", city: "Toronto, ON", venue: "THE BODEGA BY CITY COTTAGE", ticketUrl: "https://www.jumpcomedy.com/e/the-packer-experience", timeRaw: "Saturday – 8:00 PM" },
+  ]);
+  assert("punchup's desktop+mobile copies of one row still collapse", mirrored.length === 1, 1, mirrored.length);
+
+  const dallas = dedupe([
+    { date: "2026-10-09", city: "Dallas, TX", venue: "DALLAS COMEDY CLUB", ticketUrl: "https://www.prekindle.com/event/56327-730pm", timeRaw: "Friday – 7:30 PM" },
+    { date: "2026-10-09", city: "Dallas, TX", venue: "DALLAS COMEDY CLUB", ticketUrl: "https://www.prekindle.com/event/56328-930pm", timeRaw: "Friday – 9:30 PM" },
+  ]);
+  assert("double-header on two separate listings still kept", dallas.length === 2, 2, dallas.length);
+
+  const timeless = dedupe([
+    { date: "2026-12-01", city: "Toronto, ON", venue: "SOME CLUB", ticketUrl: "https://example.com/x" },
+    { date: "2026-12-01", city: "Toronto, ON", venue: "SOME CLUB", ticketUrl: "https://example.com/x" },
+  ]);
+  assert(
+    "KNOWN LIMIT: same-night pair with no time on either row still collapses",
+    timeless.length === 1,
+    1,
+    timeless.length
   );
 }
 
