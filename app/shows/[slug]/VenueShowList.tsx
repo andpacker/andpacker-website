@@ -74,12 +74,17 @@ export default function VenueShowList({
                   href={show.ticketUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() =>
+                  onClick={() => {
                     window.fbq?.("trackCustom", "TicketClickOut", {
                       content_name: venue,
                       show_date: show.date,
                     })
-                  }
+                    window.fbq?.("track", "AddToCart", {
+                      content_name: venue,
+                      content_type: "product",
+                      show_date: show.date,
+                    })
+                  }}
                   className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 bg-[#0D41CB] hover:bg-[#0b35a8] text-white transition-colors${showTypeRing(
                     show.showType
                   )}`}
