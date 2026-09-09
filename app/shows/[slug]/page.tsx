@@ -6,6 +6,26 @@ import VenueShowList from "./VenueShowList"
 
 export const revalidate = 3600
 
+// Per-show artwork, keyed "<slug>|<showType>" because one venue can run two
+// different shows on the same day. Top Secret NY on Nov 8 is Day Care Comedy at
+// 2 PM and Laugh It Off at 6:30. The slug-keyed banner map below cannot tell
+// them apart, so anything show-specific belongs here.
+// NOTE: the key must stay slug-scoped, not showType-only. "laugh_it_off" runs in
+// both Toronto and New York, and those two markets require DIFFERENT artwork:
+// Toronto uses the banner with Andrew's dad, New York must not show his face at
+// all, for visa reasons.
+const showBanners: Record<
+  string,
+  { src: string; alt: string; width: number; height: number }
+> = {
+  "top-secret-comedy-club-new-york|day_care_comedy": {
+    src: "/day-care-comedy-banner.png",
+    alt: "Day Care Comedy, comedy for new parents with Andrew Packer, November 8 at Top Secret Comedy Club in New York, part of the New York Comedy Festival",
+    width: 1920,
+    height: 1080,
+  },
+}
+
 const VENUE_BANNERS: Record<
   string,
   { src: string; alt: string; width: number; height: number }
@@ -96,7 +116,11 @@ export default async function VenuePage({
           {upcoming[0].venue}
         </h1>
         <p className="text-[#888] mb-12">{upcoming[0].city.split(",")[0]}</p>
-        <VenueShowList shows={upcoming} venue={upcoming[0].venue} />
+        <VenueShowList
+          shows={upcoming}
+          venue={upcoming[0].venue}
+          showBanners={showBanners}
+        />
         {banner && (
           <div className="mt-12 flex justify-center">
             <Image

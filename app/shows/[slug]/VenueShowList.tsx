@@ -1,8 +1,11 @@
 "use client"
 
 import { useEffect } from "react"
+import Image from "next/image"
 import type { Show } from "@/lib/tour"
 import ShowTypeBadge, { showTypeRing } from "@/components/ShowTypeBadge"
+
+type ShowBanner = { src: string; alt: string; width: number; height: number }
 
 declare global {
   interface Window {
@@ -24,9 +27,11 @@ function formatDate(dateStr: string) {
 export default function VenueShowList({
   shows,
   venue,
+  showBanners = {},
 }: {
   shows: Show[]
   venue: string
+  showBanners?: Record<string, ShowBanner>
 }) {
   useEffect(() => {
     window.fbq?.("track", "ViewContent", {
@@ -40,59 +45,70 @@ export default function VenueShowList({
       {shows.map((show, i) => {
         const d = formatDate(show.date)
         const isSoldOut = show.status === "sold_out"
+        const showBanner = showBanners[`${show.slug}|${show.showType}`]
         return (
-          <div
-            key={i}
-            className="flex items-center gap-6 py-6 -mx-4 px-4 hover:bg-[#0f0f0f] transition-colors"
-          >
-            <div className="w-14 text-center flex-shrink-0">
-              <div className="text-[#0D41CB] font-[family-name:var(--font-display)] font-bold text-xs tracking-widest">
-                {d.month}
+          <div key={i}>
+            <div className="flex items-center gap-6 py-6 -mx-4 px-4 hover:bg-[#0f0f0f] transition-colors">
+              <div className="w-14 text-center flex-shrink-0">
+                <div className="text-[#0D41CB] font-[family-name:var(--font-display)] font-bold text-xs tracking-widest">
+                  {d.month}
+                </div>
+                <div className="text-white font-[family-name:var(--font-display)] font-extrabold text-3xl leading-none">
+                  {d.day}
+                </div>
+                <div className="text-[#555] text-xs">{d.year}</div>
               </div>
-              <div className="text-white font-[family-name:var(--font-display)] font-extrabold text-3xl leading-none">
-                {d.day}
+              <div className="h-10 w-px bg-[#222] flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="text-white font-semibold truncate">
+                  {show.city.split(",")[0]}
+                </div>
+                {show.time && (
+                  <div className="text-[#888] text-sm">{show.time}</div>
+                )}
+                <ShowTypeBadge showType={show.showType} />
               </div>
-              <div className="text-[#555] text-xs">{d.year}</div>
-            </div>
-            <div className="h-10 w-px bg-[#222] flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <div className="text-white font-semibold truncate">
-                {show.city.split(",")[0]}
+              <div className="flex-shrink-0">
+                {isSoldOut ? (
+                  <span className="inline-block bg-[#222] text-[#555] font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 cursor-not-allowed">
+                    Sold Out
+                  </span>
+                ) : (
+                  <a
+                    href={show.ticketUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                      window.fbq?.("trackCustom", "TicketClickOut", {
+                        content_name: venue,
+                        show_date: show.date,
+                      })
+                      window.fbq?.("track", "AddToCart", {
+                        content_name: venue,
+                        content_type: "product",
+                        show_date: show.date,
+                      })
+                    }}
+                    className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 bg-[#0D41CB] hover:bg-[#0b35a8] text-white transition-colors${showTypeRing(
+                      show.showType
+                    )}`}
+                  >
+                    {show.status === "low_tickets" ? "Low Tickets" : "Get Tickets"}
+                  </a>
+                )}
               </div>
-              {show.time && (
-                <div className="text-[#888] text-sm">{show.time}</div>
-              )}
-              <ShowTypeBadge showType={show.showType} />
             </div>
-            <div className="flex-shrink-0">
-              {isSoldOut ? (
-                <span className="inline-block bg-[#222] text-[#555] font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 cursor-not-allowed">
-                  Sold Out
-                </span>
-              ) : (
-                <a
-                  href={show.ticketUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    window.fbq?.("trackCustom", "TicketClickOut", {
-                      content_name: venue,
-                      show_date: show.date,
-                    })
-                    window.fbq?.("track", "AddToCart", {
-                      content_name: venue,
-                      content_type: "product",
-                      show_date: show.date,
-                    })
-                  }}
-                  className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 bg-[#0D41CB] hover:bg-[#0b35a8] text-white transition-colors${showTypeRing(
-                    show.showType
-                  )}`}
-                >
-                  {show.status === "low_tickets" ? "Low Tickets" : "Get Tickets"}
-                </a>
-              )}
-            </div>
+            {showBanner && (
+              <div className="pb-6 flex justify-center">
+                <Image
+                  src={showBanner.src}
+                  alt={showBanner.alt}
+                  width={showBanner.width}
+                  height={showBanner.height}
+                  className="h-auto w-full max-w-xl rounded-lg"
+                />
+              </div>
+            )}
           </div>
         )
       })}
