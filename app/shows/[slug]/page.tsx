@@ -17,8 +17,8 @@ const VENUE_BANNERS: Record<
     height: 200,
   },
   "comedy-bar-toronto": {
-    src: "/laugh-it-off-poster.jpg",
-    alt: "Laugh It Off — Andrew Packer's group therapy comedy show with his therapist dad, June 27 at Comedy Bar Toronto",
+    src: "/laugh-it-off-banner.jpg",
+    alt: "Laugh It Off, Andrew Packer's group therapy comedy show with his therapist dad, October 3 at Comedy Bar Bloor in Toronto",
     width: 1920,
     height: 1080,
   },
