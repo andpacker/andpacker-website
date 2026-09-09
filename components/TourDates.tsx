@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { tourDates, type Show } from "@/lib/tour";
 import ShowTypeBadge, { showTypeRing } from "@/components/ShowTypeBadge";
 
@@ -52,7 +53,7 @@ export default function TourDates() {
   const visibleShows = expanded ? upcomingShows : upcomingShows.slice(0, PREVIEW_COUNT);
 
   return (
-    <section id="tour" className="pt-7 pb-7 px-6">
+    <section id="tour" className="pt-7 pb-16 px-6">
       <div className="max-w-2xl mx-auto">
         <div className="flex items-end justify-between mb-12">
           <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-[clamp(2rem,6vw,4rem)] leading-none tracking-tight text-white">
@@ -115,6 +116,17 @@ export default function TourDates() {
             </button>
           </div>
         )}
+
+        <div className="mt-12 flex justify-center">
+          <Image
+            src="/birth-plan-tour-poster.jpg"
+            alt="Andrew Packer Birth Plan Tour poster, listing the tour dates and cities including January 20 in Chicago and January 22 to 23 in Minneapolis"
+            width={1080}
+            height={1350}
+            sizes="(max-width: 624px) calc(100vw - 48px), 576px"
+            className="h-auto w-full max-w-xl"
+          />
+        </div>
       </div>
     </section>
   );
