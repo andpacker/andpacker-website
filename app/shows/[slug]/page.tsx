@@ -28,6 +28,16 @@ const VENUE_BANNERS: Record<
     width: 1400,
     height: 636,
   },
+  // US shows use the faces-free artwork on purpose. The Toronto banner shows
+  // Andrew's dad, who cannot be advertised on US-facing assets for visa reasons.
+  // Copy here is role-only: "a licensed therapist of 35 years", never a name and
+  // never a family relationship. Do not swap this for a banner with faces.
+  "top-secret-comedy-club-new-york": {
+    src: "/laugh-it-off-banner-nofaces.jpg",
+    alt: "Laugh It Off, Andrew Packer's group therapy comedy show with a licensed therapist of 35 years, November 8 at Top Secret Comedy Club in New York",
+    width: 1920,
+    height: 1080,
+  },
 }
 
 function getTodayYMD(): string {
