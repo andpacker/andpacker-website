@@ -1,15 +1,5 @@
 [
   {
-    "slug": "othership-yorkville",
-    "date": "2026-09-14",
-    "city": "Toronto, ON",
-    "venue": "Othership Yorkville",
-    "ticketUrl": "https://www.othership.us/schedule?_mt=%2Fclasses%2F87120%2Freserve&_bookoClass=87120",
-    "status": "on_sale",
-    "time": "9 PM",
-    "showType": "sauna_comedy"
-  },
-  {
     "slug": "chefs-hall",
     "date": "2026-09-25",
     "city": "Toronto, ON",
