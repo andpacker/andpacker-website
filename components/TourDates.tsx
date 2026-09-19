@@ -120,7 +120,7 @@ export default function TourDates() {
         <div className="mt-12 flex justify-center">
           <Image
             src="/birth-plan-tour-poster.jpg"
-            alt="Andrew Packer Birth Plan Tour poster, listing the tour dates and cities including January 20 in Chicago and January 22 to 23 in Minneapolis"
+            alt="Andrew Packer Birth Plan Tour poster, listing the tour dates and cities including November 18 in Boston, January 20 in Chicago and January 22 to 23 in Minneapolis"
             width={1080}
             height={1350}
             sizes="(max-width: 624px) calc(100vw - 48px), 576px"
