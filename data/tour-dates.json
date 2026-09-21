@@ -104,6 +104,15 @@
     "time": "7 PM"
   },
   {
+    "slug": "the-comedy-studio",
+    "date": "2026-11-18",
+    "city": "Cambridge, MA",
+    "venue": "The Comedy Studio",
+    "ticketUrl": "https://www.thecomedystudio.com/events/tcs-presents-andrew-packer",
+    "status": "on_sale",
+    "time": "7:30 PM"
+  },
+  {
     "slug": "naukabout-brewery-and-taproom",
     "date": "2026-11-19",
     "city": "Mashpee, MA",
