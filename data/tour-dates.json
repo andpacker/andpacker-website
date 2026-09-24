@@ -179,6 +179,15 @@
     "showType": "laugh_it_off"
   },
   {
+    "slug": "zanies-comedy-club-chicago",
+    "date": "2027-01-20",
+    "city": "Chicago, IL",
+    "venue": "Zanies Comedy Club - Chicago",
+    "ticketUrl": "https://www.etix.com/ticket/p/60924898/andrew-packer-special-event-chicago-zanies-chicago",
+    "status": "on_sale",
+    "time": "7 PM"
+  },
+  {
     "slug": "the-comedy-store-west-hollywood",
     "date": "2027-02-17",
     "city": "West Hollywood, CA",
