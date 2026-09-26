@@ -1,15 +1,5 @@
 [
   {
-    "slug": "chefs-hall",
-    "date": "2026-09-25",
-    "city": "Toronto, ON",
-    "venue": "Chefs Hall",
-    "ticketUrl": "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-798883922317?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale",
-    "time": "7 PM",
-    "showType": "new_material"
-  },
-  {
     "slug": "comedy-bar-toronto",
     "date": "2026-10-03",
     "city": "Toronto, ON",
@@ -46,6 +36,16 @@
     "status": "on_sale",
     "time": "7 PM",
     "showType": "new_material"
+  },
+  {
+    "slug": "reids-distillery",
+    "date": "2026-10-25",
+    "city": "Toronto, ON",
+    "venue": "Reid's Distillery",
+    "ticketUrl": "https://www.eventbrite.ca/e/day-care-comedy-bring-baby-to-a-stand-up-show-for-grown-ups-tickets-2002328252705",
+    "status": "on_sale",
+    "time": "1 PM",
+    "showType": "day_care_comedy"
   },
   {
     "slug": "yuk-yuks-comedy-club-calgary",
