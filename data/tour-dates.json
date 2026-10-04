@@ -1,15 +1,5 @@
 [
   {
-    "slug": "comedy-bar-toronto",
-    "date": "2026-10-03",
-    "city": "Toronto, ON",
-    "venue": "Comedy Bar - Toronto",
-    "ticketUrl": "https://comedybar.ca/shows/laugh-it-off-jfl",
-    "status": "on_sale",
-    "time": "5 PM",
-    "showType": "laugh_it_off"
-  },
-  {
     "slug": "dallas-comedy-club",
     "date": "2026-10-09",
     "city": "Dallas, TX",
