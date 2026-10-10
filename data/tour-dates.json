@@ -1,23 +1,5 @@
 [
   {
-    "slug": "dallas-comedy-club",
-    "date": "2026-10-09",
-    "city": "Dallas, TX",
-    "venue": "Dallas Comedy Club",
-    "ticketUrl": "https://www.prekindle.com/event/56327-andrew-packer-730pm-dallas",
-    "status": "on_sale",
-    "time": "7:30 PM"
-  },
-  {
-    "slug": "dallas-comedy-club",
-    "date": "2026-10-09",
-    "city": "Dallas, TX",
-    "venue": "Dallas Comedy Club",
-    "ticketUrl": "https://www.prekindle.com/event/94714-andrew-packer-930pm-dallas",
-    "status": "on_sale",
-    "time": "9:30 PM"
-  },
-  {
     "slug": "chefs-hall",
     "date": "2026-10-23",
     "city": "Toronto, ON",
