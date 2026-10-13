@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-end overflow-hidden">
+    <section className="relative hero flex items-end overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-no-repeat hero-bg"
         style={{ backgroundImage: "url('/hero-home.jpg')" }}

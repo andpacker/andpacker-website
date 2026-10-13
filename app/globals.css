@@ -25,35 +25,56 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Home hero: hero-home.jpg is a 2:3 portrait with the face ~42% across, ~46% down.
-   Phones and portrait tablets zoom in on him; desktop pins the photo to the right. */
-.hero-bg {
-  background-size: auto 150%;
-  background-position: 34% 76%;
+/* Home hero. hero-home.jpg is a 2:3 portrait with his hairline 39% down and his
+   face 41.6% across. The crop is pinned to those two numbers so it holds at any
+   screen shape: --hh is the hero height, --iw the rendered photo width, and
+   0.585 is 0.39 x 1.5 (the hairline, in photo widths). */
+.hero {
+  --hh: max(620px, 92vh);
+  --iw: max(var(--hh), 135vw);
+  min-height: var(--hh);
 }
 
-/* The top of the frame is bright graffiti and posters; fade it so the nav stays readable. */
+@supports (height: 1svh) {
+  .hero {
+    --hh: max(620px, 92svh);
+  }
+}
+
+/* Phones and tablets: full-bleed, hairline just under the nav, face right of centre. */
+.hero-bg {
+  background-size: var(--iw) auto;
+  background-position: calc(55vw - var(--iw) * 0.416) calc(84px - var(--iw) * 0.585);
+}
+
+/* Fade behind the nav so the menu stays readable over the photo. */
 .hero-bg::after {
   content: "";
   position: absolute;
   inset: 0 0 auto 0;
-  height: 200px;
-  background: linear-gradient(to bottom, rgb(10 10 10 / 0.8), rgb(10 10 10 / 0));
+  height: 120px;
+  background: linear-gradient(to bottom, rgb(10 10 10 / 0.85), rgb(10 10 10 / 0));
   pointer-events: none;
 }
 
-/* Bottom fade: dark behind the headline, clear by the time it reaches his face. */
+/* Bottom fade, in px because the headline block is a fixed ~380px tall:
+   dark behind the text, gone by the time it reaches his face. */
 .hero-fade {
-  background-image: linear-gradient(to top, #0A0A0A 0%, rgb(10 10 10 / 0.8) 28%, rgb(10 10 10 / 0.25) 55%, rgb(10 10 10 / 0) 75%);
+  background-image: linear-gradient(to top, #0A0A0A 0, rgb(10 10 10 / 0.8) 170px, rgb(10 10 10 / 0.45) 380px, rgb(10 10 10 / 0) 470px);
 }
 
+/* Desktop: shorter hero so the tour dates show without scrolling, photo pinned right.
+   The 58vw term keeps the photo tall enough to fill the hero in squarish windows. */
 @media (min-width: 1024px) {
+  .hero {
+    --hh: clamp(640px, min(72vh, 58vw), 820px);
+    --iw: min(60vw, calc(var(--hh) * 1.45));
+  }
+
   .hero-bg {
     left: auto;
-    /* 110vh cap keeps his face in frame on ultrawide monitors */
-    width: min(60vw, 110vh);
-    background-size: cover;
-    background-position: center 85%;
+    width: var(--iw);
+    background-position: center calc(88px - var(--iw) * 0.585);
     -webkit-mask-image: linear-gradient(to right, transparent 0px, black 180px);
     mask-image: linear-gradient(to right, transparent 0px, black 180px);
   }
