@@ -25,16 +25,42 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Home hero: hero-home.jpg is a 2:3 portrait with the face ~42% across, ~46% down.
+   Phones and portrait tablets zoom in on him; desktop pins the photo to the right. */
 .hero-bg {
-  background-position: center center;
+  background-size: auto 150%;
+  background-position: 34% 76%;
 }
 
-@media (min-width: 768px) {
+/* The top of the frame is bright graffiti and posters; fade it so the nav stays readable. */
+.hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 200px;
+  background: linear-gradient(to bottom, rgb(10 10 10 / 0.8), rgb(10 10 10 / 0));
+  pointer-events: none;
+}
+
+/* Bottom fade: dark behind the headline, clear by the time it reaches his face. */
+.hero-fade {
+  background-image: linear-gradient(to top, #0A0A0A 0%, rgb(10 10 10 / 0.8) 28%, rgb(10 10 10 / 0.25) 55%, rgb(10 10 10 / 0) 75%);
+}
+
+@media (min-width: 1024px) {
   .hero-bg {
-    transform: translateX(220px);
-    background-position: center 10%;
-    -webkit-mask-image: linear-gradient(to right, transparent 0px, black 80px);
-    mask-image: linear-gradient(to right, transparent 0px, black 80px);
+    left: auto;
+    /* 110vh cap keeps his face in frame on ultrawide monitors */
+    width: min(60vw, 110vh);
+    background-size: cover;
+    background-position: center 85%;
+    -webkit-mask-image: linear-gradient(to right, transparent 0px, black 180px);
+    mask-image: linear-gradient(to right, transparent 0px, black 180px);
+  }
+
+  /* Headline sits on black here, so the bottom fade can lift and show the staircase. */
+  .hero-fade {
+    background-image: linear-gradient(to top, #0A0A0A 0%, rgb(10 10 10 / 0.35) 22%, rgb(10 10 10 / 0) 50%);
   }
 }
 

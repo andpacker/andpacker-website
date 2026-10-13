@@ -5,9 +5,9 @@ export default function Hero() {
     <section className="relative min-h-screen flex items-end overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-no-repeat hero-bg"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
+        style={{ backgroundImage: "url('/hero-home.jpg')" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/50 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/50 to-transparent hero-fade" />
       <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/60 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 pb-6 w-full">
