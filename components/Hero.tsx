@@ -30,10 +30,10 @@ export default function Hero() {
             See Tour Dates
           </Link>
           <Link
-            href="#watch"
+            href="#special"
             className="inline-block border border-white/30 hover:border-white text-white font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-sm px-8 py-4 transition-colors"
           >
-            Watch
+            Watch the Special
           </Link>
         </div>
       </div>
