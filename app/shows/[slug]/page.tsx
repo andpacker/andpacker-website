@@ -59,16 +59,35 @@ function getTodayYMD(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "America/Toronto" })
 }
 
-// Slugs that never get a venue page. A skipped slug is treated exactly like a
-// venue with no upcoming shows: no metadata, not prebuilt, and a visit
-// redirects to /#tour. The homepage tour list still shows its dates.
-// chefs-hall: tickets sell on Andrew's own Eventbrite, which carries his Meta
-// pixel, and both the homepage Get Tickets button and the Chefs Hall ads go
-// straight to Eventbrite, so a page in between adds nothing.
-const NO_VENUE_PAGE = new Set(["chefs-hall"])
+// A venue gets no page when EVERY one of its upcoming shows sells on
+// Eventbrite. Those tickets sell on Andrew's own Eventbrite, which carries his
+// Meta pixel, and both the homepage Get Tickets buttons and his ads go
+// straight to Eventbrite, so a page in between adds nothing. It is a rule, not
+// a list, so a new Eventbrite date added by the nightly scraper never gets a
+// page either. A venue with mixed ticket sites (some Eventbrite, some not)
+// keeps its page.
+// A skipped venue is treated exactly like a venue with no upcoming shows: no
+// metadata, not prebuilt, and a visit redirects to /#tour. The homepage tour
+// list still shows its dates.
+const EVENTBRITE_DOMAINS = ["eventbrite.com", "eventbrite.ca"]
 
-function getUpcoming(slug: string): Show[] {
-  if (NO_VENUE_PAGE.has(slug)) return []
+// True for eventbrite.com, eventbrite.ca and any subdomain of them
+// (www.eventbrite.ca, andrewscituate.eventbrite.com). Matches the hostname
+// suffix, not a substring. An unparsable URL counts as not Eventbrite.
+function isEventbriteUrl(ticketUrl: string): boolean {
+  try {
+    const host = new URL(ticketUrl).hostname.toLowerCase()
+    return EVENTBRITE_DOMAINS.some((d) => host === d || host.endsWith("." + d))
+  } catch {
+    return false
+  }
+}
+
+function sellsOnlyOnEventbrite(shows: Show[]): boolean {
+  return shows.length > 0 && shows.every((s) => isEventbriteUrl(s.ticketUrl))
+}
+
+function getUpcomingShows(slug: string): Show[] {
   const today = getTodayYMD()
   return tourDates
     .filter((s) => s.slug === slug && s.date >= today)
@@ -79,9 +98,15 @@ function getUpcoming(slug: string): Show[] {
     )
 }
 
+// Upcoming shows for a venue that gets a page; empty means redirect.
+function getUpcoming(slug: string): Show[] {
+  const upcoming = getUpcomingShows(slug)
+  return sellsOnlyOnEventbrite(upcoming) ? [] : upcoming
+}
+
 export function generateStaticParams() {
   return [...new Set(tourDates.map((s) => s.slug))]
-    .filter((slug) => !NO_VENUE_PAGE.has(slug))
+    .filter((slug) => !sellsOnlyOnEventbrite(getUpcomingShows(slug)))
     .map((slug) => ({ slug }))
 }
 
