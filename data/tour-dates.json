@@ -160,6 +160,42 @@
     "time": "7 PM"
   },
   {
+    "slug": "sisyphus-brewing",
+    "date": "2027-01-22",
+    "city": "Minneapolis, MN",
+    "venue": "Sisyphus Brewing",
+    "ticketUrl": "https://www.sisyphusbrewing.com/products/andrew-packer",
+    "status": "on_sale",
+    "time": "7 PM"
+  },
+  {
+    "slug": "sisyphus-brewing",
+    "date": "2027-01-22",
+    "city": "Minneapolis, MN",
+    "venue": "Sisyphus Brewing",
+    "ticketUrl": "https://www.sisyphusbrewing.com/products/andrew-packer",
+    "status": "on_sale",
+    "time": "9 PM"
+  },
+  {
+    "slug": "sisyphus-brewing",
+    "date": "2027-01-23",
+    "city": "Minneapolis, MN",
+    "venue": "Sisyphus Brewing",
+    "ticketUrl": "https://www.sisyphusbrewing.com/products/andrew-packer",
+    "status": "on_sale",
+    "time": "7 PM"
+  },
+  {
+    "slug": "sisyphus-brewing",
+    "date": "2027-01-23",
+    "city": "Minneapolis, MN",
+    "venue": "Sisyphus Brewing",
+    "ticketUrl": "https://www.sisyphusbrewing.com/products/andrew-packer",
+    "status": "on_sale",
+    "time": "9 PM"
+  },
+  {
     "slug": "the-comedy-store-west-hollywood",
     "date": "2027-02-17",
     "city": "West Hollywood, CA",
