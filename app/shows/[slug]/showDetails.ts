@@ -81,8 +81,8 @@ type ShowFacts = {
 }
 
 /**
- * Verified per-show facts, keyed "<slug>|<showType>" (same key shape as the
- * showBanners map in page.tsx, because one venue can run two shows a day).
+ * Verified per-show facts, keyed "<slug>|<showType>" because one venue can run
+ * two shows a day (Top Secret NY on Nov 8: Day Care Comedy, then Laugh It Off).
  */
 const SHOW_FACTS: Record<string, ShowFacts> = {
   "top-secret-comedy-club-new-york|day_care_comedy": {
@@ -127,15 +127,45 @@ export function joinAnd(parts: string[]) {
   return `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`
 }
 
-/** "Sunday, November 8, 2026 at 2 PM" */
-export function longWhen(show: Show) {
+/** "Sun, Nov 8 · 2 PM". The year is added only when it is not this year. */
+export function cardWhen(show: Show, thisYear: string) {
   const date = fmt(show.date, {
-    weekday: "long",
-    month: "long",
+    weekday: "short",
+    month: "short",
     day: "numeric",
-    year: "numeric",
+    ...(show.date.slice(0, 4) !== thisYear ? { year: "numeric" as const } : {}),
   })
-  return show.time ? `${date} at ${show.time}` : date
+  return show.time ? `${date} · ${show.time}` : date
+}
+
+/**
+ * Page header date line. One date: "Sunday, November 8". Several: "Nov 28 and
+ * Dec 20", or "Oct 23 to Dec 20" past three. The year is added only when it is
+ * not this year.
+ */
+export function dateSummary(shows: Show[], thisYear: string) {
+  const dates = [...new Set(shows.map((s) => s.date))].sort()
+  const years = new Set(dates.map((d) => d.slice(0, 4)))
+  const sameYear = years.size === 1
+  const needYear = !sameYear || !years.has(thisYear)
+  if (dates.length === 1) {
+    return fmt(dates[0], {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      ...(needYear ? { year: "numeric" as const } : {}),
+    })
+  }
+  const parts = dates.map((d) =>
+    fmt(d, {
+      month: "short",
+      day: "numeric",
+      ...(sameYear ? {} : { year: "numeric" as const }),
+    })
+  )
+  const joined =
+    parts.length > 3 ? `${parts[0]} to ${parts[parts.length - 1]}` : joinAnd(parts)
+  return sameYear && needYear ? `${joined}, ${dates[0].slice(0, 4)}` : joined
 }
 
 /** "Sun Nov 8 at 2 PM" */
@@ -167,6 +197,11 @@ export function venueName(show: Show) {
     : show.venue
 }
 
+/** "44 Avenue A, New York, NY", or just "Calgary, AB" with no verified address. */
+export function venuePlace(show: Show) {
+  return [VENUE_ADDRESS[show.slug], show.city].filter(Boolean).join(", ")
+}
+
 /** "Top Secret Comedy Club, 44 Avenue A, New York, NY" */
 export function venueWhere(show: Show) {
   return [venueName(show), VENUE_ADDRESS[show.slug], show.city]
@@ -175,7 +210,7 @@ export function venueWhere(show: Show) {
 }
 
 /** "https://www.eventbrite.ca/e/..." -> "eventbrite.ca" */
-function ticketSite(url: string): string | null {
+export function ticketSite(url: string): string | null {
   try {
     return new URL(url).hostname.split(".").slice(-2).join(".")
   } catch {
@@ -212,6 +247,17 @@ export function groupShows(shows: Show[]): ShowGroup[] {
     if (site && !group.ticketSites.includes(site)) group.ticketSites.push(site)
   }
   return [...groups.values()]
+}
+
+/**
+ * Notes every group carries (NYC: festival + no drink minimum on both shows).
+ * The page shows these once, in the venue section, instead of on every card.
+ */
+export function sharedNotes(groups: ShowGroup[]): string[] {
+  const [first, ...rest] = groups
+  return (first?.notes ?? []).filter((note) =>
+    rest.every((g) => g.notes?.includes(note))
+  )
 }
 
 /** "Day Care Comedy and Laugh It Off at Top Secret Comedy Club, New York, Nov 8, 2026 | Andrew Packer" */

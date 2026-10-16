@@ -1,11 +1,9 @@
 "use client"
 
 import { useEffect } from "react"
-import Image from "next/image"
 import type { Show } from "@/lib/tour"
-import ShowTypeBadge, { showTypeRing } from "@/components/ShowTypeBadge"
-
-type ShowBanner = { src: string; alt: string; width: number; height: number }
+import { showTypeRing } from "@/components/ShowTypeBadge"
+import { cardWhen, ticketSite, type ShowGroup } from "./showDetails"
 
 declare global {
   interface Window {
@@ -13,25 +11,64 @@ declare global {
   }
 }
 
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr + "T12:00:00Z")
-  return {
-    month: d
-      .toLocaleString("en-US", { month: "short", timeZone: "UTC" })
-      .toUpperCase(),
-    day: d.toLocaleString("en-US", { day: "2-digit", timeZone: "UTC" }),
-    year: d.toLocaleString("en-US", { year: "numeric", timeZone: "UTC" }),
+function TicketButton({ show, venue }: { show: Show; venue: string }) {
+  if (show.status === "sold_out") {
+    return (
+      <span className="flex min-h-12 w-full items-center justify-center bg-[#222] text-[#555] font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-sm cursor-not-allowed">
+        Sold Out
+      </span>
+    )
   }
+  return (
+    <a
+      href={show.ticketUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => {
+        window.fbq?.("trackCustom", "TicketClickOut", {
+          content_name: venue,
+          show_date: show.date,
+        })
+        window.fbq?.("track", "AddToCart", {
+          content_name: venue,
+          content_type: "product",
+          show_date: show.date,
+        })
+      }}
+      className={`flex min-h-12 w-full items-center justify-center font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-sm bg-[#0D41CB] hover:bg-[#0b35a8] text-white transition-colors${showTypeRing(
+        show.showType
+      )}`}
+    >
+      {show.status === "low_tickets" ? "Low Tickets" : "Get Tickets"}
+    </a>
+  )
 }
 
+function Disclosure({ site }: { site: string }) {
+  return (
+    <p className="mt-3 text-sm text-[#888]">
+      {`You'll buy tickets on ${site}.`}
+    </p>
+  )
+}
+
+/**
+ * One card per show type: what the show is, then every date with its own
+ * ticket button, then where the tickets are sold. `venue` is the raw venue
+ * string from tour-dates.json; the pixel events below key on it, so keep it raw.
+ */
 export default function VenueShowList({
-  shows,
+  groups,
   venue,
-  showBanners = {},
+  thisYear,
+  hideNotes = [],
 }: {
-  shows: Show[]
+  groups: ShowGroup[]
   venue: string
-  showBanners?: Record<string, ShowBanner>
+  /** "2026". Dates in any other year print their year. */
+  thisYear: string
+  /** Notes shown once in the page's venue section, left off the cards. */
+  hideNotes?: string[]
 }) {
   useEffect(() => {
     window.fbq?.("track", "ViewContent", {
@@ -41,75 +78,47 @@ export default function VenueShowList({
   }, [venue])
 
   return (
-    <div className="divide-y divide-[#1a1a1a]">
-      {shows.map((show, i) => {
-        const d = formatDate(show.date)
-        const isSoldOut = show.status === "sold_out"
-        const showBanner = showBanners[`${show.slug}|${show.showType}`]
+    <div className="space-y-6">
+      {groups.map((group) => {
+        const facts = [group.price, group.length].filter(Boolean).join(" · ")
+        const notes = (group.notes ?? []).filter((n) => !hideNotes.includes(n))
+        // One line for the whole card when every date sells on the same site,
+        // otherwise a line under each button.
+        const oneSite = group.ticketSites.length === 1
         return (
-          <div key={i}>
-            <div className="flex items-center gap-6 py-6 -mx-4 px-4 hover:bg-[#0f0f0f] transition-colors">
-              <div className="w-14 text-center flex-shrink-0">
-                <div className="text-[#0D41CB] font-[family-name:var(--font-display)] font-bold text-xs tracking-widest">
-                  {d.month}
-                </div>
-                <div className="text-white font-[family-name:var(--font-display)] font-extrabold text-3xl leading-none">
-                  {d.day}
-                </div>
-                <div className="text-[#555] text-xs">{d.year}</div>
-              </div>
-              <div className="h-10 w-px bg-[#222] flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <div className="text-white font-semibold truncate">
-                  {show.city.split(",")[0]}
-                </div>
-                {show.time && (
-                  <div className="text-[#888] text-sm">{show.time}</div>
-                )}
-                <ShowTypeBadge showType={show.showType} />
-              </div>
-              <div className="flex-shrink-0">
-                {isSoldOut ? (
-                  <span className="inline-block bg-[#222] text-[#555] font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 cursor-not-allowed">
-                    Sold Out
-                  </span>
-                ) : (
-                  <a
-                    href={show.ticketUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => {
-                      window.fbq?.("trackCustom", "TicketClickOut", {
-                        content_name: venue,
-                        show_date: show.date,
-                      })
-                      window.fbq?.("track", "AddToCart", {
-                        content_name: venue,
-                        content_type: "product",
-                        show_date: show.date,
-                      })
-                    }}
-                    className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 bg-[#0D41CB] hover:bg-[#0b35a8] text-white transition-colors${showTypeRing(
-                      show.showType
-                    )}`}
-                  >
-                    {show.status === "low_tickets" ? "Low Tickets" : "Get Tickets"}
-                  </a>
-                )}
-              </div>
-            </div>
-            {showBanner && (
-              <div className="pb-6 flex justify-center">
-                <Image
-                  src={showBanner.src}
-                  alt={showBanner.alt}
-                  width={showBanner.width}
-                  height={showBanner.height}
-                  className="h-auto w-full max-w-xl rounded-lg"
-                />
-              </div>
+          <section
+            key={group.key}
+            className="border border-[#222] bg-[#111] p-5 sm:p-8"
+          >
+            <h2 className="font-[family-name:var(--font-display)] font-extrabold uppercase text-3xl leading-none tracking-tight">
+              {group.name}
+            </h2>
+            {group.tagline && (
+              <p className="mt-2 font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs text-[#888]">
+                {group.tagline}
+              </p>
             )}
-          </div>
+            <p className="mt-4 leading-relaxed">{group.description}</p>
+            {facts && <p className="mt-3 text-sm text-[#888]">{facts}</p>}
+            {notes.length > 0 && (
+              <p className="mt-1 text-sm text-[#888]">{notes.join(" ")}</p>
+            )}
+            <ul className="mt-6 space-y-6">
+              {group.shows.map((show, i) => {
+                const site = oneSite ? null : ticketSite(show.ticketUrl)
+                return (
+                  <li key={i}>
+                    <p className="mb-2 text-lg font-semibold">
+                      {cardWhen(show, thisYear)}
+                    </p>
+                    <TicketButton show={show} venue={venue} />
+                    {site && <Disclosure site={site} />}
+                  </li>
+                )
+              })}
+            </ul>
+            {oneSite && <Disclosure site={group.ticketSites[0]} />}
+          </section>
         )
       })}
     </div>
