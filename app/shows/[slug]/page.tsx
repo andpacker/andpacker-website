@@ -59,7 +59,16 @@ function getTodayYMD(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "America/Toronto" })
 }
 
+// Slugs that never get a venue page. A skipped slug is treated exactly like a
+// venue with no upcoming shows: no metadata, not prebuilt, and a visit
+// redirects to /#tour. The homepage tour list still shows its dates.
+// chefs-hall: tickets sell on Andrew's own Eventbrite, which carries his Meta
+// pixel, and both the homepage Get Tickets button and the Chefs Hall ads go
+// straight to Eventbrite, so a page in between adds nothing.
+const NO_VENUE_PAGE = new Set(["chefs-hall"])
+
 function getUpcoming(slug: string): Show[] {
+  if (NO_VENUE_PAGE.has(slug)) return []
   const today = getTodayYMD()
   return tourDates
     .filter((s) => s.slug === slug && s.date >= today)
@@ -71,7 +80,9 @@ function getUpcoming(slug: string): Show[] {
 }
 
 export function generateStaticParams() {
-  return [...new Set(tourDates.map((s) => s.slug))].map((slug) => ({ slug }))
+  return [...new Set(tourDates.map((s) => s.slug))]
+    .filter((slug) => !NO_VENUE_PAGE.has(slug))
+    .map((slug) => ({ slug }))
 }
 
 // Every field is set explicitly because a child's openGraph REPLACES the root
