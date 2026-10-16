@@ -17,6 +17,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  // Resolves any relative URL in page metadata (og:image etc.) against the
+  // live domain. Does not change the homepage's own tags, which are absolute.
+  metadataBase: new URL("https://andpacker.com"),
   title: "Andrew Packer: Stand-Up Comedian",
   description:
     "Official website of Andrew Packer, stand-up comedian. Tour dates, specials, and more.",
