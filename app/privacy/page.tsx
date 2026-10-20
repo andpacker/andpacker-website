@@ -99,8 +99,8 @@ export default function PrivacyPage() {
               your ticket.
             </li>
             <li>
-              To send show updates, only if you signed up. Every email has an unsubscribe
-              link.
+              To send show updates to people who&apos;ve bought tickets or signed up. Every
+              email has an unsubscribe link.
             </li>
             <li>
               To advertise my shows. I may share a scrambled (hashed) version of your email
