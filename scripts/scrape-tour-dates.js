@@ -46,9 +46,9 @@ const TICKET_URL_OVERRIDES = {
 //
 // WHY THIS EXISTS: when punchup supplies no time for a show and `timeFromUrl` can't
 // recover one from the ticket URL, a hand-set `time` normally survives via the
-// non-destructive merge below — but that merge is SKIPPED for same-venue/same-date
-// double-headers (its `date|slug` key can't tell them apart), so a hand-set time on
-// one would be lost on the next cron run. Keying on the ticket URL disambiguates
+// non-destructive merge below — but for same-venue/same-date double-headers that
+// merge falls back to a `date|slug|time` key, which can't match a show that has no
+// time, so a hand-set time on one would be lost on the next cron run. Keying on the ticket URL disambiguates
 // them, since that is the one field unique to each show.
 //
 // EMPTY as of 2026-09-08. Both former entries were for the Nov 8 Top Secret pair, and
@@ -298,12 +298,25 @@ async function main() {
       return t === "buy tickets" || t === "tickets" || t === "get tickets" || t === "purchase tickets" || t === "ticket";
     });
 
-    for (const ticketLink of ticketLinks) {
-      const ticketUrl = ticketLink.href || "";
+    // Sold-out rows. Once a show sells out, punchup swaps its "Buy Tickets" LINK for a
+    // "Join Waitlist" BUTTON with no href, and the words "sold out" appear nowhere on
+    // the row. Scanning only ticket links made a sold-out show vanish from the site
+    // (Day Care Comedy Toronto, Oct 25 2026, dropped on the Oct 17 sync). These rows
+    // carry no ticket URL; the merge below restores the one from the previous night.
+    const soldOutControls = Array.from(
+      document.querySelectorAll("a, button")
+    ).filter((el) => {
+      const t = (el.innerText || el.textContent || "").trim().toLowerCase();
+      return t === "join waitlist" || t === "sold out";
+    });
+
+    for (const control of [...ticketLinks, ...soldOutControls]) {
+      const isSoldOutControl = !ticketLinks.includes(control);
+      const ticketUrl = isSoldOutControl ? "" : control.href || "";
 
       // Walk up to find the individual show row: exactly 4 direct children.
       // Stop before reaching a container that has many children (multi-row wrapper).
-      let row = ticketLink.parentElement;
+      let row = control.parentElement;
       for (let i = 0; i < 6; i++) {
         if (!row) break;
         if (row.children.length === 4) break;
@@ -312,6 +325,9 @@ async function main() {
 
       // Only accept rows with exactly 4 children (clean individual show rows)
       if (!row || row.children.length !== 4) continue;
+
+      // A row with a real ticket link is already covered by that link.
+      if (isSoldOutControl && ticketLinks.some((a) => row.contains(a))) continue;
 
       const rowText = row.innerText || row.textContent || "";
 
@@ -385,10 +401,14 @@ async function main() {
       // Status detection
       const cardText = rowText.toLowerCase();
       let status = "on_sale";
-      if (cardText.includes("sold out")) status = "sold_out";
+      if (isSoldOutControl || cardText.includes("sold out") || cardText.includes("join waitlist")) status = "sold_out";
       else if (cardText.includes("low ticket") || cardText.includes("almost sold")) status = "low_tickets";
 
-      results.push({ dateRaw, timeRaw, city, venue, ticketUrl, status });
+      // punchup's own page for the show: the fallback ticketUrl for a sold-out show
+      // the site never saw on sale, so there is no earlier URL to carry forward.
+      const eventHref = eventLinks[0] ? eventLinks[0].href : "";
+
+      results.push({ dateRaw, timeRaw, city, venue, ticketUrl, status, eventHref });
     }
 
     return results;
@@ -409,6 +429,9 @@ async function main() {
   // Normalize and deduplicate
   const seen = new Set();
   const enriched = [];
+  // Sold-out show -> its punchup event page, used only if the merge finds no earlier
+  // ticket URL. Kept off the show object so it never reaches tour-dates.json.
+  const soldOutFallbackUrl = new Map();
 
   for (const show of shows) {
     const dateStr = parsePunchupDate(show.dateRaw);
@@ -427,17 +450,22 @@ async function main() {
     seen.add(key);
 
     const venue = titleCaseVenue(show.venue || "");
+    const soldOutNoUrl = show.status === "sold_out" && !show.ticketUrl;
 
-    enriched.push({
+    const entry = {
       slug: slugify(venue),
       date: dateStr,
       city: normalizeCity(show.city || "TBD"),
       venue,
-      ticketUrl: show.ticketUrl || PUNCHUP_URL,
+      // Left empty for a sold-out row so the merge carries the real ticket URL (and
+      // the showType derived from it) forward from the previous night's entry.
+      ticketUrl: soldOutNoUrl ? "" : show.ticketUrl || PUNCHUP_URL,
       status: show.status,
       ...(resolvedTime ? { time: resolvedTime } : {}),
       ...showTypeFor(show.ticketUrl, venue),
-    });
+    };
+    if (soldOutNoUrl) soldOutFallbackUrl.set(entry, show.eventHref || PUNCHUP_URL);
+    enriched.push(entry);
   }
 
   // Sort chronologically and remove past shows
@@ -468,26 +496,51 @@ async function main() {
   // Keyed on date|slug — stable across the casing/region reformatting the scraper
   // applies to venue/city (slug is casing-independent) AND across ticketUrl changes,
   // both of which broke the old date|city|venue|ticketUrl key. Same-venue/same-date
-  // double-headers (e.g. two Dallas shows on one night) collide on this key; for
-  // those we skip carry-forward (their distinguishing fields — time, ticketUrl — are
-  // always re-derived fresh, so nothing is lost).
+  // double-headers (e.g. two Dallas shows on one night) collide on this key, so for
+  // those it falls back to date|slug|time. A sold-out row arrives with NO ticketUrl,
+  // so without this a sold-out half of a pair (the Nov 8 Top Secret Day Care show
+  // beside its Laugh It Off show) would lose its ticket URL and its showType. A pair
+  // that shares a time, or has none, is still ambiguous and keeps fresh data only.
+  // A key must be unique on BOTH sides: when a sold-out show reappears beside its
+  // pair, the old file holds one show at that date|slug and the fresh scrape two, and
+  // matching on date|slug alone would hand the other show's ticket URL to both.
   const stableKey = (s) => `${s.date}|${s.slug || slugify(s.venue || "")}`;
+  const timedKey = (s) => `${stableKey(s)}|${s.time || ""}`;
+  const countBy = (shows, keyFn) => {
+    const counts = {};
+    for (const s of shows) counts[keyFn(s)] = (counts[keyFn(s)] || 0) + 1;
+    return counts;
+  };
+  const keyCounts = countBy(existing, stableKey);
+  const timedKeyCounts = countBy(existing, timedKey);
+  const freshKeyCounts = countBy(future, stableKey);
+  const freshTimedKeyCounts = countBy(future, timedKey);
   const existingByKey = {};
-  const keyCounts = {};
+  const existingByTimedKey = {};
   for (const s of existing) {
-    const k = stableKey(s);
-    keyCounts[k] = (keyCounts[k] || 0) + 1;
-    existingByKey[k] = s;
+    existingByKey[stableKey(s)] = s;
+    existingByTimedKey[timedKey(s)] = s;
   }
   for (const show of future) {
     const k = stableKey(show);
-    if (keyCounts[k] !== 1) continue; // ambiguous double-header — keep fresh data only
-    const prev = existingByKey[k];
+    const tk = timedKey(show);
+    let prev;
+    if (keyCounts[k] === 1 && freshKeyCounts[k] === 1) prev = existingByKey[k];
+    else if (show.time && timedKeyCounts[tk] === 1 && freshTimedKeyCounts[tk] === 1) prev = existingByTimedKey[tk];
+    else continue; // ambiguous double-header — keep fresh data only
     for (const [field, value] of Object.entries(prev)) {
       const cur = show[field];
       if (cur === undefined || cur === null || cur === "") {
         show[field] = value;
       }
+    }
+  }
+
+  // A sold-out show the site never saw on sale has no earlier ticket URL to inherit.
+  // Point it at its punchup event page so the schema gate below still passes.
+  for (const show of future) {
+    if (!show.ticketUrl && soldOutFallbackUrl.has(show)) {
+      show.ticketUrl = soldOutFallbackUrl.get(show);
     }
   }
 

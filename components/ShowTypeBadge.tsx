@@ -70,6 +70,17 @@ export function showTypeRing(showType?: Show["showType"]) {
   return spec ? ` ring-1 ${spec.ring} ring-offset-2 ring-offset-[#0A0A0A]` : ""
 }
 
+/** Solid red tag on a sold-out show, sized to sit beside the show-type badge. */
+export function SoldOutTag() {
+  return (
+    <span
+      className={`mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase ${DEFAULT_SIZE} bg-[#DC2626] border border-[#DC2626] text-white px-2 py-0.5`}
+    >
+      Sold Out
+    </span>
+  )
+}
+
 export default function ShowTypeBadge({ showType }: { showType?: Show["showType"] }) {
   const spec = showType ? BADGES[showType] : undefined
   if (!spec) return null

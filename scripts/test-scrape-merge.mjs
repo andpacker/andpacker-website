@@ -60,29 +60,48 @@ function titleCaseVenue(v) {
     .join(" ");
 }
 
-// ─── Exact copy: merge block, wrapped for testing ───────────────────────────
-// Mirrors lines 380-398 of scrape-tour-dates.js verbatim.
+// ─── Exact copy: merge block + sold-out fallback, wrapped for testing ───────
+// Mirrors the merge block of scrape-tour-dates.js verbatim.
 // `existing` = prior tour-dates.json array
 // `future`   = freshly-scraped + enriched array (will be mutated in place)
+// `soldOutFallbackUrl` = Map(show -> punchup event URL) for sold-out rows
 // Returns the mutated `future` array.
-function mergeForward(existing, future) {
+function mergeForward(existing, future, soldOutFallbackUrl = new Map()) {
   const stableKey = (s) => `${s.date}|${s.slug || slugify(s.venue || "")}`;
+  const timedKey = (s) => `${stableKey(s)}|${s.time || ""}`;
+  const countBy = (shows, keyFn) => {
+    const counts = {};
+    for (const s of shows) counts[keyFn(s)] = (counts[keyFn(s)] || 0) + 1;
+    return counts;
+  };
+  const keyCounts = countBy(existing, stableKey);
+  const timedKeyCounts = countBy(existing, timedKey);
+  const freshKeyCounts = countBy(future, stableKey);
+  const freshTimedKeyCounts = countBy(future, timedKey);
   const existingByKey = {};
-  const keyCounts = {};
+  const existingByTimedKey = {};
   for (const s of existing) {
-    const k = stableKey(s);
-    keyCounts[k] = (keyCounts[k] || 0) + 1;
-    existingByKey[k] = s;
+    existingByKey[stableKey(s)] = s;
+    existingByTimedKey[timedKey(s)] = s;
   }
   for (const show of future) {
     const k = stableKey(show);
-    if (keyCounts[k] !== 1) continue; // ambiguous double-header — keep fresh data only
-    const prev = existingByKey[k];
+    const tk = timedKey(show);
+    let prev;
+    if (keyCounts[k] === 1 && freshKeyCounts[k] === 1) prev = existingByKey[k];
+    else if (show.time && timedKeyCounts[tk] === 1 && freshTimedKeyCounts[tk] === 1) prev = existingByTimedKey[tk];
+    else continue; // ambiguous double-header — keep fresh data only
     for (const [field, value] of Object.entries(prev)) {
       const cur = show[field];
       if (cur === undefined || cur === null || cur === "") {
         show[field] = value;
       }
+    }
+  }
+
+  for (const show of future) {
+    if (!show.ticketUrl && soldOutFallbackUrl.has(show)) {
+      show.ticketUrl = soldOutFallbackUrl.get(show);
     }
   }
   return future;
@@ -288,8 +307,10 @@ console.log("\n=== mergeForward: carry forward time when fresh lacks it ===");
   );
 }
 
-// ─── Suite 5: double-header skip ─────────────────────────────────────────────
-console.log("\n=== mergeForward: double-header skip (keyCounts != 1) ===");
+// ─── Suite 5: double-header with distinct times matches per show ─────────────
+// Was "double-header skip": before the date|slug|time fallback, a hand-set field
+// on either show of a pair was wiped. Each show now matches its own old entry.
+console.log("\n=== mergeForward: double-header matched on date|slug|time ===");
 {
   const existing = [
     {
@@ -337,16 +358,150 @@ console.log("\n=== mergeForward: double-header skip (keyCounts != 1) ===");
   mergeForward(existing, future);
 
   assert(
-    "double-header: first fresh entry showType NOT carried forward (keyCounts === 2)",
-    future[0].showType === undefined,
-    undefined,
+    "double-header: 7 PM show inherits the showType hand-set on the old 7 PM entry",
+    future[0].showType === "comedy_special_recording",
+    "comedy_special_recording",
     future[0].showType
   );
   assert(
-    "double-header: second fresh entry showType NOT carried forward",
+    "double-header: 9 PM show does NOT pick up the 7 PM show's showType",
     future[1].showType === undefined,
     undefined,
     future[1].showType
+  );
+}
+
+// ─── Suite 5b: double-header that cannot be told apart still skips ──────────
+console.log("\n=== mergeForward: ambiguous double-header still skips ===");
+{
+  const base = { date: "2026-10-09", slug: "dallas-comedy-club", venue: "Dallas Comedy Club", city: "Dallas, TX", status: "on_sale" };
+
+  // Same time on both shows (two listings for one slot).
+  const existingSame = [
+    { ...base, ticketUrl: "https://example.com/a", time: "7 PM", showType: "laugh_it_off" },
+    { ...base, ticketUrl: "https://example.com/b", time: "7 PM" },
+  ];
+  const futureSame = [
+    { ...base, ticketUrl: "https://example.com/a", time: "7 PM" },
+    { ...base, ticketUrl: "https://example.com/b", time: "7 PM" },
+  ];
+  mergeForward(existingSame, futureSame);
+  assert(
+    "same-time pair: neither show inherits a showType",
+    futureSame[0].showType === undefined && futureSame[1].showType === undefined,
+    [undefined, undefined],
+    [futureSame[0].showType, futureSame[1].showType]
+  );
+
+  // No time on either show.
+  const existingNone = [
+    { ...base, ticketUrl: "https://example.com/a", showType: "laugh_it_off" },
+    { ...base, ticketUrl: "https://example.com/b" },
+  ];
+  const futureNone = [
+    { ...base, ticketUrl: "https://example.com/a" },
+    { ...base, ticketUrl: "https://example.com/b" },
+  ];
+  mergeForward(existingNone, futureNone);
+  assert(
+    "timeless pair: neither show inherits a showType",
+    futureNone[0].showType === undefined && futureNone[1].showType === undefined,
+    [undefined, undefined],
+    [futureNone[0].showType, futureNone[1].showType]
+  );
+
+  // Old file has ONE show at date|slug, fresh scrape has TWO (a sold-out show
+  // reappearing beside its pair). The lone old entry must not feed both.
+  const existingOne = [
+    { ...base, ticketUrl: "https://example.com/lio", time: "6:30 PM", showType: "laugh_it_off" },
+  ];
+  const futureTwo = [
+    { ...base, ticketUrl: "", time: "2 PM", status: "sold_out" },
+    { ...base, ticketUrl: "https://example.com/lio", time: "6:30 PM" },
+  ];
+  mergeForward(existingOne, futureTwo);
+  assert(
+    "1 old vs 2 fresh: sold-out 2 PM show does NOT take the 6:30 PM show's ticket URL",
+    futureTwo[0].ticketUrl === "",
+    "",
+    futureTwo[0].ticketUrl
+  );
+  assert(
+    "1 old vs 2 fresh: sold-out 2 PM show does NOT take the 6:30 PM show's showType",
+    futureTwo[0].showType === undefined,
+    undefined,
+    futureTwo[0].showType
+  );
+  assert(
+    "1 old vs 2 fresh: 6:30 PM show still matches its own entry on date|slug|time",
+    futureTwo[1].showType === "laugh_it_off",
+    "laugh_it_off",
+    futureTwo[1].showType
+  );
+}
+
+// ─── Suite 5c: sold-out rows keep their old ticket URL and showType ──────────
+console.log("\n=== mergeForward: sold-out rows ===");
+{
+  // The real case: Day Care Comedy Toronto went from Buy Tickets to Join Waitlist.
+  const existing = [
+    {
+      slug: "reids-distillery", date: "2026-10-25", city: "Toronto, ON", venue: "Reid's Distillery",
+      ticketUrl: "https://www.eventbrite.ca/e/day-care-comedy-tickets-2002328252705",
+      status: "on_sale", time: "1 PM", showType: "day_care_comedy",
+    },
+  ];
+  const fresh = {
+    slug: "reids-distillery", date: "2026-10-25", city: "Toronto, ON", venue: "Reid's Distillery",
+    ticketUrl: "", status: "sold_out", time: "1 PM",
+  };
+  const fallback = new Map([[fresh, "https://punchup.live/e/7d21cce0"]]);
+  const future = [fresh];
+  mergeForward(existing, future, fallback);
+  assert(
+    "sold-out: inherits the real Eventbrite ticket URL, not the punchup fallback",
+    future[0].ticketUrl === existing[0].ticketUrl,
+    existing[0].ticketUrl,
+    future[0].ticketUrl
+  );
+  assert(
+    "sold-out: inherits showType day_care_comedy",
+    future[0].showType === "day_care_comedy",
+    "day_care_comedy",
+    future[0].showType
+  );
+  assert(
+    "sold-out: fresh status sold_out beats the old on_sale",
+    future[0].status === "sold_out",
+    "sold_out",
+    future[0].status
+  );
+
+  // A show that was sold out before the site ever saw it: nothing to inherit.
+  const unseen = {
+    slug: "new-venue", date: "2026-12-01", city: "Ottawa, ON", venue: "New Venue",
+    ticketUrl: "", status: "sold_out", time: "8 PM",
+  };
+  const unseenFallback = new Map([[unseen, "https://punchup.live/e/abc"]]);
+  mergeForward([], [unseen], unseenFallback);
+  assert(
+    "sold-out, never seen before: falls back to its punchup event page",
+    unseen.ticketUrl === "https://punchup.live/e/abc",
+    "https://punchup.live/e/abc",
+    unseen.ticketUrl
+  );
+
+  // The fallback never replaces a ticket URL the show already has.
+  const onSale = {
+    slug: "x", date: "2026-12-02", city: "Ottawa, ON", venue: "X",
+    ticketUrl: "https://example.com/real", status: "on_sale",
+  };
+  mergeForward([], [onSale], new Map([[onSale, "https://punchup.live/e/zzz"]]));
+  assert(
+    "fallback does not overwrite an existing ticket URL",
+    onSale.ticketUrl === "https://example.com/real",
+    "https://example.com/real",
+    onSale.ticketUrl
   );
 }
 

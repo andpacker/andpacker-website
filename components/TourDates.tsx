@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { tourDates, type Show } from "@/lib/tour";
-import ShowTypeBadge, { showTypeRing } from "@/components/ShowTypeBadge";
+import ShowTypeBadge, { SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge";
+import WaitlistForm from "@/components/WaitlistForm";
 
 type ShowStatus = Show["status"];
 
@@ -17,12 +18,36 @@ function formatDate(dateStr: string) {
   };
 }
 
-function TicketButton({ status, url, showType }: { status: ShowStatus; url: string; showType?: Show["showType"] }) {
+// One per show; a same-night double-header shares date + slug, so time is in it.
+function showKey(show: Show) {
+  return `${show.date}|${show.slug}|${show.time ?? ""}`;
+}
+
+function TicketButton({
+  status,
+  url,
+  showType,
+  waitlistOpen,
+  onToggleWaitlist,
+}: {
+  status: ShowStatus;
+  url: string;
+  showType?: Show["showType"];
+  waitlistOpen: boolean;
+  onToggleWaitlist: () => void;
+}) {
   if (status === "sold_out") {
+    // An inset ring, not a border, so it is exactly the size of Get Tickets.
     return (
-      <span className="inline-block bg-[#222] text-[#555] font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 cursor-not-allowed">
-        Sold Out
-      </span>
+      <button
+        type="button"
+        onClick={onToggleWaitlist}
+        aria-expanded={waitlistOpen}
+        className="inline-block ring-1 ring-inset ring-white text-white hover:bg-white hover:text-black font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 transition-colors"
+      >
+        <span className="md:hidden">Waitlist</span>
+        <span className="hidden md:inline">Join Waitlist</span>
+      </button>
     );
   }
 
@@ -45,6 +70,8 @@ function TicketButton({ status, url, showType }: { status: ShowStatus; url: stri
 
 export default function TourDates() {
   const [expanded, setExpanded] = useState(false);
+  // The show whose waitlist form is open; one at a time.
+  const [openWaitlist, setOpenWaitlist] = useState<string | null>(null);
   const PREVIEW_COUNT = 5;
 
   const upcomingShows = tourDates.filter(
@@ -71,35 +98,49 @@ export default function TourDates() {
           <div className="divide-y divide-[#1a1a1a]">
             {visibleShows.map((show, i) => {
               const d = formatDate(show.date);
+              const key = showKey(show);
+              const waitlistOpen = openWaitlist === key;
               return (
                 <div
                   key={i}
-                  className="flex items-center gap-6 py-6 group hover:bg-[#0f0f0f] transition-colors -mx-4 px-4"
+                  className="py-6 group hover:bg-[#0f0f0f] transition-colors -mx-4 px-4"
                 >
-                  <div className="w-14 text-center flex-shrink-0">
-                    <div className="text-[#0D41CB] font-[family-name:var(--font-display)] font-bold text-xs tracking-widest">
-                      {d.month}
+                  <div className="flex items-center gap-6">
+                    <div className="w-14 text-center flex-shrink-0">
+                      <div className="text-[#0D41CB] font-[family-name:var(--font-display)] font-bold text-xs tracking-widest">
+                        {d.month}
+                      </div>
+                      <div className="text-white font-[family-name:var(--font-display)] font-extrabold text-3xl leading-none">
+                        {d.day}
+                      </div>
+                      <div className="text-[#555] text-xs">{d.year}</div>
                     </div>
-                    <div className="text-white font-[family-name:var(--font-display)] font-extrabold text-3xl leading-none">
-                      {d.day}
+  
+                    <div className="h-10 w-px bg-[#222] flex-shrink-0" />
+  
+                    <div className="flex-1 min-w-0">
+                      <div className="text-white font-semibold truncate">{show.city}</div>
+                      <div className="flex items-center gap-1.5 text-[#888] text-sm min-w-0">
+                        <span className="truncate">{show.venue}</span>
+                        {show.time && <span className="flex-shrink-0">– {show.time}</span>}
+                      </div>
+                      <div className="flex flex-wrap gap-x-1.5">
+                        <ShowTypeBadge showType={show.showType} />
+                        {show.status === "sold_out" && <SoldOutTag />}
+                      </div>
                     </div>
-                    <div className="text-[#555] text-xs">{d.year}</div>
-                  </div>
-
-                  <div className="h-10 w-px bg-[#222] flex-shrink-0" />
-
-                  <div className="flex-1 min-w-0">
-                    <div className="text-white font-semibold truncate">{show.city}</div>
-                    <div className="flex items-center gap-1.5 text-[#888] text-sm min-w-0">
-                      <span className="truncate">{show.venue}</span>
-                      {show.time && <span className="flex-shrink-0">– {show.time}</span>}
+  
+                    <div className="flex-shrink-0">
+                      <TicketButton
+                        status={show.status}
+                        url={show.ticketUrl}
+                        showType={show.showType}
+                        waitlistOpen={waitlistOpen}
+                        onToggleWaitlist={() => setOpenWaitlist(waitlistOpen ? null : key)}
+                      />
                     </div>
-                    <ShowTypeBadge showType={show.showType} />
                   </div>
-
-                  <div className="flex-shrink-0">
-                    <TicketButton status={show.status} url={show.ticketUrl} showType={show.showType} />
-                  </div>
+                  {waitlistOpen && <WaitlistForm show={show} />}
                 </div>
               );
             })}

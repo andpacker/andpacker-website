@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import type { Show } from "@/lib/tour"
-import { showTypeRing } from "@/components/ShowTypeBadge"
+import { SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge"
+import WaitlistForm from "@/components/WaitlistForm"
 import { cardWhen, ticketSite, type ShowGroup } from "./showDetails"
 
 declare global {
@@ -11,14 +12,26 @@ declare global {
   }
 }
 
+// A sold-out date: Join Waitlist in place of Get Tickets, opening the form below.
+function WaitlistButton({ show }: { show: Show }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="flex min-h-12 w-full items-center justify-center ring-1 ring-inset ring-white text-white hover:bg-white hover:text-black font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-sm transition-colors"
+      >
+        Join Waitlist
+      </button>
+      {open && <WaitlistForm show={show} />}
+    </>
+  )
+}
+
 function TicketButton({ show, venue }: { show: Show; venue: string }) {
-  if (show.status === "sold_out") {
-    return (
-      <span className="flex min-h-12 w-full items-center justify-center bg-[#222] text-[#555] font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-sm cursor-not-allowed">
-        Sold Out
-      </span>
-    )
-  }
+  if (show.status === "sold_out") return <WaitlistButton show={show} />
   return (
     <a
       href={show.ticketUrl}
@@ -110,6 +123,11 @@ export default function VenueShowList({
                   <li key={i}>
                     <p className="mb-2 text-lg font-semibold">
                       {cardWhen(show, thisYear)}
+                      {show.status === "sold_out" && (
+                        <span className="ml-2 align-middle">
+                          <SoldOutTag />
+                        </span>
+                      )}
                     </p>
                     <TicketButton show={show} venue={venue} />
                     {site && <Disclosure site={site} />}
