@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   const year = new Date().getFullYear();
 
@@ -25,7 +27,10 @@ export default function Footer() {
 
         <div className="mt-12 pt-8 border-t border-[#141414] flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-[#444] text-xs">
-            © {year} Andrew Packer. All rights reserved.
+            © {year} Andrew Packer. All rights reserved.{" "}
+            <Link href="/privacy" className="ml-3 text-[#888] hover:text-white transition-colors">
+              Privacy
+            </Link>
           </p>
           <p className="text-[#333] text-xs">
             andpacker.com

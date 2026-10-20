@@ -110,7 +110,18 @@ export default function WaitlistForm({ show }: { show: Show }) {
       {status === "error" && (
         <p className="text-red-300 text-sm mt-3">{errorMsg}</p>
       )}
-      <p className="text-[#555] text-xs mt-3">No spam. Unsubscribe anytime.</p>
+      {/* New tab, so a half-filled form survives a look at the policy. */}
+      <p className="text-[#555] text-xs mt-3">
+        No spam. Unsubscribe anytime.{" "}
+        <a
+          href="/privacy"
+          target="_blank"
+          rel="noopener"
+          className="underline underline-offset-2 hover:text-white transition-colors"
+        >
+          Privacy
+        </a>
+      </p>
     </form>
   );
 }

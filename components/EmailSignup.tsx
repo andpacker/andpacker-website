@@ -232,7 +232,18 @@ export default function EmailSignup({
           </form>
         )}
 
-        <p className="text-white/40 text-xs mt-4">No spam. Unsubscribe anytime.</p>
+        {/* New tab, so a half-filled form survives a look at the policy. */}
+        <p className="text-white/40 text-xs mt-4">
+          No spam. Unsubscribe anytime.{" "}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener"
+            className="underline underline-offset-2 hover:text-white transition-colors"
+          >
+            Privacy
+          </a>
+        </p>
       </div>
     </section>
   );
