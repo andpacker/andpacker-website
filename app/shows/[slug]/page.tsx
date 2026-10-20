@@ -212,6 +212,15 @@ export default async function VenuePage({
             <p className="mt-3 text-sm text-[#888]">{venueNotes.join(" ")}</p>
           )}
         </section>
+        {/* The Meta pixel runs here, so the privacy notice is one tap away. */}
+        <p className="mt-12">
+          <a
+            href="/privacy"
+            className="text-[#555] text-sm tracking-widest uppercase hover:text-white transition-colors"
+          >
+            Privacy
+          </a>
+        </p>
       </div>
     </main>
   )

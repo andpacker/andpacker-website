@@ -81,7 +81,8 @@ export default function PrivacyPage() {
               show&apos;s organizer.
             </li>
             <li>
-              When you sign up for show updates: your email and, if you choose, your city.
+              When you sign up for show updates or a show&apos;s waitlist: your email, your
+              city and, on some forms, your name.
             </li>
             <li>
               When you visit this site: standard browsing information collected by the Meta

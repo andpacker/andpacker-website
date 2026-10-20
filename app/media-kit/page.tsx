@@ -1121,7 +1121,10 @@ export default function MediaKitPage() {
             Andrew Packer
           </span>
           <p className="text-xs text-gray-400">
-            &copy; {new Date().getFullYear()} Andrew Packer. All rights reserved.
+            &copy; {new Date().getFullYear()} Andrew Packer. All rights reserved.{" "}
+            <Link href="/privacy" className="ml-3 hover:text-[#0D41CB] transition-colors">
+              Privacy
+            </Link>
           </p>
         </div>
       </footer>
