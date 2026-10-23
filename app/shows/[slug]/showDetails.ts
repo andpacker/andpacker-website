@@ -88,7 +88,7 @@ const SHOW_FACTS: Record<string, ShowFacts> = {
   "top-secret-comedy-club-new-york|day_care_comedy": {
     description:
       "A stand-up show for new parents where you bring the baby. Babies come free. It works best for pre-walkers, so roughly 15 months and under.",
-    price: "$25",
+    price: "$20",
     length: "About 75 minutes",
     notes: ["Part of the New York Comedy Festival.", "No drink minimum."],
   },
