@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import type { Metadata } from "next"
-import { tourDates, type Show } from "@/lib/tour"
+import { tourDates } from "@/lib/tour"
 import VenueShowList from "./VenueShowList"
 import {
   SITE_URL,
@@ -12,6 +12,12 @@ import {
   venueName,
   venuePlace,
 } from "./showDetails"
+import {
+  getTodayYMD,
+  getUpcoming,
+  getUpcomingShows,
+  sellsOnlyOnEventbrite,
+} from "./venueShows"
 
 export const revalidate = 3600
 
@@ -55,54 +61,9 @@ const DEFAULT_OG_IMAGE = {
   height: 1800,
 }
 
-function getTodayYMD(): string {
-  return new Date().toLocaleDateString("en-CA", { timeZone: "America/Toronto" })
-}
-
-// A venue gets no page when EVERY one of its upcoming shows sells on
-// Eventbrite. Those tickets sell on Andrew's own Eventbrite, which carries his
-// Meta pixel, and both the homepage Get Tickets buttons and his ads go
-// straight to Eventbrite, so a page in between adds nothing. It is a rule, not
-// a list, so a new Eventbrite date added by the nightly scraper never gets a
-// page either. A venue with mixed ticket sites (some Eventbrite, some not)
-// keeps its page.
-// A skipped venue is treated exactly like a venue with no upcoming shows: no
-// metadata, not prebuilt, and a visit redirects to /#tour. The homepage tour
-// list still shows its dates.
-const EVENTBRITE_DOMAINS = ["eventbrite.com", "eventbrite.ca"]
-
-// True for eventbrite.com, eventbrite.ca and any subdomain of them
-// (www.eventbrite.ca, andrewscituate.eventbrite.com). Matches the hostname
-// suffix, not a substring. An unparsable URL counts as not Eventbrite.
-function isEventbriteUrl(ticketUrl: string): boolean {
-  try {
-    const host = new URL(ticketUrl).hostname.toLowerCase()
-    return EVENTBRITE_DOMAINS.some((d) => host === d || host.endsWith("." + d))
-  } catch {
-    return false
-  }
-}
-
-function sellsOnlyOnEventbrite(shows: Show[]): boolean {
-  return shows.length > 0 && shows.every((s) => isEventbriteUrl(s.ticketUrl))
-}
-
-function getUpcomingShows(slug: string): Show[] {
-  const today = getTodayYMD()
-  return tourDates
-    .filter((s) => s.slug === slug && s.date >= today)
-    .sort(
-      (a, b) =>
-        a.date.localeCompare(b.date) ||
-        (a.time ?? "").localeCompare(b.time ?? "")
-    )
-}
-
-// Upcoming shows for a venue that gets a page; empty means redirect.
-function getUpcoming(slug: string): Show[] {
-  const upcoming = getUpcomingShows(slug)
-  return sellsOnlyOnEventbrite(upcoming) ? [] : upcoming
-}
+// Which upcoming shows a venue page lists, and the rule that a venue selling
+// only on Eventbrite gets no page, live in ./venueShows (shared with the
+// Laugh It Off landing page).
 
 export function generateStaticParams() {
   return [...new Set(tourDates.map((s) => s.slug))]

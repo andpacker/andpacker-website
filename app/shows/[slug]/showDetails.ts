@@ -99,6 +99,45 @@ const SHOW_FACTS: Record<string, ShowFacts> = {
   },
 }
 
+export type LandingCopy = {
+  /** Small line above the title, e.g. the festival the show is part of. */
+  eyebrow?: string
+  /** Line under the title. Keep it matching the ads that point here. */
+  tagline: string
+  /** The pitch under the date, a few short sentences in Andrew's voice. */
+  description: string
+  /** Start of the meta / og / twitter description; the date and venue follow it. */
+  metaPitch: string
+  /** Link-preview image (og:image / twitter:image), metadata only. */
+  ogImage: { src: string; alt: string; width: number; height: number }
+}
+
+/**
+ * Laugh It Off ad landing pages, /shows/<slug>/laugh-it-off, keyed by slug.
+ * A slug gets the page only when it is listed here AND has an upcoming Laugh
+ * It Off show, so every landing page is one somebody wrote and checked. Kept
+ * apart from SHOW_FACTS on purpose: editing this never changes the venue page.
+ */
+export const LIO_LANDING: Record<string, LandingCopy> = {
+  // US-SAFETY (visa): a US page. The therapist is only ever "a licensed
+  // therapist of 35 years": no name, no family relationship, and only the
+  // faces-free artwork, never laugh-it-off-banner.jpg.
+  "top-secret-comedy-club-new-york": {
+    eyebrow: "New York Comedy Festival",
+    tagline: "Comedy Therapy with a Real Therapist",
+    description:
+      "Bring a problem, or just come to laugh. Comedians take on the audience's real-life problems. A licensed therapist of 35 years helps everyone make sense of them. Part stand-up, part therapy.",
+    metaPitch:
+      "Laugh It Off: comedy therapy with a real therapist, part of the New York Comedy Festival. Comedians take on the audience's real-life problems, and a licensed therapist of 35 years helps everyone make sense of them.",
+    ogImage: {
+      src: "/laugh-it-off-banner-nofaces.jpg",
+      alt: "Laugh It Off, Andrew Packer's group therapy comedy show with a licensed therapist of 35 years, November 8 at Top Secret Comedy Club in New York",
+      width: 1920,
+      height: 1080,
+    },
+  },
+}
+
 export type ShowGroup = {
   key: string
   name: string
@@ -168,8 +207,17 @@ export function dateSummary(shows: Show[], thisYear: string) {
   return sameYear && needYear ? `${joined}, ${dates[0].slice(0, 4)}` : joined
 }
 
+/** "Nov 8". The year is added only when it is not this year. */
+export function monthDay(ymd: string, thisYear: string) {
+  return fmt(ymd, {
+    month: "short",
+    day: "numeric",
+    ...(ymd.slice(0, 4) !== thisYear ? { year: "numeric" as const } : {}),
+  })
+}
+
 /** "Sun Nov 8 at 2 PM" */
-function shortWhen(show: Show) {
+export function shortWhen(show: Show) {
   const date = `${fmt(show.date, { weekday: "short" })} ${fmt(show.date, {
     month: "short",
     day: "numeric",
