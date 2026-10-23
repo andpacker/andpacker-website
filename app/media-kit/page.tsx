@@ -8,9 +8,9 @@ import Link from "next/link";
 
 const CONTACT_EMAIL = "info@andpacker.com";
 const MAILTO_GENERAL =
-  "mailto:info@andpacker.com?subject=Partnership%20Inquiry%20%E2%80%94%20Andrew%20Packer";
-const MAILTO_PRENATAL =
-  "mailto:info@andpacker.com?subject=Prenatal%20Integration%20Inquiry";
+  "mailto:info@andpacker.com?subject=Partnership%20Inquiry%3A%20Andrew%20Packer";
+const MAILTO_BIRTH_PLAN =
+  "mailto:info@andpacker.com?subject=Birth%20Plan%20Integration%20Inquiry";
 const MAILTO_SHORTFORM =
   "mailto:info@andpacker.com?subject=Short-Form%20Campaign%20Inquiry";
 const MAILTO_PODCAST =
@@ -136,12 +136,13 @@ function InPageNav() {
   return (
     <div className="sticky top-14 z-40 bg-white border-b border-gray-200">
       <div className="max-w-5xl mx-auto px-6">
-        <div className="flex items-center justify-center gap-6 md:gap-10 py-3 overflow-x-auto">
+        <div className="flex items-center justify-start md:justify-center gap-6 md:gap-10 py-3 overflow-x-auto">
           {[
+            { label: "NEW DAD", href: "#new-dad" },
             { label: "AUDIENCE", href: "#audience" },
             { label: "STATS", href: "#stats" },
             { label: "BRAND WORK", href: "#brand-work" },
-            { label: "PRENATAL", href: "#prenatal" },
+            { label: "BIRTH PLAN", href: "#birth-plan" },
             { label: "PACKAGES", href: "#packages" },
             { label: "CONTACT", href: "#contact" },
           ].map((item) => (
@@ -209,8 +210,8 @@ const PRESS_LOGOS = [
 
 const PLATFORM_STATS = [
   { platform: "YouTube", count: "1.2M", label: "SUBSCRIBERS" },
-  { platform: "Instagram", count: "617K", label: "FOLLOWERS" },
-  { platform: "Facebook", count: "180K", label: "FOLLOWERS" },
+  { platform: "Instagram", count: "612K", label: "FOLLOWERS" },
+  { platform: "Facebook", count: "193K", label: "FOLLOWERS" },
   { platform: "TikTok", count: "2.9M", label: "FOLLOWERS" },
   { platform: "Combined", count: "5M+", label: "TOTAL REACH" },
   { platform: "Live Tour", count: "26+", label: "DATES / YEAR" },
@@ -225,7 +226,7 @@ const BRAND_GRID = [
   },
   {
     name: "OPTIMUM",
-    format: "MAN NEWS — SECOND CAMPAIGN",
+    format: "MAN NEWS, SECOND CAMPAIGN",
     url: "https://www.tiktok.com/@andpacker/video/7640243712605392149",
     note: null,
   },
@@ -301,14 +302,114 @@ const FORMAT_CARDS = [
   {
     format: "HERO CONTENT",
     pitch: "Brand integrated into long-form production. Perpetual organic reach.",
-    bestFor: "Premium brands · Prenatal campaign · parenting category",
+    bestFor: "Premium brands · Birth Plan special · parenting category",
     primaryUrl: "https://www.youtube.com/watch?v=wBo6-8DoiRU",
     thumbs: [
       { name: "ON GUARD", url: "https://www.youtube.com/watch?v=wBo6-8DoiRU", type: "youtube", youtubeId: "wBo6-8DoiRU" },
-      { name: "PRENATAL", url: "#prenatal", type: "prenatal", youtubeId: undefined },
+      { name: "BIRTH PLAN", url: "#birth-plan", type: "birthplan", youtubeId: undefined },
     ],
   },
 ];
+
+// Images are the reels' own Instagram covers (9:16), cropped to 4:5 by CSS.
+// imagePos keeps the face and the on-screen caption inside the crop.
+type ReelItem = {
+  title: string;
+  detail: string;
+  beat?: string;
+  note?: string;
+  url: string;
+  image: string;
+  imagePos: string;
+  likes?: number;
+};
+
+// In story order: clearing the office, building the nursery, the first trip.
+const NEW_DAD_DEALS: ReelItem[] = [
+  {
+    title: "PITH & STEM",
+    detail: "DropTop Smartdesk · Collab Reel",
+    beat: "Making room for the nursery",
+    url: "https://www.instagram.com/p/Dc1gw1-tv5a/",
+    image: "/images/brand/pith-stem-droptop.jpg",
+    imagePos: "center 40%",
+  },
+  {
+    title: "WEST COAST KIDS × BABYLETTO",
+    detail: "Pogo Crib + Kiwi Plus Glider · Collab Reel + 5 Stories",
+    beat: "The nursery build",
+    url: "https://www.instagram.com/reel/DbYZ67RxZpF/",
+    image: "/images/brand/wck-babyletto-nursery.jpg",
+    imagePos: "center 20%",
+  },
+  {
+    title: "WEST COAST KIDS × JOOLZ",
+    detail: "Aer 2 Stroller · Collab Reel",
+    beat: "First trip with an 8-week-old",
+    note: "Repeat partner, second collab",
+    url: "https://www.instagram.com/reel/Dec2isON1D4/",
+    image: "/images/brand/wck-joolz-aer2.jpg",
+    imagePos: "center 35%",
+  },
+];
+
+// Organic, unsponsored. Likes as of Oct 23 2026; refresh when the kit is updated.
+const DAD_VIRAL: ReelItem[] = [
+  {
+    title: "Asked the audience to warn me about childbirth",
+    detail: "Stand-up crowd work",
+    url: "https://www.instagram.com/reel/DZN8LpONfbh/",
+    image: "/images/dad/childbirth-crowdwork.jpg",
+    imagePos: "center 10%",
+    likes: 40148,
+  },
+  {
+    title: "Maybe I'm just too tired",
+    detail: "Newborn sketch with @sambirduel",
+    url: "https://www.instagram.com/p/Ddma8AIR-vW/",
+    image: "/images/dad/too-tired-sketch.jpg",
+    imagePos: "center 5%",
+    likes: 21096,
+  },
+  {
+    title: "Stroller skills, locked in before the baby arrives",
+    detail: "Expecting-dad skit",
+    url: "https://www.instagram.com/reel/DZf5AA8N5Sg/",
+    image: "/images/dad/stroller-skills.jpg",
+    imagePos: "center 50%",
+    likes: 11035,
+  },
+  {
+    title: "Dad Training 101",
+    detail: "Expecting-dad skit",
+    url: "https://www.instagram.com/p/DZyBq6NtATL/",
+    image: "/images/dad/dad-training-101.jpg",
+    imagePos: "center 50%",
+    likes: 4728,
+  },
+  {
+    title: "An empathy exercise for expecting dads",
+    detail: "Vlog · an 18 lb watermelon",
+    url: "https://www.instagram.com/p/DbRvBPht7fH/",
+    image: "/images/dad/empathy-watermelon.jpg",
+    imagePos: "center 5%",
+    likes: 2163,
+  },
+  {
+    title: "How was he while I was out?",
+    detail: "New-parent sketch",
+    url: "https://www.instagram.com/p/DdcOKyuNZij/",
+    image: "/images/dad/handoff-report.jpg",
+    imagePos: "center 30%",
+    likes: 1027,
+  },
+];
+
+function formatLikes(n: number) {
+  if (n >= 10000) return `${Math.round(n / 1000)}K`;
+  if (n >= 1000) return `${(n / 1000).toFixed(1).replace(/\.0$/, "")}K`;
+  return String(n);
+}
 
 const HOW_I_WORK = [
   { label: "Turnaround", value: "2–3 weeks from brief to publish. Rush turnaround available." },
@@ -343,6 +444,76 @@ function BrandCard({ item }: { item: typeof BRAND_GRID[number] }) {
         {item.note && (
           <p className="text-xs text-[#0D41CB] mt-0.5">{item.note} &rarr;</p>
         )}
+      </div>
+    </a>
+  );
+}
+
+// ─── New dad cards ────────────────────────────────────────────────────────────
+
+// Brand deal: a row (thumb + text) on phones, a stacked card from sm up.
+function DealCard({ item }: { item: ReelItem }) {
+  return (
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex sm:block gap-4 items-start"
+    >
+      <div className="relative w-28 sm:w-full shrink-0 aspect-[4/5] bg-gray-900 rounded-sm overflow-hidden">
+        <Image
+          src={item.image}
+          alt={`${item.title} reel`}
+          fill
+          sizes="(max-width: 639px) 112px, 33vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          style={{ objectPosition: item.imagePos }}
+        />
+      </div>
+      <div className="min-w-0 sm:mt-3">
+        <p className="text-xs font-bold tracking-widest text-[#111111] uppercase">{item.title}</p>
+        <p className="text-xs italic text-gray-500 mt-0.5">{item.detail}</p>
+        {item.beat && (
+          <p className="font-[family-name:var(--font-display)] font-black text-lg uppercase leading-tight text-[#111111] mt-2">
+            {item.beat}
+          </p>
+        )}
+        {item.note && <p className="text-xs text-[#0D41CB] mt-1">{item.note}</p>}
+        <p className="text-xs text-[#0D41CB] mt-2 group-hover:underline underline-offset-2">
+          Watch on Instagram &rarr;
+        </p>
+      </div>
+    </a>
+  );
+}
+
+// Organic clip: like count under the thumbnail (the covers carry burned-in captions).
+function ClipCard({ item }: { item: ReelItem }) {
+  return (
+    <a href={item.url} target="_blank" rel="noopener noreferrer" className="group block">
+      <div className="relative aspect-[4/5] bg-gray-900 rounded-sm overflow-hidden">
+        <Image
+          src={item.image}
+          alt={item.title}
+          fill
+          sizes="(max-width: 767px) 50vw, 33vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          style={{ objectPosition: item.imagePos }}
+        />
+      </div>
+      {item.likes !== undefined && (
+        <p className="mt-3 leading-none">
+          <span className="font-[family-name:var(--font-display)] font-black text-3xl text-[#0D41CB]">
+            {formatLikes(item.likes)}
+          </span>
+          <span className="text-[10px] tracking-widest uppercase text-gray-400 ml-1.5">likes</span>
+        </p>
+      )}
+      <div className="mt-2">
+        <p className="text-sm font-semibold text-[#111111] leading-snug group-hover:text-[#0D41CB] transition-colors">
+          {item.title}
+        </p>
+        <p className="text-xs italic text-gray-500 mt-0.5">{item.detail}</p>
       </div>
     </a>
   );
@@ -410,10 +581,10 @@ function FormatCard({ card }: { card: typeof FORMAT_CARDS[number] }) {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             )}
-            {thumb.type === "prenatal" && (
+            {thumb.type === "birthplan" && (
               <Image
                 src="/images/prenatal-thumb.png"
-                alt="Prenatal"
+                alt="Birth Plan"
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
                 style={{ objectPosition: "center 15%" }}
@@ -492,10 +663,10 @@ export default function MediaKitPage() {
               ].map((stat, i) => (
                 <div key={stat.label} className="flex items-stretch">
                   {i > 0 && (
-                    <div className="w-px bg-white/30 mx-6 self-stretch" />
+                    <div className="w-px bg-white/30 mx-4 sm:mx-6 self-stretch" />
                   )}
                   <div className="text-center">
-                    <div className="font-[family-name:var(--font-display)] font-black text-5xl text-white leading-none">
+                    <div className="font-[family-name:var(--font-display)] font-black text-4xl sm:text-5xl text-white leading-none whitespace-nowrap">
                       {stat.num}
                     </div>
                     <div className="text-xs tracking-widest uppercase text-white/70 mt-1.5 font-[family-name:var(--font-display)]">
@@ -520,7 +691,7 @@ export default function MediaKitPage() {
 
           {/* Badge */}
           <p className="font-[family-name:var(--font-display)] font-black text-sm uppercase text-white/80 tracking-tight mt-4">
-            First Baby Due August 2026
+            First-Time Dad Since July 2026
           </p>
 
           {/* CTA */}
@@ -558,8 +729,39 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 3. AUDIENCE + STATS (full-bleed dark) ────────────────────────── */}
-      <section id="audience" className="relative py-20 px-6 overflow-hidden">
+      {/* ── 3. THE NEW DAD SERIES (white) ─────────────────────────────────── */}
+      <section id="new-dad" className="scroll-mt-24 py-20 px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center">
+            <SectionHeader title="The New Dad Series" subtitle="Baby &amp; Parenting Partners" />
+          </div>
+          <p className="italic text-sm text-gray-500 -mt-4 mb-10 text-center">
+            Real gear in a real first year, from the nursery build to the first trip.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+            {NEW_DAD_DEALS.map((item) => (
+              <DealCard key={item.url} item={item} />
+            ))}
+          </div>
+
+          <div className="text-center mt-20">
+            <SectionHeader title="Dad Content That Travels" subtitle="Organic Reach on Instagram" />
+          </div>
+          <p className="italic text-sm text-gray-500 -mt-4 mb-10 text-center">
+            Not sponsored. Just the audience showing up for dad content.
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            {DAD_VIRAL.map((item) => (
+              <ClipCard key={item.url} item={item} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 4. AUDIENCE + STATS (full-bleed dark) ────────────────────────── */}
+      <section id="audience" className="scroll-mt-24 relative py-20 px-6 overflow-hidden">
         {/* Background: hero.jpg with dark overlay */}
         <div
           className="mk-stats-bg absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -644,12 +846,12 @@ export default function MediaKitPage() {
 
           {/* Positioning line */}
           <p className="mt-10 text-center text-sm italic text-white/60 max-w-2xl mx-auto leading-relaxed">
-            &ldquo;Baby marketing is saturated with mom-focused creators. Dads co-research and co-decide on big-ticket gear — and almost nobody is marketing to them. This is that audience, at scale.&rdquo;
+            &ldquo;Baby marketing is saturated with mom-focused creators. Dads co-research and co-decide on big-ticket gear, and almost nobody is marketing to them. This is that audience, at scale.&rdquo;
           </p>
         </div>
       </section>
 
-      {/* ── 4. WHY DADS, WHY NOW (white) ──────────────────────────────────── */}
+      {/* ── 5. WHY DADS, WHY NOW (white) ──────────────────────────────────── */}
       <section id="opportunity" className="py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <SectionHeader title="Why Dads, Why Now" subtitle="The Marketing Opportunity" />
@@ -657,14 +859,14 @@ export default function MediaKitPage() {
             Dads co-decide on cars, electronics, baby gear, home furnishings, food delivery,
             insurance, finance, and alcohol. They&apos;re systematically under-targeted because
             most lifestyle creators at scale skew female. The few reaching men at scale are
-            sports, finance, and news — not lifestyle and family. Andrew is the gap. And with
-            his first baby due August 2026, he&apos;s building into this content arc at exactly
+            sports, finance, and news, not lifestyle and family. Andrew is the gap. And since
+            his son arrived in July 2026, he&apos;s living this content arc in real time, at exactly
             the moment his audience hits peak buying age for everything in the parenting category.
           </p>
         </div>
       </section>
 
-      {/* ── 5. ENGAGEMENT PROOF (warm cream) ─────────────────────────────── */}
+      {/* ── 6. ENGAGEMENT PROOF (warm cream) ─────────────────────────────── */}
       <section className="py-20 px-6" style={{ backgroundColor: "#F5F0EB" }}>
         <div className="max-w-5xl mx-auto">
           <SectionHeader title="Engagement" subtitle="What the Audience Actually Does" />
@@ -712,12 +914,12 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 6. BRAND SAFETY (white) ───────────────────────────────────────── */}
+      {/* ── 7. BRAND SAFETY (white) ───────────────────────────────────────── */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-2xl mx-auto text-center flex flex-col gap-4">
           <p className="text-sm italic text-gray-600 leading-relaxed">
             &ldquo;Every partner listed below ran their integration through their own legal and brand
-            safety review — Nissan, Paramount+, and Optimum included.&rdquo;
+            safety review, including Nissan, Paramount+, and Optimum.&rdquo;
           </p>
           <p className="text-sm italic text-gray-600 leading-relaxed">
             &ldquo;Andrew&apos;s branded content is observational and family-safe. No politics. No
@@ -727,10 +929,10 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 7. BRAND WORK (white) ─────────────────────────────────────────── */}
-      <section id="brand-work" className="py-20 px-6 bg-white">
+      {/* ── 8. BRAND WORK (white) ─────────────────────────────────────────── */}
+      <section id="brand-work" className="scroll-mt-24 py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <SectionHeader title="Brand Work" subtitle="A Portfolio of Sponsored Content" />
+          <SectionHeader title="More Brand Work" subtitle="A Portfolio of Sponsored Content" />
 
           {/* 4-across desktop, 2-across mobile */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -741,24 +943,24 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 8. PRENATAL (full-bleed brand blue) ───────────────────────────── */}
+      {/* ── 9. BIRTH PLAN (full-bleed brand blue) ─────────────────────────── */}
       <section
-        id="prenatal"
-        className="py-20 px-6"
+        id="birth-plan"
+        className="scroll-mt-24 py-20 px-6"
         style={{ backgroundColor: "#0D41CB" }}
       >
         <div className="max-w-5xl mx-auto">
           <div className="text-center">
             <SectionHeader
-              title="Prenatal"
-              subtitle="A Comedy Special About What to Expect When You're Expecting"
+              title="Birth Plan"
+              subtitle="A Comedy Special About Becoming a Dad"
               light
             />
           </div>
 
           <div className="max-w-2xl mx-auto text-center">
             <p className="text-white text-base leading-relaxed mb-8">
-              Andrew&apos;s third comedy special launches in 2026, built entirely around the
+              Andrew&apos;s upcoming comedy special lands in 2027, built entirely around the
               experience of becoming a dad for the first time. This is a rare opportunity to
               integrate a brand into original long-form comedy content at the exact life moment
               the audience is actively living through.
@@ -770,20 +972,20 @@ export default function MediaKitPage() {
               Why specials outperform posts
             </p>
             <p className="text-white/90 text-base leading-relaxed mb-6">
-              Comedy specials accumulate views indefinitely. Andrew&apos;s previous special
+              Comedy specials accumulate views indefinitely. Andrew&apos;s 2023 special
               &ldquo;On Guard&rdquo; has 190,000 YouTube views and 10M+ combined clip views
-              across platforms — with no paid promotion. A brand integration inside
-              &ldquo;Prenatal&rdquo; reaches millions of dads in a format they&apos;ll return
+              across platforms, with no paid promotion. A brand integration inside
+              &ldquo;Birth Plan&rdquo; reaches millions of dads in a format they&apos;ll return
               to and share, not scroll past.
             </p>
 
             <p className="text-white/70 text-sm italic mb-8">
-              Brand integrations are woven into the narrative — not ad breaks. Limited
+              Brand integrations are woven into the narrative, not ad breaks. Limited
               availability.
             </p>
 
             <a
-              href={MAILTO_PRENATAL}
+              href={MAILTO_BIRTH_PLAN}
               className="inline-block border border-white text-white text-sm tracking-widest uppercase px-8 py-3.5 hover:bg-white hover:text-[#0D41CB] transition-colors font-medium"
             >
               Discuss Integration &rarr;
@@ -792,7 +994,7 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 9. CONTENT (warm cream) ──────────────────────────────────────── */}
+      {/* ── 10. CONTENT (warm cream) ──────────────────────────────────────── */}
       <section className="py-20 px-6" style={{ backgroundColor: "#F5F0EB" }}>
         <div className="max-w-5xl mx-auto">
 
@@ -809,12 +1011,12 @@ export default function MediaKitPage() {
           <SectionHeader title="Featured Projects" subtitle="Production &amp; Press" />
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {/* 1. Prenatal */}
-            <a href="#prenatal" className="group block">
+            {/* 1. Birth Plan */}
+            <a href="#birth-plan" className="group block">
               <div className="aspect-video bg-gray-200 rounded-sm overflow-hidden">
                 <Image
                   src="/images/prenatal-thumb.png"
-                  alt="Prenatal"
+                  alt="Birth Plan"
                   width={300}
                   height={168}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -823,9 +1025,9 @@ export default function MediaKitPage() {
               </div>
               <div className="mt-2 p-1">
                 <p className="font-[family-name:var(--font-display)] font-black text-sm uppercase text-[#111111] leading-tight">
-                  Prenatal
+                  Birth Plan
                 </p>
-                <p className="text-xs italic text-gray-500 mt-0.5">2026 · In production · Brand integration available</p>
+                <p className="text-xs italic text-gray-500 mt-0.5">2027 · Brand integration available</p>
               </div>
             </a>
 
@@ -849,7 +1051,7 @@ export default function MediaKitPage() {
                 <p className="font-[family-name:var(--font-display)] font-black text-sm uppercase text-[#111111] leading-tight">
                   Never Call Her Crazy
                 </p>
-                <p className="text-xs italic text-gray-500 mt-0.5">2026 · Dry Bar Comedy</p>
+                <p className="text-xs italic text-gray-500 mt-0.5">2026 · Dry Bar Comedy · 111K YouTube views</p>
               </div>
             </a>
 
@@ -923,8 +1125,8 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 10. PACKAGES (white) ──────────────────────────────────────────── */}
-      <section id="packages" className="py-20 px-6 bg-white">
+      {/* ── 11. PACKAGES (white) ──────────────────────────────────────────── */}
+      <section id="packages" className="scroll-mt-24 py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <SectionHeader title="Packages" subtitle="Three Ways to Work Together" />
 
@@ -944,17 +1146,17 @@ export default function MediaKitPage() {
             />
             <PackageCard
               title="Comedy Special Integration"
-              category="Prenatal — 2026 · Perpetual Reach"
+              category="Birth Plan, 2027 · Perpetual Reach"
               items={[
-                "Brand woven into \"Prenatal\" narrative",
-                "Not an ad break — part of the show",
+                "Brand woven into the \"Birth Plan\" narrative",
+                "Not an ad break, part of the show",
                 "Perpetual organic reach",
                 "On Guard precedent: 190K YouTube + 10M+ clips",
                 "Full creative collaboration",
                 "Script & final cut review included",
-                "Limited slots for 2026",
+                "Limited slots for 2027",
               ]}
-              mailto={MAILTO_PRENATAL}
+              mailto={MAILTO_BIRTH_PLAN}
             />
             <PackageCard
               title="Podcast Sponsorship"
@@ -976,7 +1178,7 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 11. HOW I WORK (warm cream) ───────────────────────────────────── */}
+      {/* ── 12. HOW I WORK (warm cream) ───────────────────────────────────── */}
       <section className="py-20 px-6" style={{ backgroundColor: "#F5F0EB" }}>
         <div className="max-w-5xl mx-auto">
           <SectionHeader title="How I Work" subtitle="Process &amp; Terms" />
@@ -997,8 +1199,8 @@ export default function MediaKitPage() {
         </div>
       </section>
 
-      {/* ── 12. CONTACT (white) ───────────────────────────────────────────── */}
-      <section id="contact" className="py-20 px-6 bg-white">
+      {/* ── 13. CONTACT (white) ───────────────────────────────────────────── */}
+      <section id="contact" className="scroll-mt-24 py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <SectionHeader title="Contact" subtitle="" />
 
