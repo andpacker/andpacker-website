@@ -10,7 +10,9 @@ permissions:
 
 jobs:
   scrape:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moves to Ubuntu 26 from 2026-10-19, and an image swap
+    # can break the Playwright install with no change on our side.
+    runs-on: ubuntu-24.04
     # Cap a genuinely hung run (e.g. punchup.live stops responding) so it fails
     # fast with one clear error instead of stalling ~15 min before GitHub kills it.
     # (Does not affect a queued/unacquired-runner cancel — that's a GitHub-side wait.)
@@ -29,7 +31,10 @@ jobs:
 
       - name: Install Playwright + Chromium
         timeout-minutes: 5
-        run: npm install playwright && npx playwright install --with-deps chromium
+        # No --with-deps: it runs apt against Ubuntu's mirror, which timed this step
+        # out on 2026-10-07 and twice on 2026-10-23. The runner image already has
+        # Chromium's system libraries; --with-deps only added fonts we don't need.
+        run: npm install playwright && npx playwright install chromium
 
       - name: Run tour date scraper
         timeout-minutes: 3
