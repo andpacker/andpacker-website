@@ -34,7 +34,10 @@ jobs:
         # No --with-deps: it runs apt against Ubuntu's mirror, which timed this step
         # out on 2026-10-07 and twice on 2026-10-23. The runner image already has
         # Chromium's system libraries; --with-deps only added fonts we don't need.
-        run: npm install playwright && npx playwright install chromium
+        # Playwright is pinned (it is not in package.json) so a new Chromium never
+        # arrives unannounced: without --with-deps, a version needing a system lib
+        # the image lacks would fail every attempt. Bump by hand, test via dispatch.
+        run: npm install playwright@1.64.1 && npx playwright install chromium
 
       - name: Run tour date scraper
         timeout-minutes: 3
