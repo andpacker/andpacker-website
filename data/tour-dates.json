@@ -1,15 +1,5 @@
 [
   {
-    "slug": "reids-distillery",
-    "date": "2026-10-25",
-    "city": "Toronto, ON",
-    "venue": "Reid's Distillery",
-    "ticketUrl": "https://www.eventbrite.ca/e/day-care-comedy-bring-baby-to-a-stand-up-show-for-grown-ups-tickets-2002328252705",
-    "status": "sold_out",
-    "time": "1 PM",
-    "showType": "day_care_comedy"
-  },
-  {
     "slug": "yuk-yuks-comedy-club-calgary",
     "date": "2026-11-06",
     "city": "Calgary, AB",
