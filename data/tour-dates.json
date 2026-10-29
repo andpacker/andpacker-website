@@ -121,6 +121,16 @@
     "showType": "laugh_it_off"
   },
   {
+    "slug": "society-clubhouse",
+    "date": "2026-12-06",
+    "city": "Toronto, ON",
+    "venue": "Society Clubhouse",
+    "ticketUrl": "https://www.eventbrite.ca/e/day-care-comedy-bring-baby-to-a-stand-up-show-for-grown-ups-to-west-tickets-2003941193053",
+    "status": "on_sale",
+    "time": "1 PM",
+    "showType": "day_care_comedy"
+  },
+  {
     "slug": "comedy-bar-toronto",
     "date": "2026-12-20",
     "city": "Toronto, ON",
