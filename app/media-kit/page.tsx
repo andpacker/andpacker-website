@@ -1102,24 +1102,26 @@ export default function MediaKitPage() {
               </div>
             </a>
 
-            {/* 5. Sauna Comedy */}
-            <a
-              href="https://nypost.com/2025/11/12/health/inside-a-comedy-show-in-a-sauna-and-why-its-great-for-health/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group block"
-            >
+            {/* 5. Day Care Comedy (no link: no press piece, and show links go stale) */}
+            <div className="block">
               <div className="aspect-video bg-gray-200 rounded-sm overflow-hidden">
-                <SaunaPlaceholder />
+                <Image
+                  src="/images/day-care-comedy-oct25-room.jpg"
+                  alt="Andrew Packer on stage at Day Care Comedy, parents with babies in the audience"
+                  width={1200}
+                  height={800}
+                  sizes="(min-width: 1024px) 190px, (min-width: 768px) 33vw, 50vw"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="mt-2 p-1">
                 <p className="font-[family-name:var(--font-display)] font-black text-sm uppercase text-[#111111] leading-tight">
-                  Sauna Comedy
+                  Day Care Comedy
                 </p>
                 <p className="text-xs italic text-gray-500 mt-0.5">Original live format · Creator &amp; host</p>
-                <p className="text-[10px] text-gray-400 mt-0.5">Photo: McKenzie Beard / N.Y. Post</p>
+                <p className="text-[10px] text-gray-400 mt-0.5">Comedy for new parents · Toronto debut sold out</p>
               </div>
-            </a>
+            </div>
           </div>
 
         </div>
@@ -1331,31 +1333,5 @@ export default function MediaKitPage() {
         </div>
       </footer>
     </div>
-  );
-}
-
-// ─── Sauna Comedy image with onError fallback ─────────────────────────────────
-
-function SaunaPlaceholder() {
-  const [errored, setErrored] = useState(false);
-
-  if (errored) {
-    return (
-      <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-        <span className="font-[family-name:var(--font-display)] font-black text-white text-center px-4 text-sm uppercase tracking-widest leading-tight">
-          Sauna Comedy
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src="/images/sauna-comedy.jpg"
-      alt="Sauna Comedy"
-      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-      onError={() => setErrored(true)}
-    />
   );
 }
