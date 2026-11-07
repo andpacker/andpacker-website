@@ -1,43 +1,5 @@
 [
   {
-    "slug": "yuk-yuks-comedy-club-calgary",
-    "date": "2026-11-06",
-    "city": "Calgary, AB",
-    "venue": "Yuk Yuk's Comedy Club - Calgary",
-    "ticketUrl": "https://www.yukyuks.com/calgary/show/andrew-packer-live-in-calgary-44017",
-    "status": "on_sale",
-    "time": "9:30 PM"
-  },
-  {
-    "slug": "kings-head-pub",
-    "date": "2026-11-07",
-    "city": "Winnipeg, MB",
-    "venue": "King's Head Pub",
-    "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-winnipeg-kings-head-pub-tickets-1987789006428?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale",
-    "time": "7:30 PM"
-  },
-  {
-    "slug": "top-secret-comedy-club-new-york",
-    "date": "2026-11-08",
-    "city": "New York, NY",
-    "venue": "Top Secret Comedy Club - New York",
-    "ticketUrl": "https://topsecretcomedyclub.com/events-listings/day-care-comedy-with-andrew-packer/",
-    "status": "on_sale",
-    "time": "2 PM",
-    "showType": "day_care_comedy"
-  },
-  {
-    "slug": "top-secret-comedy-club-new-york",
-    "date": "2026-11-08",
-    "city": "New York, NY",
-    "venue": "Top Secret Comedy Club - New York",
-    "ticketUrl": "https://topsecretcomedyclub.com/comedians/laugh-it-off-with-andrew-packer-new-york-comedy-festival-2026/",
-    "status": "on_sale",
-    "time": "6:30 PM",
-    "showType": "laugh_it_off"
-  },
-  {
     "slug": "the-bus-stop-theatre",
     "date": "2026-11-13",
     "city": "Halifax, NS",
