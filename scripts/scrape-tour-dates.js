@@ -6,15 +6,58 @@
  * Flags:
  *   --check-today   Only run full scrape if a show is today (used by hourly cron).
  *                   Exits with code 0 immediately if no show is today.
+ *
+ * Environment:
+ *   TOUR_DATES_OUTPUT       Write the result here instead of data/tour-dates.json
+ *                           (a local dry run; the previous list is still read
+ *                           from data/tour-dates.json).
+ *   TOUR_ALLOW_LARGE_DROP=1 Accept a list that shrank by more than half (a real
+ *                           mass cancellation). Workflow input: allow_large_drop.
+ *   SCRAPE_FAILURE_FILE     On failure, the reason is written here (the workflow
+ *                           posts it to Discord).
+ *
+ * SAFETY: the scrape exits non-zero WITHOUT writing tour-dates.json when any show
+ * on punchup fails to parse, when "See All" does not expand, or when the list comes
+ * back empty or under half its previous size. The last good list stays live and
+ * the GitHub Action goes red. A show that is gone from punchup (a cancellation)
+ * still drops normally. Parsing + guards live in ./punchup-parse.js.
  */
 
 const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
+const {
+  extractEvents,
+  parsePunchupDate,
+  findParseFailures,
+  checkListSize,
+} = require("./punchup-parse");
 
 const PUNCHUP_URL = "https://punchup.live/AndrewPacker";
-const OUTPUT_PATH = path.join(__dirname, "..", "data", "tour-dates.json");
+// punchup's own event links (relative or absolute), never Eventbrite's /e/ URLs.
+const PUNCHUP_EVENT_LINK = 'a[href^="/e/"], a[href*="//punchup.live/e/"]';
+const DATA_PATH = path.join(__dirname, "..", "data", "tour-dates.json");
+const OUTPUT_PATH = process.env.TOUR_DATES_OUTPUT || DATA_PATH;
 const CHECK_TODAY = process.argv.includes("--check-today");
+const ALLOW_LARGE_DROP = process.env.TOUR_ALLOW_LARGE_DROP === "1";
+
+// Logs a failure, hands the reason to the workflow (Discord alert + run summary),
+// and leaves tour-dates.json untouched. The caller exits non-zero.
+function reportFailure(lines) {
+  const text = [
+    "Tour-date scrape FAILED. tour-dates.json was NOT written; the last good list stays live.",
+    ...lines,
+  ].join("\n");
+  console.error(text);
+  try {
+    if (process.env.SCRAPE_FAILURE_FILE) fs.writeFileSync(process.env.SCRAPE_FAILURE_FILE, text + "\n");
+    if (process.env.GITHUB_STEP_SUMMARY) {
+      fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, "### Tour-date scrape failed\n```\n" + text + "\n```\n");
+    }
+  } catch (err) {
+    console.error("Could not write the failure report:", err.message);
+  }
+}
 
 // Ticket-URL overrides, keyed by `${date}|${slug}`.
 //
@@ -64,30 +107,6 @@ function todayUTC() {
 
 function showIsToday(dateStr) {
   return dateStr === todayUTC();
-}
-
-// Parse "May 15" or "May 15, 2026" style date strings into YYYY-MM-DD.
-// Falls back to current year if year is omitted.
-function parsePunchupDate(raw) {
-  if (!raw) return "";
-  const cleaned = raw.trim();
-  // Already ISO
-  if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) return cleaned;
-
-  const currentYear = new Date().getFullYear();
-  // Try with year appended if not present
-  const withYear = /\d{4}/.test(cleaned)
-    ? cleaned
-    : `${cleaned}, ${currentYear}`;
-  const parsed = new Date(withYear);
-  if (!isNaN(parsed.getTime())) {
-    // Use UTC to avoid timezone shifting the date
-    const y = parsed.getFullYear();
-    const m = String(parsed.getMonth() + 1).padStart(2, "0");
-    const d = String(parsed.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  }
-  return cleaned;
 }
 
 // Derive a show's format brand. Ticket-URL rules come first because a URL is unique
@@ -215,13 +234,16 @@ function timeFromUrl(url) {
 }
 
 async function main() {
+  // The live list, read before scraping: the merge carries fields forward from it
+  // and the list-size guard compares against it.
+  let existing = [];
+  try {
+    existing = JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
+  } catch {
+    // no existing file (first run): nothing to merge or compare against
+  }
+
   if (CHECK_TODAY) {
-    let existing = [];
-    try {
-      existing = JSON.parse(fs.readFileSync(OUTPUT_PATH, "utf8"));
-    } catch {
-      // no existing file — run scrape anyway
-    }
     if (existing.length > 0 && !existing.some((s) => showIsToday(s.date))) {
       console.log("No show today — skipping hourly scrape.");
       process.exit(0);
@@ -230,6 +252,11 @@ async function main() {
   }
 
   const browser = await chromium.launch({ headless: true, timeout: 30000 });
+  const fail = async (lines) => {
+    reportFailure(lines);
+    await browser.close().catch(() => {});
+    process.exit(1);
+  };
   const context = await browser.newContext({
     userAgent:
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -243,188 +270,98 @@ async function main() {
   console.log(`Navigating to ${PUNCHUP_URL}...`);
   await page.goto(PUNCHUP_URL, { waitUntil: "domcontentloaded", timeout: 60000 });
 
-  // punchup.live renders show rows as grid divs with exactly 4 direct children:
-  //   [0] date/city column, [1] info column, [2] ticket button column, [3] share button column
-  //
-  // The page also renders wider wrapper containers (childCount >= 8) that span multiple rows
-  // and pollute the data — we must filter those out by requiring childCount === 4.
-  //
-  // Strategy: find all "Buy Tickets" anchors, walk up to the nearest 4-child container,
-  // then extract date, city, and venue from siblings within that row.
-
-  // Wait for at least one ticket link to appear (try multiple button text variants)
+  // Wait for the show list. Every show row, on sale or sold out, links to its
+  // punchup event page (/e/<id>), so that is what we wait for.
   try {
-    await page.waitForSelector(
-      'a:has-text("Buy Tickets"), a:has-text("Tickets"), a:has-text("Get Tickets")',
-      { timeout: 15000 }
-    );
+    await page.waitForSelector(PUNCHUP_EVENT_LINK, { timeout: 20000 });
   } catch {
-    // May have timed out — try anyway
+    // Timed out: the list-size guard below decides whether "no shows" is real.
   }
 
-  // Click "See All" button if present to expand the full show list
-  try {
-    const seeAllBtn = await page.$('button:has-text("See All"), button:has-text("View All"), button:has-text("Load More"), button:has-text("Show All"), button:has-text("Show More")');
-    if (seeAllBtn) {
-      console.log("Found 'See All' button — clicking to expand full show list...");
-      await seeAllBtn.click();
-      // Scroll to bottom to trigger any lazy-loaded rows, then wait for network to settle
-      await page.waitForTimeout(1500);
-      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-      await page.waitForTimeout(1000);
-      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-      await page.waitForTimeout(1000);
-      // Wait for additional ticket links to appear beyond the initial batch
-      await page.waitForFunction(
-        () => document.querySelectorAll('a').length > 10,
+  // Distinct punchup event ids on the page (its own /e/<id> links only; Eventbrite
+  // ticket URLs also contain "/e/").
+  const countEventIds = () =>
+    page.evaluate((sel) => {
+      const ids = new Set();
+      for (const a of document.querySelectorAll(sel)) {
+        const m = (a.getAttribute("href") || "").match(/\/e\/([^/?#]+)/);
+        if (m) ids.add(m[1]);
+      }
+      return ids.size;
+    }, PUNCHUP_EVENT_LINK);
+
+  // punchup shows 5 dates until "See All" is clicked. If the button is there, the
+  // click MUST expand the list (a "Show Less" button appears or more events load);
+  // otherwise the run fails rather than publishing a 5-show list.
+  const seeAll = page
+    .locator("button")
+    .filter({ hasText: /^\s*(see all|view all|show all|show more|load more|view more)\b/i })
+    .first();
+  if ((await seeAll.count()) > 0) {
+    const before = await countEventIds();
+    console.log(`Found "See All" (${before} events showing) — clicking to expand the full list...`);
+    await seeAll.click();
+    const expanded = await page
+      .waitForFunction(
+        ({ b, sel }) => {
+          const ids = new Set();
+          for (const a of document.querySelectorAll(sel)) {
+            const m = (a.getAttribute("href") || "").match(/\/e\/([^/?#]+)/);
+            if (m) ids.add(m[1]);
+          }
+          const less = Array.from(document.querySelectorAll("button")).some((x) =>
+            /^\s*(show less|see less|view less)\b/i.test(x.textContent || "")
+          );
+          return ids.size > b || less;
+        },
+        { b: before, sel: PUNCHUP_EVENT_LINK },
         { timeout: 10000 }
-      ).catch(() => console.log("waitForFunction timed out — continuing anyway"));
-      console.log("Expansion complete.");
-    } else {
-      console.log("No 'See All' button found — scraping visible shows only.");
+      )
+      .then(() => true)
+      .catch(() => false);
+    if (!expanded) {
+      await fail([`"See All" was clicked but the list did not expand (still ${before} events).`]);
     }
-  } catch (err) {
-    console.log("See All click failed:", err.message, "— continuing anyway.");
+    // Scroll to the bottom so any lazy-loaded rows render, then let them settle.
+    await page.waitForTimeout(1500);
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(1000);
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await page.waitForTimeout(1000);
+    console.log(`Expansion complete: ${await countEventIds()} events.`);
+  } else {
+    console.log('No "See All" button found — the full list is already showing.');
   }
 
-  const shows = await page.evaluate(() => {
-    const results = [];
-
-    // Find all ticket anchors — match "Buy Tickets", "Tickets", "Get Tickets", etc.
-    const ticketLinks = Array.from(
-      document.querySelectorAll("a")
-    ).filter((a) => {
-      const t = (a.innerText || a.textContent || "").trim().toLowerCase();
-      return t === "buy tickets" || t === "tickets" || t === "get tickets" || t === "purchase tickets" || t === "ticket";
-    });
-
-    // Sold-out rows. Once a show sells out, punchup swaps its "Buy Tickets" LINK for a
-    // "Join Waitlist" BUTTON with no href, and the words "sold out" appear nowhere on
-    // the row. Scanning only ticket links made a sold-out show vanish from the site
-    // (Day Care Comedy Toronto, Oct 25 2026, dropped on the Oct 17 sync). These rows
-    // carry no ticket URL; the merge below restores the one from the previous night.
-    const soldOutControls = Array.from(
-      document.querySelectorAll("a, button")
-    ).filter((el) => {
-      const t = (el.innerText || el.textContent || "").trim().toLowerCase();
-      return t === "join waitlist" || t === "sold out";
-    });
-
-    for (const control of [...ticketLinks, ...soldOutControls]) {
-      const isSoldOutControl = !ticketLinks.includes(control);
-      const ticketUrl = isSoldOutControl ? "" : control.href || "";
-
-      // Walk up to find the individual show row: exactly 4 direct children.
-      // Stop before reaching a container that has many children (multi-row wrapper).
-      let row = control.parentElement;
-      for (let i = 0; i < 6; i++) {
-        if (!row) break;
-        if (row.children.length === 4) break;
-        row = row.parentElement;
-      }
-
-      // Only accept rows with exactly 4 children (clean individual show rows)
-      if (!row || row.children.length !== 4) continue;
-
-      // A row with a real ticket link is already covered by that link.
-      if (isSoldOutControl && ticketLinks.some((a) => row.contains(a))) continue;
-
-      const rowText = row.innerText || row.textContent || "";
-
-      // Extract date and city — they appear in anchor tags pointing to /e/<uuid>
-      const eventLinks = Array.from(row.querySelectorAll('a[href^="/e/"]'));
-      let dateRaw = "";
-      let timeRaw = "";
-      let city = "";
-
-      if (eventLinks.length >= 1) {
-        const allPs = Array.from(eventLinks[0].querySelectorAll("p"));
-        dateRaw = allPs[0] ? (allPs[0].innerText || allPs[0].textContent || "").trim() : "";
-      }
-
-      // Time (e.g. "Friday – 7:00 PM"). punchup renders it in a SIBLING event link
-      // alongside the venue, not inside the date link, so a scan limited to
-      // eventLinks[0] found a time on almost no row — only the handful whose ticket
-      // URL happened to encode one survived. Scan every event link, then fall back to
-      // the whole row, and take the first match.
-      const timeRe = /\d{1,2}:\d{2}\s*[APap][Mm]/;
-      for (const link of eventLinks) {
-        const m = (link.innerText || link.textContent || "").match(timeRe);
-        if (m) { timeRaw = m[0].trim(); break; }
-      }
-      if (!timeRaw) {
-        const m = rowText.match(timeRe);
-        if (m) timeRaw = m[0].trim();
-      }
-      if (eventLinks.length >= 2) {
-        const secondP = eventLinks[1].querySelector("p");
-        city = secondP ? (secondP.innerText || secondP.textContent || "").trim() : "";
-      }
-
-      // Fallback: split first event link text on newline
-      if (!city && eventLinks.length === 1) {
-        const parts = (eventLinks[0].innerText || "").trim().split("\n").map((s) => s.trim()).filter(Boolean);
-        if (parts.length >= 2) {
-          dateRaw = parts[0];
-          city = parts[1];
-        }
-      }
-
-      // Extract venue — punchup styles venue names with "uppercase" in className.
-      // Use textContent (NOT innerText) so we get the source casing rather than the
-      // CSS-uppercased rendering; titleCaseVenue() normalizes any all-caps stragglers.
-      let venue = "";
-      const allP = Array.from(row.querySelectorAll("p"));
-      for (const p of allP) {
-        const cls = p.className || "";
-        if (cls.includes("uppercase") && cls.includes("semibold")) {
-          const t = (p.textContent || "").trim();
-          if (t && t.length < 100) {
-            venue = t;
-            break;
-          }
-        }
-      }
-      // Fallback: computed textTransform
-      if (!venue) {
-        for (const p of allP) {
-          if (window.getComputedStyle(p).textTransform === "uppercase") {
-            const t = (p.textContent || "").trim();
-            if (t && t.length < 100) {
-              venue = t;
-              break;
-            }
-          }
-        }
-      }
-
-      // Status detection
-      const cardText = rowText.toLowerCase();
-      let status = "on_sale";
-      if (isSoldOutControl || cardText.includes("sold out") || cardText.includes("join waitlist")) status = "sold_out";
-      else if (cardText.includes("low ticket") || cardText.includes("almost sold")) status = "low_tickets";
-
-      // punchup's own page for the show: the fallback ticketUrl for a sold-out show
-      // the site never saw on sale, so there is no earlier URL to carry forward.
-      const eventHref = eventLinks[0] ? eventLinks[0].href : "";
-
-      results.push({ dateRaw, timeRaw, city, venue, ticketUrl, status, eventHref });
-    }
-
-    return results;
-  });
-
-  console.log(`Extracted ${shows.length} raw show entries.`);
-
-  if (shows.length === 0) {
-    const html = await page.content();
-    fs.writeFileSync("/tmp/punchup-debug.html", html);
-    console.warn(
-      "WARNING: Could not find any shows. Page HTML saved to /tmp/punchup-debug.html. Preserving existing tour-dates.json unchanged."
+  const scraped = await page.evaluate(extractEvents);
+  console.log(
+    `Parsed ${scraped.events.length} of ${scraped.pageEventCount} punchup events:`
+  );
+  for (const e of scraped.events) {
+    console.log(
+      `  ${e.eventHref}  ${e.dateRaw} ${e.timeRaw} | ${e.city} | ${e.venue} | ${e.status}${e.ticketUrl ? "" : " (no ticket link)"}`
     );
-    await browser.close();
-    process.exit(0);
   }
+
+  if (scraped.pageEventCount === 0) {
+    try {
+      fs.writeFileSync("/tmp/punchup-debug.html", await page.content());
+      console.warn("WARNING: no shows found on punchup. Page HTML saved to /tmp/punchup-debug.html.");
+    } catch {
+      // debug dump only
+    }
+  }
+
+  // Completeness guard: every event punchup shows must parse into a usable row.
+  const parseFailures = findParseFailures(scraped);
+  if (parseFailures.length > 0) {
+    await fail([
+      `${parseFailures.length} punchup event(s) failed to parse. Fix the parser in scripts/punchup-parse.js:`,
+      ...parseFailures.map((f) => `  - ${f}`),
+    ]);
+  }
+
+  const shows = scraped.events;
 
   // Normalize and deduplicate
   const seen = new Set();
@@ -476,10 +413,21 @@ async function main() {
 
   console.log(`${future.length} upcoming shows after dedup + filtering past dates.`);
 
-  const existingRaw = fs.existsSync(OUTPUT_PATH)
-    ? fs.readFileSync(OUTPUT_PATH, "utf8")
-    : "[]";
-  const existing = JSON.parse(existingRaw);
+  // List-size guard: an empty or far shorter list is a broken scrape, not a
+  // cancellation spree. Override for a real mass cancellation with
+  // TOUR_ALLOW_LARGE_DROP=1 (workflow input allow_large_drop).
+  const prevUpcoming = existing.filter((s) => s.date >= today).length;
+  const sizeError = checkListSize(prevUpcoming, future.length);
+  if (sizeError) {
+    if (ALLOW_LARGE_DROP) {
+      console.warn(`WARNING: ${sizeError}. Accepted because TOUR_ALLOW_LARGE_DROP=1.`);
+    } else {
+      await fail([
+        `${sizeError}.`,
+        "If the shows really were removed, re-run the workflow with allow_large_drop checked.",
+      ]);
+    }
+  }
 
   // Non-destructive merge: carry forward any field on the prior entry that this
   // run did NOT (re)produce. This generically defeats the recurring "field-strip"
@@ -585,12 +533,10 @@ async function main() {
     for (const field of REQUIRED_STRING_FIELDS) {
       const val = entry[field];
       if (typeof val !== "string" || val.trim() === "") {
-        console.error(
-          `SCHEMA GATE FAILED: entry missing non-empty string "${field}". Offending entry:`
-        );
-        console.error(JSON.stringify(entry, null, 2));
-        await browser.close();
-        process.exit(1);
+        await fail([
+          `SCHEMA GATE FAILED: entry missing non-empty string "${field}". Offending entry:`,
+          JSON.stringify(entry, null, 2),
+        ]);
       }
     }
   }
@@ -602,14 +548,16 @@ async function main() {
   if (JSON.stringify(future) === JSON.stringify(existing)) {
     console.log("Tour dates unchanged — no commit needed.");
   } else {
-    fs.writeFileSync(OUTPUT_PATH, JSON.stringify(future, null, 2));
-    console.log(`Updated tour-dates.json with ${future.length} upcoming shows.`);
+    // Write to a temp file, then rename, so a killed run can never leave a truncated JSON.
+    fs.writeFileSync(`${OUTPUT_PATH}.tmp`, JSON.stringify(future, null, 2));
+    fs.renameSync(`${OUTPUT_PATH}.tmp`, OUTPUT_PATH);
+    console.log(`Updated ${OUTPUT_PATH} with ${future.length} upcoming shows.`);
   }
 
   await browser.close();
 }
 
 main().catch((err) => {
-  console.error("Scraper error:", err);
+  reportFailure([`Scraper error: ${err && err.stack ? err.stack : err}`]);
   process.exit(1);
 });

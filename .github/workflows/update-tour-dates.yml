@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "0 15 * * *"  # Daily 3pm UTC
   workflow_dispatch:       # Manual trigger from GitHub Actions UI
+    inputs:
+      allow_large_drop:
+        description: "Accept a list that shrank by more than half (a real mass cancellation)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -41,6 +46,13 @@ jobs:
 
       - name: Run tour date scraper
         timeout-minutes: 3
+        # Exits non-zero WITHOUT writing tour-dates.json if any punchup show fails
+        # to parse, "See All" does not expand, or the list comes back empty or under
+        # half its size. The commit step is then skipped and the last good list
+        # stays live. Guards: scripts/punchup-parse.js.
+        env:
+          TOUR_ALLOW_LARGE_DROP: ${{ github.event.inputs.allow_large_drop == 'true' && '1' || '' }}
+          SCRAPE_FAILURE_FILE: ${{ runner.temp }}/scrape-failure.txt
         run: node scripts/scrape-tour-dates.js
 
       - name: Commit updated tour dates if changed
@@ -54,3 +66,15 @@ jobs:
             git commit -m "chore: update tour dates from punchup.live [skip ci]"
             git push
           fi
+
+      - name: Alert Discord #bot-errors
+        # Final attempt only: retry-tour-dates.yml re-runs a failed run up to 3
+        # attempts, so an earlier failure may still recover on its own. Needs the
+        # repo secret DISCORD_ALERT_WEBHOOK_URL (the #bot-errors webhook); until it
+        # exists the script logs a notice and the red run is the only signal.
+        if: failure() && github.run_attempt >= 3
+        env:
+          DISCORD_ALERT_WEBHOOK_URL: ${{ secrets.DISCORD_ALERT_WEBHOOK_URL }}
+          FAILURE_FILE: ${{ runner.temp }}/scrape-failure.txt
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: node scripts/notify-discord-failure.js
