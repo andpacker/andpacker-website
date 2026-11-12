@@ -18,24 +18,6 @@
     "time": "7 PM"
   },
   {
-    "slug": "the-comedy-studio",
-    "date": "2026-11-18",
-    "city": "Cambridge, MA",
-    "venue": "The Comedy Studio",
-    "ticketUrl": "https://www.thecomedystudio.com/events/tcs-presents-andrew-packer",
-    "status": "on_sale",
-    "time": "7:30 PM"
-  },
-  {
-    "slug": "the-tree-bar-and-lounge",
-    "date": "2026-11-19",
-    "city": "Braintree, MA",
-    "venue": "The Tree Bar and Lounge",
-    "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-live-at-the-tree-bar-tickets-2003019235453?aff=efbevent&fbclid=IwY2xjawUyQGhleHRuA2FlbQIxMABwZG9mAWJyaWQRMWVIQUNIcHVUanRjOHhCYnZzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEeR-t56n18aOM5BIsWB8l6XyDZSFPnU8kN3pZWOrCmg_Q1fbt08Yo8i-vuF5M_aem_G_LW0RzREw9btStT2fHYxg",
-    "status": "on_sale",
-    "time": "8:30 PM"
-  },
-  {
     "slug": "chefs-hall",
     "date": "2026-11-20",
     "city": "Toronto, ON",
@@ -44,15 +26,6 @@
     "status": "on_sale",
     "time": "7 PM",
     "showType": "new_material"
-  },
-  {
-    "slug": "scituate-veterans-of-foreign-wars-post-3169",
-    "date": "2026-11-20",
-    "city": "Scituate, MA",
-    "venue": "Scituate Veterans of Foreign Wars Post 3169",
-    "ticketUrl": "https://andrewscituate.eventbrite.com/",
-    "status": "on_sale",
-    "time": "8 PM"
   },
   {
     "slug": "royal-garden-chinese-restaurant",
