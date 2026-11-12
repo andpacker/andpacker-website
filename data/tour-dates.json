@@ -37,6 +37,24 @@
     "time": "8 PM"
   },
   {
+    "slug": "simcoe-street-theatre",
+    "date": "2026-11-27",
+    "city": "Collingwood, ON",
+    "venue": "Simcoe Street Theatre",
+    "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-stand-up-comedy-live-in-collingwood-6-pm-show-tickets-2004738078559",
+    "status": "on_sale",
+    "time": "6 PM"
+  },
+  {
+    "slug": "simcoe-street-theatre",
+    "date": "2026-11-27",
+    "city": "Collingwood, ON",
+    "venue": "Simcoe Street Theatre",
+    "ticketUrl": "https://punchup.live/e/8c666789-cd33-4a94-8695-85ad5f742a31",
+    "status": "sold_out",
+    "time": "8:30 PM"
+  },
+  {
     "slug": "comedy-bar-toronto",
     "date": "2026-11-28",
     "city": "Toronto, ON",
