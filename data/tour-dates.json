@@ -75,16 +75,6 @@
     "showType": "day_care_comedy"
   },
   {
-    "slug": "comedy-bar-toronto",
-    "date": "2026-12-20",
-    "city": "Toronto, ON",
-    "venue": "Comedy Bar - Toronto",
-    "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
-    "status": "on_sale",
-    "time": "7 PM",
-    "showType": "laugh_it_off"
-  },
-  {
     "slug": "zanies-comedy-club-chicago",
     "date": "2027-01-20",
     "city": "Chicago, IL",
