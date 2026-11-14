@@ -1,14 +1,5 @@
 [
   {
-    "slug": "the-bus-stop-theatre",
-    "date": "2026-11-13",
-    "city": "Halifax, NS",
-    "venue": "The Bus Stop Theatre",
-    "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-halifax-tickets-1987791634288?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale",
-    "time": "7 PM"
-  },
-  {
     "slug": "théâtre-sainte-catherine",
     "date": "2026-11-14",
     "city": "Montréal, QC",
