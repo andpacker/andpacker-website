@@ -1,14 +1,5 @@
 [
   {
-    "slug": "théâtre-sainte-catherine",
-    "date": "2026-11-14",
-    "city": "Montréal, QC",
-    "venue": "Théâtre Sainte-Catherine",
-    "ticketUrl": "https://www.eventbrite.com/e/andrew-packer-stand-up-comedy-live-in-montreal-tickets-1987787385580?aff=oddtdtcreator&keep_tld=true",
-    "status": "on_sale",
-    "time": "7 PM"
-  },
-  {
     "slug": "chefs-hall",
     "date": "2026-11-20",
     "city": "Toronto, ON",
