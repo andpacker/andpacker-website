@@ -57,6 +57,15 @@
     "showType": "day_care_comedy"
   },
   {
+    "slug": "skyline-comedy-club",
+    "date": "2027-01-19",
+    "city": "Appleton, WI",
+    "venue": "Skyline Comedy Club",
+    "ticketUrl": "https://www.skylinecomedy.com/shows/395460",
+    "status": "on_sale",
+    "time": "7 PM"
+  },
+  {
     "slug": "zanies-comedy-club-chicago",
     "date": "2027-01-20",
     "city": "Chicago, IL",
