@@ -154,5 +154,23 @@
     "ticketUrl": "https://www.micdropcomedychandler.com/events/140957",
     "status": "on_sale",
     "time": "9:30 PM"
+  },
+  {
+    "slug": "tacoma-comedy-club-6th-and-proctor",
+    "date": "2027-04-14",
+    "city": "Tacoma, WA",
+    "venue": "Tacoma Comedy Club - 6th and Proctor",
+    "ticketUrl": "https://www.tacomacomedyclub.com/shows/395461",
+    "status": "on_sale",
+    "time": "7 PM"
+  },
+  {
+    "slug": "louisville-comedy-club",
+    "date": "2027-05-13",
+    "city": "Louisville, KY",
+    "venue": "Louisville Comedy Club",
+    "ticketUrl": "https://www.louisvillecomedy.com/shows/395459",
+    "status": "on_sale",
+    "time": "7 PM"
   }
 ]
