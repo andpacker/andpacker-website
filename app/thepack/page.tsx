@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Nav from "@/components/Nav";
 import EmailSignup from "@/components/EmailSignup";
 import Footer from "@/components/Footer";
@@ -17,6 +18,17 @@ export const metadata: Metadata = {
   },
 };
 
+// Fan photos behind the form: a 2x2 grid on landscape screens, 4 stacked bands on portrait ones
+// (an upright tablet in the 2x2 crops each photo to a tall sliver).
+// One objectPosition serves both: laptop cells (~1.6:1) barely crop these 3:2 photos,
+// so the Y value only matters for the wide phone bands, where it keeps the faces in frame.
+const PACK_PHOTOS = [
+  { src: "/pack-fans-1.jpg", objectPosition: "50% 55%" }, // Sep 19: fans posing behind Andrew
+  { src: "/pack-fans-2.jpg", objectPosition: "50% 36%" }, // Sep 19: group in the hallway
+  { src: "/pack-fans-3.jpg", objectPosition: "50% 25%" }, // LIO Jan 18: handshake
+  { src: "/pack-fans-4.jpg", objectPosition: "50% 34%" }, // Sep 19: stairwell chat
+];
+
 const VALUE_POINTS = [
   "New shows near you hit your inbox before I post them anywhere else.",
   "You get an early heads-up before tickets go on sale, so you are not scrambling for seats.",
@@ -31,10 +43,39 @@ export default function ThePackPage() {
         {/* One above-the-fold capture moment: headline + one line + form, all visible on load. */}
         <section className="relative min-h-svh flex items-center justify-center overflow-hidden">
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: "url('/hero.jpg')" }}
+            aria-hidden="true"
+            className="absolute inset-0 grid grid-cols-1 grid-rows-4 landscape:grid-cols-2 landscape:grid-rows-2 gap-[2px] bg-[#0A0A0A]"
+          >
+            {PACK_PHOTOS.map((photo) => (
+              <div key={photo.src} className="relative overflow-hidden">
+                <Image
+                  src={photo.src}
+                  alt=""
+                  fill
+                  loading="eager"
+                  sizes="(orientation: landscape) 50vw, 100vw"
+                  className="object-cover"
+                  style={{ objectPosition: photo.objectPosition }}
+                />
+              </div>
+            ))}
+          </div>
+          {/* Darkest behind the form so it reads; lighter at the edges so the faces show. */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.76) 40%, rgba(10,10,10,0.45) 100%)",
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A]/85 via-[#0A0A0A]/65 to-[#0A0A0A]/90" />
+          {/* Dark under the nav, clear through the middle, solid at the bottom into the next section. */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to bottom, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0) 16%, rgba(10,10,10,0) 84%, #0A0A0A 100%)",
+            }}
+          />
 
           <div className="relative z-10 w-full max-w-xl mx-auto px-6 pt-24 pb-12 text-center">
             <p className="font-[family-name:var(--font-display)] font-bold text-[#0D41CB] tracking-[0.3em] uppercase text-sm md:text-base mb-3">
