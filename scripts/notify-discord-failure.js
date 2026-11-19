@@ -8,6 +8,9 @@
  *   FAILURE_FILE               reason written by scrape-tour-dates.js (optional)
  *   RUN_URL                    link to the failed Actions run
  *   GITHUB_RUN_ATTEMPT         set by Actions
+ *   ALERT_TITLE                first line, replacing the "sync FAILED" one (used for
+ *                              the non-fatal Eventbrite warning; FAILURE_FILE then
+ *                              holds the warning text)
  *   DRY_RUN=1                  print the payload instead of posting
  */
 const fs = require("fs");
@@ -21,8 +24,11 @@ function buildPayload() {
     // no failure file: keep the generic reason
   }
   const fence = "```";
+  const title =
+    process.env.ALERT_TITLE ||
+    `andpacker.com tour-date sync FAILED (attempt ${process.env.GITHUB_RUN_ATTEMPT || "?"} of 3). The site keeps the last good list.`;
   const content = [
-    `andpacker.com tour-date sync FAILED (attempt ${process.env.GITHUB_RUN_ATTEMPT || "?"} of 3). The site keeps the last good list.`,
+    title,
     fence,
     reason,
     fence,

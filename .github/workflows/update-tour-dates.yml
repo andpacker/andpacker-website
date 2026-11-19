@@ -22,6 +22,12 @@ jobs:
     # fast with one clear error instead of stalling ~15 min before GitHub kills it.
     # (Does not affect a queued/unacquired-runner cancel — that's a GitHub-side wait.)
     timeout-minutes: 8
+    # Job level on purpose: a step's env does not reach later steps, and the Discord
+    # warning step below must read the file the scraper writes. A fixed /tmp path,
+    # because the runner context is not available in job-level env (each run gets a
+    # fresh VM, so the file never survives from an earlier run).
+    env:
+      EVENTBRITE_WARNING_FILE: /tmp/eventbrite-warning.txt
 
     steps:
       - name: Checkout repo
@@ -53,6 +59,10 @@ jobs:
         env:
           TOUR_ALLOW_LARGE_DROP: ${{ github.event.inputs.allow_large_drop == 'true' && '1' || '' }}
           SCRAPE_FAILURE_FILE: ${{ runner.temp }}/scrape-failure.txt
+          # Andrew's own Eventbrite counts -> Low Tickets / Sold Out
+          # (scripts/eventbrite-status.js). Missing or rejected = punchup only, plus
+          # a Discord warning from the step below; the sync itself never fails on it.
+          EVENTBRITE_API_TOKEN: ${{ secrets.EVENTBRITE_API_TOKEN }}
         run: node scripts/scrape-tour-dates.js
 
       - name: Commit updated tour dates if changed
@@ -65,6 +75,26 @@ jobs:
           else
             git commit -m "chore: update tour dates from punchup.live [skip ci]"
             git push
+          fi
+
+      - name: Warn Discord about the Eventbrite check
+        # A successful sync that could not read Eventbrite (token missing or
+        # rejected, an event of Andrew's unreadable) keeps punchup's statuses, so a
+        # Low Tickets / Sold Out tag can be stale. Success runs only, so it never
+        # doubles with the failure alert below. A Discord hiccup must never turn a
+        # good sync red (that would trigger the retry workflow), hence continue-on-error.
+        if: success()
+        continue-on-error: true
+        env:
+          DISCORD_ALERT_WEBHOOK_URL: ${{ secrets.DISCORD_ALERT_WEBHOOK_URL }}
+          FAILURE_FILE: ${{ env.EVENTBRITE_WARNING_FILE }}
+          ALERT_TITLE: "andpacker.com tour sync: the Eventbrite check could not run fully, so Low Tickets / Sold Out tags may be stale."
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -s "$EVENTBRITE_WARNING_FILE" ]; then
+            node scripts/notify-discord-failure.js
+          else
+            echo "No Eventbrite warnings."
           fi
 
       - name: Alert Discord #bot-errors

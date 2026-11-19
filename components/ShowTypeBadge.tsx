@@ -70,6 +70,22 @@ export function showTypeRing(showType?: Show["showType"]) {
   return spec ? ` ring-1 ${spec.ring} ring-offset-2 ring-offset-[#0A0A0A]` : ""
 }
 
+/**
+ * Solid yellow warning tag on a show that is nearly sold out (status low_tickets:
+ * 80%+ sold on Andrew's own Eventbrite, or set by hand for a club show). The ticket
+ * button stays the normal blue Get Tickets; this tag carries the warning. Filled,
+ * so it never reads as the OUTLINED yellow Laugh It Off / Special Recording badges.
+ */
+export function LowTicketsTag() {
+  return (
+    <span
+      className={`mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase ${DEFAULT_SIZE} bg-[#FACC15] border border-[#FACC15] text-black px-2 py-0.5`}
+    >
+      Low Tickets
+    </span>
+  )
+}
+
 /** Solid red tag on a sold-out show, sized to sit beside the show-type badge. */
 export function SoldOutTag() {
   return (

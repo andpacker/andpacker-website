@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:scraper": "node scripts/test-punchup-parse.mjs && node scripts/test-scrape-merge.mjs"
+    "test:scraper": "node scripts/test-punchup-parse.mjs && node scripts/test-scrape-merge.mjs && node scripts/test-eventbrite-status.mjs && node scripts/test-eventbrite-status-qa.mjs"
   },
   "dependencies": {
     "next": "16.2.5",

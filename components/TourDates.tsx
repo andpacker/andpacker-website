@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { tourDates, type Show } from "@/lib/tour";
-import ShowTypeBadge, { SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge";
+import ShowTypeBadge, { LowTicketsTag, SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge";
 import WaitlistForm from "@/components/WaitlistForm";
 
 type ShowStatus = Show["status"];
@@ -51,19 +51,16 @@ function TicketButton({
     );
   }
 
-  const isLow = status === "low_tickets";
+  // On sale and low_tickets alike: the normal blue Get Tickets. A low_tickets show
+  // carries its warning in the yellow LowTicketsTag beside the badges instead.
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 transition-colors ${
-        isLow
-          ? "bg-amber-500 hover:bg-amber-400 text-black"
-          : `bg-[#0D41CB] hover:bg-[#0b35a8] text-white${showTypeRing(showType)}`
-      }`}
+      className={`inline-block font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 transition-colors bg-[#0D41CB] hover:bg-[#0b35a8] text-white${showTypeRing(showType)}`}
     >
-      {isLow ? "Low Tickets" : "Get Tickets"}
+      Get Tickets
     </a>
   );
 }
@@ -126,6 +123,7 @@ export default function TourDates() {
                       </div>
                       <div className="flex flex-wrap gap-x-1.5">
                         <ShowTypeBadge showType={show.showType} />
+                        {show.status === "low_tickets" && <LowTicketsTag />}
                         {show.status === "sold_out" && <SoldOutTag />}
                       </div>
                     </div>

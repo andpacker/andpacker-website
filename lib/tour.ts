@@ -8,6 +8,9 @@ export interface Show {
   date: string
   time?: string
   ticketUrl: string
+  // low_tickets: 80%+ sold on Andrew's own Eventbrite (set nightly by
+  // scripts/eventbrite-status.js), or hand-set for a club show (STATUS_OVERRIDES in
+  // scripts/scrape-tour-dates.js). Normal Get Tickets plus a yellow Low Tickets tag.
   status: "on_sale" | "low_tickets" | "sold_out"
   showType?:
     | "laugh_it_off"

@@ -15,6 +15,11 @@
  *                           mass cancellation). Workflow input: allow_large_drop.
  *   SCRAPE_FAILURE_FILE     On failure, the reason is written here (the workflow
  *                           posts it to Discord).
+ *   EVENTBRITE_API_TOKEN    Reads Andrew's own Eventbrite counts to set Low Tickets /
+ *                           Sold Out (./eventbrite-status.js). Unset = punchup only,
+ *                           plus a warning.
+ *   EVENTBRITE_WARNING_FILE Warnings from that check are written here (the workflow
+ *                           posts them to Discord). The sync never fails on them.
  *
  * SAFETY: the scrape exits non-zero WITHOUT writing tour-dates.json when any show
  * on punchup fails to parse, when "See All" does not expand, or when the list comes
@@ -32,6 +37,11 @@ const {
   findParseFailures,
   checkListSize,
 } = require("./punchup-parse");
+const {
+  applyEventbriteStatus,
+  applyStatusOverrides,
+  overrideFor,
+} = require("./eventbrite-status");
 
 const PUNCHUP_URL = "https://punchup.live/AndrewPacker";
 // punchup's own event links (relative or absolute), never Eventbrite's /e/ URLs.
@@ -59,7 +69,8 @@ function reportFailure(lines) {
   }
 }
 
-// Ticket-URL overrides, keyed by `${date}|${slug}`.
+// Ticket-URL overrides, keyed by `${date}|${slug}`, or `${date}|${slug}|${time}` for
+// ONE show of a same-venue double-header (the timed key wins; see overrideFor).
 //
 // WHY THIS EXISTS: the scraper copies each show's ticket URL verbatim from the
 // "Buy Tickets" button on punchup.live. When punchup's button points at the WRONG
@@ -78,12 +89,28 @@ function reportFailure(lines) {
 // (verified live via the Eventbrite API). Repointed to the correct live listings:
 //   Jul 24 2026 -> event 1987789780744 (status "live")
 //   Aug 28 2026 -> event 1987789785759 (status "live")
+//
+// 2026-11-19: Collingwood Nov 27 8:30 PM. punchup still shows Join Waitlist with no
+// ticket link, but 2 seats opened on Eventbrite 1988930483617. Pinned so the row
+// always carries its real Eventbrite listing: that is what lets the Eventbrite
+// check read its count (Low Tickets now, Sold Out once they sell) and what its Get
+// Tickets button opens. Timed key, because the 6 PM show shares date|slug. Harmless
+// after Nov 27 (past shows are dropped); delete it then.
 const TICKET_URL_OVERRIDES = {
   "2026-07-24|chefs-hall":
     "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-1987789780744",
   "2026-08-28|chefs-hall":
     "https://www.eventbrite.ca/e/friday-pro-stand-up-comedy-chefs-hall-toronto-tickets-1987789785759",
+  "2026-11-27|simcoe-street-theatre|8:30 PM":
+    "https://www.eventbrite.ca/e/andrew-packer-stand-up-comedy-live-in-collingwood-830-pm-show-tickets-1988930483617",
 };
+
+// Hand-set Low Tickets for CLUB shows (no Eventbrite count to read), keyed by a
+// substring of the ticket URL -> "low_tickets". Shows on Andrew's own Eventbrite
+// never need a line here: the Eventbrite check sets them every night. A line only
+// applies while punchup lists the show on sale, so it stops on its own when punchup
+// marks it sold out. Still delete it once the show is past or no longer low.
+const STATUS_OVERRIDES = {};
 
 // Show-time overrides, keyed by a substring of the ticket URL.
 //
@@ -495,17 +522,34 @@ async function main() {
   // Apply ticket-URL overrides (see TICKET_URL_OVERRIDES above). Runs AFTER scrape +
   // merge so it wins over whatever punchup served, keeping the corrected URL stable
   // across every daily cron run. A key that matches nothing is a silent no-op.
-  // Like the merge block, the date|slug key can't disambiguate a same-venue/same-date
-  // double-header — both rows would take the same override URL. Not a risk today
-  // (one entry per key); add time to the key if such a collision ever arises.
+  // A date|slug key hits every show that night; for one show of a same-venue
+  // double-header use date|slug|time, which wins (overrideFor).
   for (const show of future) {
-    const overrideKey = `${show.date}|${show.slug || slugify(show.venue || "")}`;
-    const override = TICKET_URL_OVERRIDES[overrideKey];
-    if (override && show.ticketUrl !== override) {
+    if (!show.slug) show.slug = slugify(show.venue || "");
+    const hit = overrideFor(TICKET_URL_OVERRIDES, show);
+    if (hit && show.ticketUrl !== hit.value) {
       console.log(
-        `Ticket URL override: ${overrideKey}\n    ${show.ticketUrl}\n -> ${override}`
+        `Ticket URL override: ${hit.key}\n    ${show.ticketUrl}\n -> ${hit.value}`
       );
-      show.ticketUrl = override;
+      show.ticketUrl = hit.value;
+    }
+  }
+
+  // Low Tickets / Sold Out from Andrew's own Eventbrite counts (./eventbrite-status.js),
+  // after the URL overrides so a corrected listing is the one counted. Never fails
+  // the sync; anything it can't read keeps punchup's status and becomes a warning.
+  const { warnings: eventbriteWarnings, decided } = await applyEventbriteStatus(future, {
+    token: process.env.EVENTBRITE_API_TOKEN,
+  });
+  applyStatusOverrides(future, STATUS_OVERRIDES, decided);
+  if (eventbriteWarnings.length) {
+    for (const w of eventbriteWarnings) console.warn(`WARNING: ${w}`);
+    try {
+      if (process.env.EVENTBRITE_WARNING_FILE) {
+        fs.writeFileSync(process.env.EVENTBRITE_WARNING_FILE, eventbriteWarnings.join("\n") + "\n");
+      }
+    } catch (err) {
+      console.error("Could not write the Eventbrite warning file:", err.message);
     }
   }
 

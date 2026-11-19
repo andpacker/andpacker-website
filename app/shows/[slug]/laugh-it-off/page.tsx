@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
-import { SoldOutTag } from "@/components/ShowTypeBadge"
+import { LowTicketsTag, SoldOutTag } from "@/components/ShowTypeBadge"
 import { ShowCard, TicketList, ViewContentPixel } from "../VenueShowList"
 import {
   LIO_LANDING,
@@ -157,6 +157,11 @@ export default async function LaughItOffPage({
         </p>
         <p className="mt-6 text-lg font-semibold">
           {only?.time ? `${when} · ${only.time}` : when}
+          {only?.status === "low_tickets" && (
+            <span className="ml-2 align-middle">
+              <LowTicketsTag />
+            </span>
+          )}
           {only?.status === "sold_out" && (
             <span className="ml-2 align-middle">
               <SoldOutTag />

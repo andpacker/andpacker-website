@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import type { Show } from "@/lib/tour"
-import { SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge"
+import { LowTicketsTag, SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge"
 import WaitlistForm from "@/components/WaitlistForm"
 import { cardWhen, ticketSite, type ShowGroup } from "./showDetails"
 
@@ -70,7 +70,8 @@ export function TicketButton({ show, venue }: { show: Show; venue: string }) {
         show.showType
       )}`}
     >
-      {show.status === "low_tickets" ? "Low Tickets" : "Get Tickets"}
+      {/* low_tickets too: its warning is the yellow tag on the date line. */}
+      Get Tickets
     </a>
   )
 }
@@ -122,6 +123,11 @@ export function TicketList({
               {showWhen && (
                 <p className="mb-2 text-lg font-semibold">
                   {cardWhen(show, thisYear)}
+                  {show.status === "low_tickets" && (
+                    <span className="ml-2 align-middle">
+                      <LowTicketsTag />
+                    </span>
+                  )}
                   {show.status === "sold_out" && (
                     <span className="ml-2 align-middle">
                       <SoldOutTag />
