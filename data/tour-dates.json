@@ -120,6 +120,15 @@
     "time": "8 PM"
   },
   {
+    "slug": "the-comedy-store-la-jolla",
+    "date": "2027-02-18",
+    "city": "La Jolla, CA",
+    "venue": "The Comedy Store - La Jolla",
+    "ticketUrl": "https://events.leapevents.com/event/andrew-packer-2027bekrpqeuclqvby",
+    "status": "on_sale",
+    "time": "7 PM"
+  },
+  {
     "slug": "mic-drop-comedy-chandler",
     "date": "2027-02-19",
     "city": "Chandler, AZ",
