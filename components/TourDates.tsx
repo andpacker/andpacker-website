@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { tourDates, type Show } from "@/lib/tour";
-import ShowTypeBadge, { LowTicketsTag, SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge";
+import ShowTypeBadge, { ComingSoonTag, LowTicketsTag, SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge";
 import WaitlistForm from "@/components/WaitlistForm";
 
 type ShowStatus = Show["status"];
@@ -36,8 +36,10 @@ function TicketButton({
   waitlistOpen: boolean;
   onToggleWaitlist: () => void;
 }) {
-  if (status === "sold_out") {
+  if (status === "sold_out" || status === "coming_soon") {
+    // Sold out: Join Waitlist. Coming soon (tickets not on sale yet): Notify Me.
     // An inset ring, not a border, so it is exactly the size of Get Tickets.
+    const soon = status === "coming_soon";
     return (
       <button
         type="button"
@@ -45,8 +47,8 @@ function TicketButton({
         aria-expanded={waitlistOpen}
         className="inline-block ring-1 ring-inset ring-white text-white hover:bg-white hover:text-black font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-5 py-2 transition-colors"
       >
-        <span className="md:hidden">Waitlist</span>
-        <span className="hidden md:inline">Join Waitlist</span>
+        <span className="md:hidden">{soon ? "Notify Me" : "Waitlist"}</span>
+        <span className="hidden md:inline">{soon ? "Notify Me First" : "Join Waitlist"}</span>
       </button>
     );
   }
@@ -125,6 +127,7 @@ export default function TourDates() {
                         <ShowTypeBadge showType={show.showType} />
                         {show.status === "low_tickets" && <LowTicketsTag />}
                         {show.status === "sold_out" && <SoldOutTag />}
+                        {show.status === "coming_soon" && <ComingSoonTag />}
                       </div>
                     </div>
   

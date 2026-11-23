@@ -303,4 +303,43 @@ function checkListSize(prevUpcoming, fresh) {
   return null;
 }
 
-module.exports = { extractEvents, parsePunchupDate, findParseFailures, checkListSize };
+/**
+ * Shows announced before tickets go on sale ("coming soon").
+ *
+ * Andrew puts https://andpacker.com/presale in punchup's ticket field for a booked
+ * show that has no ticket link yet. punchup then shows a normal Buy Tickets link,
+ * so the completeness guard above stays strict (a row with NO ticket control is
+ * still a parse failure, never a guess), and its visitors land on the presale
+ * sign-up too. The site lists the show as "coming_soon" with a Notify Me button in
+ * place of Get Tickets; when the real link replaces this one on punchup, the next
+ * sync puts the show on sale.
+ *
+ * Matched anywhere in the URL, so a link punchup stored without its scheme (and
+ * the browser then resolved against punchup.live) still counts.
+ */
+const PRESALE_URL = "https://andpacker.com/presale";
+const PRESALE_RE = /(?:^|[/.])andpacker\.com\/presale(?:[/?#]|$)/i;
+
+function isPresaleUrl(url) {
+  return typeof url === "string" && PRESALE_RE.test(url.trim());
+}
+
+/**
+ * A row's status and ticket URL once the presale link is accounted for. A presale
+ * link always means "coming_soon", whatever else the row says, and is stored in its
+ * one canonical form.
+ */
+function ticketState(status, ticketUrl) {
+  if (isPresaleUrl(ticketUrl)) return { status: "coming_soon", ticketUrl: PRESALE_URL };
+  return { status, ticketUrl };
+}
+
+module.exports = {
+  extractEvents,
+  parsePunchupDate,
+  findParseFailures,
+  checkListSize,
+  PRESALE_URL,
+  isPresaleUrl,
+  ticketState,
+};

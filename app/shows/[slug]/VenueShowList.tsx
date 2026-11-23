@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import type { Show } from "@/lib/tour"
-import { LowTicketsTag, SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge"
+import { ComingSoonTag, LowTicketsTag, SoldOutTag, showTypeRing } from "@/components/ShowTypeBadge"
 import WaitlistForm from "@/components/WaitlistForm"
 import { cardWhen, ticketSite, type ShowGroup } from "./showDetails"
 
@@ -12,9 +12,19 @@ declare global {
   }
 }
 
-// A sold-out date: Join Waitlist in place of Get Tickets, opening the form below.
-function WaitlistButton({ show }: { show: Show }) {
-  const [open, setOpen] = useState(false)
+/**
+ * A sold-out date (Join Waitlist) or a coming-soon one (Notify Me First, tickets
+ * not on sale yet) in place of Get Tickets, opening the sign-up form below.
+ * `defaultOpen` starts with the form showing (the presale page, one show).
+ */
+export function WaitlistButton({
+  show,
+  defaultOpen = false,
+}: {
+  show: Show
+  defaultOpen?: boolean
+}) {
+  const [open, setOpen] = useState(defaultOpen)
   return (
     <>
       <button
@@ -23,7 +33,7 @@ function WaitlistButton({ show }: { show: Show }) {
         aria-expanded={open}
         className="flex min-h-12 w-full items-center justify-center ring-1 ring-inset ring-white text-white hover:bg-white hover:text-black font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-sm transition-colors"
       >
-        Join Waitlist
+        {show.status === "coming_soon" ? "Notify Me First" : "Join Waitlist"}
       </button>
       {open && <WaitlistForm show={show} />}
     </>
@@ -47,7 +57,8 @@ function showParams(show: Show) {
  * keep it raw.
  */
 export function TicketButton({ show, venue }: { show: Show; venue: string }) {
-  if (show.status === "sold_out") return <WaitlistButton show={show} />
+  if (show.status === "sold_out" || show.status === "coming_soon")
+    return <WaitlistButton show={show} />
   return (
     <a
       href={show.ticketUrl}
@@ -117,7 +128,11 @@ export function TicketList({
     <>
       <ul className="mt-6 space-y-6">
         {group.shows.map((show, i) => {
-          const site = oneSite ? null : ticketSite(show.ticketUrl)
+          // A coming-soon date has no ticket site yet (its link is the presale page).
+          const site =
+            oneSite || show.status === "coming_soon"
+              ? null
+              : ticketSite(show.ticketUrl)
           return (
             <li key={i}>
               {showWhen && (
@@ -131,6 +146,11 @@ export function TicketList({
                   {show.status === "sold_out" && (
                     <span className="ml-2 align-middle">
                       <SoldOutTag />
+                    </span>
+                  )}
+                  {show.status === "coming_soon" && (
+                    <span className="ml-2 align-middle">
+                      <ComingSoonTag />
                     </span>
                   )}
                 </p>

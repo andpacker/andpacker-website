@@ -5,16 +5,17 @@ import {
   tagSubscriber,
   WEBSITE_SIGNUP_TAG_ID,
 } from "@/lib/kit";
-import { findSoldOutShow, seriesTag, waitlistCity } from "@/lib/waitlist";
+import { findWaitlistShow, presaleTag, seriesTag, waitlistCity } from "@/lib/waitlist";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_EMAIL = 254;
 const MAX_NAME = 100;
 const SAVE_ERROR = "Could not save. Try again.";
 
-// Waitlist for a sold-out show. The client names the show; the city and series
-// tags are derived here from tour-dates.json, so this public endpoint can only
-// ever apply tags that belong to a real sold-out show.
+// Waitlist for a sold-out show, or the presale list for a show announced before
+// tickets go on sale. The client names the show; every tag is derived here from
+// tour-dates.json, so this public endpoint can only ever apply tags that belong
+// to a real sold-out or coming-soon show.
 export async function POST(req: Request) {
   let body: Record<string, unknown>;
   try {
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "Enter a valid email address." }, { status: 400 });
   }
 
-  const show = findSoldOutShow(tourDates, body.date, body.slug, body.time);
+  const show = findWaitlistShow(tourDates, body.date, body.slug, body.time);
   if (!show) {
     return Response.json({ error: "This show has no waitlist." }, { status: 400 });
   }
@@ -43,17 +44,21 @@ export async function POST(req: Request) {
     return Response.json({ error: "Form not configured." }, { status: 500 });
   }
 
+  const presale = show.status === "coming_soon";
   const city = waitlistCity(show.city);
-  const tagNames = [city, seriesTag(show.showType)].filter(
-    (t): t is string => Boolean(t)
-  );
+  const tagNames = [
+    city,
+    seriesTag(show.showType),
+    presale ? presaleTag(show) : null,
+  ].filter((t): t is string => Boolean(t));
 
   const existing = await findSubscriber(apiSecret, email);
   if (existing === undefined) {
     return Response.json({ error: SAVE_ERROR }, { status: 500 });
   }
 
-  // A new person signs up exactly like a website signup, with source "waitlist".
+  // A new person signs up exactly like a website signup, with source "waitlist"
+  // (or "presale").
   // Someone already on the list only gains the tags: their home city, name and
   // source are never overwritten (an Oshawa subscriber joining a Toronto
   // waitlist stays in Oshawa). Blanks are filled in, nothing else.
@@ -61,7 +66,7 @@ export async function POST(req: Request) {
   if (existing === null) {
     const payload: Record<string, unknown> = {
       email,
-      fields: { city, source: "waitlist" },
+      fields: { city, source: presale ? "presale" : "waitlist" },
     };
     if (firstName) payload.first_name = firstName;
     if (!(await tagSubscriber(apiSecret, WEBSITE_SIGNUP_TAG_ID, payload))) {

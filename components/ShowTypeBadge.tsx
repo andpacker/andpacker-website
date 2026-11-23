@@ -97,6 +97,18 @@ export function SoldOutTag() {
   )
 }
 
+// A show announced before tickets go on sale. An outline, so it never reads as
+// the red Sold Out tag.
+export function ComingSoonTag() {
+  return (
+    <span
+      className={`mt-1 inline-block font-[family-name:var(--font-display)] font-bold uppercase ${DEFAULT_SIZE} border border-white text-white px-2 py-0.5`}
+    >
+      Tickets Soon
+    </span>
+  )
+}
+
 export default function ShowTypeBadge({ showType }: { showType?: Show["showType"] }) {
   const spec = showType ? BADGES[showType] : undefined
   if (!spec) return null

@@ -291,7 +291,8 @@ export function groupShows(shows: Show[]): ShowGroup[] {
       groups.set(key, group)
     }
     group.shows.push(show)
-    const site = ticketSite(show.ticketUrl)
+    // A coming-soon show's link is the presale page, not where tickets sell.
+    const site = show.status === "coming_soon" ? null : ticketSite(show.ticketUrl)
     if (site && !group.ticketSites.includes(site)) group.ticketSites.push(site)
   }
   return [...groups.values()]

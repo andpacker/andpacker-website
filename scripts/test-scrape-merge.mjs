@@ -60,6 +60,10 @@ function titleCaseVenue(v) {
     .join(" ");
 }
 
+// The real helper, from the module the scraper itself imports.
+import { createRequire } from "node:module";
+const { isPresaleUrl } = createRequire(import.meta.url)("./punchup-parse.js");
+
 // ─── Exact copy: merge block + sold-out fallback, wrapped for testing ───────
 // Mirrors the merge block of scrape-tour-dates.js verbatim.
 // `existing` = prior tour-dates.json array
@@ -97,6 +101,10 @@ function mergeForward(existing, future, soldOutFallbackUrl = new Map()) {
         show[field] = value;
       }
     }
+  }
+
+  for (const show of future) {
+    if (show.status !== "coming_soon" && isPresaleUrl(show.ticketUrl)) show.ticketUrl = "";
   }
 
   for (const show of future) {
@@ -926,6 +934,36 @@ console.log("\n=== dedup key ===");
     1,
     timeless.length
   );
+}
+
+// ─── Suite 5d: presale (coming_soon) rows ────────────────────────────────────
+console.log("\n=== mergeForward: presale rows ===");
+{
+  const PRESALE = "https://andpacker.com/presale";
+  const prevSoon = () => [{
+    slug: "x", date: "2027-01-15", city: "Tacoma, WA", venue: "X",
+    ticketUrl: PRESALE, status: "coming_soon", time: "7 PM",
+  }];
+
+  const onSale = { slug: "x", date: "2027-01-15", city: "Tacoma, WA", venue: "X", ticketUrl: "https://example.com/real", status: "on_sale", time: "7 PM" };
+  mergeForward(prevSoon(), [onSale]);
+  assert("coming_soon -> on_sale keeps the real URL", onSale.ticketUrl === "https://example.com/real", "https://example.com/real", onSale.ticketUrl);
+  assert("coming_soon -> on_sale status is on_sale", onSale.status === "on_sale", "on_sale", onSale.status);
+
+  const soldOut = { slug: "x", date: "2027-01-15", city: "Tacoma, WA", venue: "X", ticketUrl: "", status: "sold_out", time: "7 PM" };
+  const fb = "https://punchup.live/e/abc123";
+  mergeForward(prevSoon(), [soldOut], new Map([[soldOut, fb]]));
+  assert("coming_soon -> sold_out, no URL: ends on punchup fallback, not presale", soldOut.ticketUrl === fb, fb, soldOut.ticketUrl);
+
+  const soon = { slug: "x", date: "2027-01-15", city: "Tacoma, WA", venue: "X", ticketUrl: PRESALE, status: "coming_soon", time: "7 PM" };
+  mergeForward(prevSoon(), [soon]);
+  assert("coming_soon row stays coming_soon", soon.status === "coming_soon", "coming_soon", soon.status);
+  assert("coming_soon row keeps the presale URL", soon.ticketUrl === PRESALE, PRESALE, soon.ticketUrl);
+
+  // A fresh coming_soon row with a blank URL still inherits nothing harmful.
+  const soonBlank = { slug: "x", date: "2027-01-15", city: "Tacoma, WA", venue: "X", ticketUrl: "", status: "coming_soon", time: "7 PM" };
+  mergeForward(prevSoon(), [soonBlank]);
+  assert("coming_soon with blank fresh URL inherits presale URL (still coming_soon)", soonBlank.ticketUrl === PRESALE && soonBlank.status === "coming_soon", PRESALE, soonBlank.ticketUrl);
 }
 
 // ─── Results summary ─────────────────────────────────────────────────────────

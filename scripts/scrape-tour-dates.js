@@ -36,6 +36,8 @@ const {
   parsePunchupDate,
   findParseFailures,
   checkListSize,
+  isPresaleUrl,
+  ticketState,
 } = require("./punchup-parse");
 const {
   applyEventbriteStatus,
@@ -414,7 +416,10 @@ async function main() {
     seen.add(key);
 
     const venue = titleCaseVenue(show.venue || "");
-    const soldOutNoUrl = show.status === "sold_out" && !show.ticketUrl;
+    // A show announced before tickets go on sale carries the presale link on
+    // punchup: it lists as "coming_soon" (see ticketState in punchup-parse.js).
+    const ticket = ticketState(show.status, show.ticketUrl);
+    const soldOutNoUrl = ticket.status === "sold_out" && !ticket.ticketUrl;
 
     const entry = {
       slug: slugify(venue),
@@ -423,10 +428,10 @@ async function main() {
       venue,
       // Left empty for a sold-out row so the merge carries the real ticket URL (and
       // the showType derived from it) forward from the previous night's entry.
-      ticketUrl: soldOutNoUrl ? "" : show.ticketUrl || PUNCHUP_URL,
-      status: show.status,
+      ticketUrl: soldOutNoUrl ? "" : ticket.ticketUrl || PUNCHUP_URL,
+      status: ticket.status,
       ...(resolvedTime ? { time: resolvedTime } : {}),
-      ...showTypeFor(show.ticketUrl, venue),
+      ...showTypeFor(ticket.ticketUrl, venue),
     };
     if (soldOutNoUrl) soldOutFallbackUrl.set(entry, show.eventHref || PUNCHUP_URL);
     enriched.push(entry);
@@ -509,6 +514,13 @@ async function main() {
         show[field] = value;
       }
     }
+  }
+
+  // The presale link is never a ticket link. A show that went straight from
+  // "coming soon" to sold out inherits it in the merge above; drop it so the
+  // fallback below points the show at its punchup event page instead.
+  for (const show of future) {
+    if (show.status !== "coming_soon" && isPresaleUrl(show.ticketUrl)) show.ticketUrl = "";
   }
 
   // A sold-out show the site never saw on sale has no earlier ticket URL to inherit.

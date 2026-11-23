@@ -3,7 +3,9 @@ import type { Show } from "@/lib/tour"
 // Where a sold-out show's waitlist sign-ups are filed in Kit: the "City, ST" tag
 // Pack signups already use, plus a show-series tag, so Andrew can email everyone
 // in a city or only the people who wanted that series there ("Toronto, ON" +
-// "Day Care Comedy").
+// "Day Care Comedy"). A coming-soon show's presale sign-ups get those two plus a
+// tag for that one show (presaleTag), so its list can hear first when tickets
+// go on sale.
 
 // Tour cities that sit inside a bigger market on the signup form's city list
 // (components/EmailSignup.tsx). Filing them under the market keeps one tag per
@@ -42,11 +44,17 @@ export function seriesTag(showType: Show["showType"]): string | null {
   return (showType && SERIES_TAG[showType]) || null
 }
 
+/** A show people can join a list for: sold out, or announced before tickets. */
+export function hasWaitlist(show: Show): boolean {
+  return show.status === "sold_out" || show.status === "coming_soon"
+}
+
 /**
- * The sold-out show a waitlist request names, or null. date + slug + time is the
- * one combination unique to a show (same-night double-headers share date + slug).
+ * The show a waitlist request names, or null when it has no list. date + slug +
+ * time is the one combination unique to a show (same-night double-headers share
+ * date + slug).
  */
-export function findSoldOutShow(
+export function findWaitlistShow(
   shows: Show[],
   date: unknown,
   slug: unknown,
@@ -57,10 +65,25 @@ export function findSoldOutShow(
   return (
     shows.find(
       (s) =>
-        s.status === "sold_out" &&
+        hasWaitlist(s) &&
         s.date === date &&
         s.slug === slug &&
         (s.time ?? "") === wantTime
     ) ?? null
   )
+}
+
+/**
+ * The per-show Kit tag for a coming-soon show's presale list, in the dated-tag
+ * style the Eventbrite buyer imports use: "Presale - Tacoma, WA - Jan 15 2027 7 PM".
+ * When the ticket link arrives, this is the tag that hears first. The city keeps
+ * its own name (no market folding) and loses its accents, like the city tag.
+ */
+export function presaleTag(show: Show): string {
+  const city = show.city.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim()
+  const d = new Date(`${show.date}T12:00:00Z`)
+  const part = (o: Intl.DateTimeFormatOptions) =>
+    d.toLocaleString("en-US", { ...o, timeZone: "UTC" })
+  const when = `${part({ month: "short" })} ${part({ day: "numeric" })} ${part({ year: "numeric" })}`
+  return `Presale - ${city} - ${when}${show.time ? ` ${show.time}` : ""}`
 }

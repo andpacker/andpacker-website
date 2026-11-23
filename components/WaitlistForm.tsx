@@ -11,8 +11,10 @@ declare global {
 }
 
 /**
- * Waitlist sign-up for one sold-out show: first name + email. The server files
- * the person in Kit under the show's city and series tags (app/api/waitlist).
+ * Sign-up for one show: first name + email. A sold-out show's waitlist, or the
+ * presale list for a show announced before tickets go on sale. The server files
+ * the person in Kit under the show's city and series tags, plus the show's own
+ * presale tag when it is coming soon (app/api/waitlist).
  */
 export default function WaitlistForm({ show }: { show: Show }) {
   const [firstName, setFirstName] = useState("");
@@ -22,6 +24,7 @@ export default function WaitlistForm({ show }: { show: Show }) {
 
   // "Toronto, ON" -> "Toronto"; a suburb show reads as its market ("Boston").
   const cityName = waitlistCity(show.city).split(",")[0];
+  const presale = show.status === "coming_soon";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,7 +50,7 @@ export default function WaitlistForm({ show }: { show: Show }) {
         setStatus("error");
       } else {
         setStatus("success");
-        window.fbq?.("trackCustom", "JoinWaitlist", {
+        window.fbq?.("trackCustom", presale ? "JoinPresale" : "JoinWaitlist", {
           content_name: show.venue,
           city: show.city,
           show_date: show.date,
@@ -66,7 +69,9 @@ export default function WaitlistForm({ show }: { show: Show }) {
           You&apos;re on the list.
         </p>
         <p className="text-[#888] text-sm mt-1">
-          If I add another show in {cityName}, you&apos;ll hear first.
+          {presale
+            ? "You'll get the ticket link first."
+            : `If I add another show in ${cityName}, you'll hear first.`}
         </p>
       </div>
     );
@@ -75,8 +80,9 @@ export default function WaitlistForm({ show }: { show: Show }) {
   return (
     <form onSubmit={handleSubmit} className="mt-4 border border-[#222] p-5">
       <p className="text-[#888] text-sm mb-4">
-        This one sold out. Leave your name and email and you&apos;ll be the first to know if I
-        add another show in {cityName}.
+        {presale
+          ? "Tickets aren't on sale yet. Leave your name and email and you'll get the link first."
+          : `This one sold out. Leave your name and email and you'll be the first to know if I add another show in ${cityName}.`}
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
         <input
@@ -104,7 +110,7 @@ export default function WaitlistForm({ show }: { show: Show }) {
           disabled={status === "loading"}
           className="flex-shrink-0 bg-white text-black hover:bg-white/90 disabled:opacity-60 disabled:cursor-not-allowed font-[family-name:var(--font-display)] font-bold uppercase tracking-widest text-xs px-6 py-3 transition-colors"
         >
-          {status === "loading" ? "Saving..." : "Join Waitlist"}
+          {status === "loading" ? "Saving..." : presale ? "Notify Me" : "Join Waitlist"}
         </button>
       </div>
       {status === "error" && (
