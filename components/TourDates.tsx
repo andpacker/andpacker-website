@@ -106,7 +106,8 @@ export default function TourDates() {
                 >
                   <div className="flex items-center gap-6">
                     <div className="w-14 text-center flex-shrink-0">
-                      <div className="text-[#0D41CB] font-[family-name:var(--font-display)] font-bold text-xs tracking-widest">
+                      {/* Month on a solid blue tab: blue text on black was too hard to read. */}
+                      <div className="bg-[#0D41CB] text-white font-[family-name:var(--font-display)] font-extrabold text-base leading-none tracking-widest pl-[0.1em] py-1 mb-1.5">
                         {d.month}
                       </div>
                       <div className="text-white font-[family-name:var(--font-display)] font-extrabold text-3xl leading-none">
