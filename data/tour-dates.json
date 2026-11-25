@@ -14,7 +14,7 @@
     "city": "Collingwood, ON",
     "venue": "Simcoe Street Theatre",
     "ticketUrl": "https://www.eventbrite.ca/e/andrew-packer-stand-up-comedy-live-in-collingwood-830-pm-show-tickets-1988930483617",
-    "status": "low_tickets",
+    "status": "sold_out",
     "time": "8:30 PM"
   },
   {
@@ -23,7 +23,7 @@
     "city": "Toronto, ON",
     "venue": "Comedy Bar - Toronto",
     "ticketUrl": "https://comedybar.ca/shows/laugh-it-off",
-    "status": "on_sale",
+    "status": "sold_out",
     "time": "7 PM",
     "showType": "laugh_it_off"
   },
@@ -144,6 +144,15 @@
     "ticketUrl": "https://www.micdropcomedychandler.com/events/140957",
     "status": "on_sale",
     "time": "9:30 PM"
+  },
+  {
+    "slug": "the-wise-hall",
+    "date": "2027-03-19",
+    "city": "Vancouver, BC",
+    "venue": "The Wise Hall",
+    "ticketUrl": "https://andpacker.com/presale",
+    "status": "coming_soon",
+    "time": "7 PM"
   },
   {
     "slug": "tacoma-comedy-club-6th-and-proctor",
