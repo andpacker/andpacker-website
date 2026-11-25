@@ -30,7 +30,7 @@ export const revalidate = 3600
 // US-SAFETY (visa): only US-safe artwork for US venues. Never the Toronto Laugh
 // It Off banner (laugh-it-off-banner.jpg), which shows Andrew's dad; he cannot
 // be advertised on US-facing assets. US Laugh It Off uses the faces-free
-// artwork, and its copy is role-only: "a licensed therapist of 35 years", never
+// artwork, and its copy is role-only: "an actual therapist of 35 years", never
 // a name and never a family relationship. Do not swap it for a banner with
 // faces. The Day Care Comedy banner is New York specific (it carries the NY
 // Comedy Festival logo). Everything else gets DEFAULT_OG_IMAGE.
@@ -47,7 +47,7 @@ const OG_IMAGES: Record<
     },
     {
       src: "/laugh-it-off-banner-nofaces.jpg",
-      alt: "Laugh It Off, Andrew Packer's group therapy comedy show with a licensed therapist of 35 years, November 8 at Top Secret Comedy Club in New York",
+      alt: "Laugh It Off, Andrew Packer's group therapy comedy show with an actual therapist of 35 years, November 8 at Top Secret Comedy Club in New York",
       width: 1920,
       height: 1080,
     },

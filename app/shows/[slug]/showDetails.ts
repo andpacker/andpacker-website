@@ -7,8 +7,9 @@ import type { Show } from "@/lib/tour"
 //
 // COPY RULES (from Andrew, apply to every string in this file):
 // - No em dashes.
-// - Laugh It Off's therapist is only ever "a licensed therapist of 35 years".
-//   Never a name, never a family relationship (US visa issue).
+// - Laugh It Off's therapist is only ever "an actual therapist of 35 years".
+//   Never a name, never a family relationship (US visa issue). The word
+//   "licensed" is never used in any copy (Andrew, 2026-11-25).
 // - Day Care Comedy: the age is a recommendation, never a cap. Never "all ages
 //   welcome", never nap-timing language. The brand is "Day Care Comedy", no
 //   "Laugh It Off" prefix.
@@ -41,9 +42,9 @@ const SHOW_TYPES: Record<ShowType, ShowTypeInfo> = {
     name: "Laugh It Off",
     tagline: "Group Therapy Comedy Show",
     description:
-      "A group therapy comedy show. Comedians perform, and a licensed therapist of 35 years joins them on stage to work through stories from the audience.",
+      "A group therapy comedy show. Comedians perform, and an actual therapist of 35 years joins them on stage to work through stories from the audience.",
     metaBlurb:
-      "a group therapy comedy show with a licensed therapist of 35 years",
+      "a group therapy comedy show with an actual therapist of 35 years",
   },
   day_care_comedy: {
     name: "Day Care Comedy",
@@ -119,19 +120,19 @@ export type LandingCopy = {
  * apart from SHOW_FACTS on purpose: editing this never changes the venue page.
  */
 export const LIO_LANDING: Record<string, LandingCopy> = {
-  // US-SAFETY (visa): a US page. The therapist is only ever "a licensed
+  // US-SAFETY (visa): a US page. The therapist is only ever "an actual
   // therapist of 35 years": no name, no family relationship, and only the
   // faces-free artwork, never laugh-it-off-banner.jpg.
   "top-secret-comedy-club-new-york": {
     eyebrow: "New York Comedy Festival",
     tagline: "Comedy Therapy with a Real Therapist",
     description:
-      "Bring a problem, or just come to laugh. Comedians take on the audience's real-life problems. A licensed therapist of 35 years helps everyone make sense of them. Part stand-up, part therapy.",
+      "Bring a problem, or just come to laugh. Comedians take on the audience's real-life problems. An actual therapist of 35 years helps everyone make sense of them. Part stand-up, part therapy.",
     metaPitch:
-      "Laugh It Off: comedy therapy with a real therapist, part of the New York Comedy Festival. Comedians take on the audience's real-life problems, and a licensed therapist of 35 years helps everyone make sense of them.",
+      "Laugh It Off: comedy therapy with a real therapist, part of the New York Comedy Festival. Comedians take on the audience's real-life problems, and an actual therapist of 35 years helps everyone make sense of them.",
     ogImage: {
       src: "/laugh-it-off-banner-nofaces.jpg",
-      alt: "Laugh It Off, Andrew Packer's group therapy comedy show with a licensed therapist of 35 years, November 8 at Top Secret Comedy Club in New York",
+      alt: "Laugh It Off, Andrew Packer's group therapy comedy show with an actual therapist of 35 years, November 8 at Top Secret Comedy Club in New York",
       width: 1920,
       height: 1080,
     },
