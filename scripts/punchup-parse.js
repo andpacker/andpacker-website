@@ -334,6 +334,44 @@ function ticketState(status, ticketUrl) {
   return { status, ticketUrl };
 }
 
+/**
+ * punchup prints a venue's city from its address, and a Canadian address with no
+ * province comes out as "City, Canada" (The Wise Hall, 2026-11-25: "1882 Adanac
+ * Street, Vancouver, Canada V5L 2E1"; punchup has no province field to fix it).
+ * The city string is also the Kit city tag and the presale tag (lib/waitlist.ts),
+ * so "Vancouver, Canada" would file sign-ups away from the "Vancouver, BC" list
+ * the signup form writes. The scraper's normalizeCity gives a known city its
+ * province. Keys are accent-free and lower-case. Covers every Canada city on the
+ * signup form (components/EmailSignup.tsx) plus other Canadian towns Andrew plays.
+ */
+const CANADA_CITY_PROVINCE = {
+  // BC
+  vancouver: "BC", victoria: "BC", "new westminster": "BC", kelowna: "BC", whistler: "BC",
+  burnaby: "BC", surrey: "BC", "north vancouver": "BC", squamish: "BC", nanaimo: "BC", kamloops: "BC",
+  // AB, SK, MB
+  calgary: "AB", edmonton: "AB", "red deer": "AB", lethbridge: "AB", banff: "AB", canmore: "AB",
+  regina: "SK", saskatoon: "SK", winnipeg: "MB", brandon: "MB",
+  // ON
+  toronto: "ON", ottawa: "ON", hamilton: "ON", london: "ON", windsor: "ON", oshawa: "ON",
+  "niagara falls": "ON", "kitchener-waterloo": "ON", kitchener: "ON", waterloo: "ON",
+  kingston: "ON", collingwood: "ON", lindsay: "ON", barrie: "ON", guelph: "ON", peterborough: "ON",
+  "north bay": "ON", "thunder bay": "ON", sudbury: "ON", "greater sudbury": "ON", brantford: "ON",
+  "st. catharines": "ON", "st catharines": "ON", burlington: "ON", oakville: "ON", mississauga: "ON",
+  brampton: "ON", markham: "ON", belleville: "ON", "sault ste. marie": "ON", "sault ste marie": "ON",
+  // QC, Atlantic
+  montreal: "QC", "quebec city": "QC", quebec: "QC", gatineau: "QC",
+  halifax: "NS", dartmouth: "NS", "saint john": "NB", fredericton: "NB", moncton: "NB",
+  charlottetown: "PE", "st. john's": "NL", "st johns": "NL", "st. johns": "NL",
+};
+
+/** The province for a Canadian city name ("Vancouver", "Montréal"), or null if unknown. */
+function canadianProvince(cityPart) {
+  if (typeof cityPart !== "string") return null;
+  const key = cityPart.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/’/g, "'")
+    .replace(/\s+/g, " ").trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(CANADA_CITY_PROVINCE, key) ? CANADA_CITY_PROVINCE[key] : null;
+}
+
 module.exports = {
   extractEvents,
   parsePunchupDate,
@@ -342,4 +380,5 @@ module.exports = {
   PRESALE_URL,
   isPresaleUrl,
   ticketState,
+  canadianProvince,
 };

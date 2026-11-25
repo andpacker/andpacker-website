@@ -38,6 +38,7 @@ const {
   checkListSize,
   isPresaleUrl,
   ticketState,
+  canadianProvince,
 } = require("./punchup-parse");
 const {
   applyEventbriteStatus,
@@ -187,12 +188,20 @@ const PROVINCE_STATE_ABBR = {
   Washington: "WA", "West Virginia": "WV", Wisconsin: "WI", Wyoming: "WY",
 };
 
-// Convert "City, <full region>" -> "City, <abbr>"; leave anything else untouched.
+// Convert "City, <full region>" -> "City, <abbr>", and "City, Canada" -> "City, <province>"
+// for a known city (canadianProvince in punchup-parse.js: punchup prints a Canadian
+// address with no province as "City, Canada"). Anything else is left untouched; an
+// unknown "X, Canada" is only warned about, never a failed sync.
 function normalizeCity(cityStr) {
   if (!cityStr || !cityStr.includes(", ")) return cityStr;
   const idx = cityStr.lastIndexOf(", ");
   const cityPart = cityStr.slice(0, idx);
   const region = cityStr.slice(idx + 2).trim();
+  if (region.toLowerCase() === "canada") {
+    const prov = canadianProvince(cityPart);
+    if (!prov) console.warn(`  city "${cityStr}" has no province and isn't a known Canadian city; left as is`);
+    return prov ? `${cityPart}, ${prov}` : cityStr;
+  }
   const abbr = PROVINCE_STATE_ABBR[region];
   return abbr ? `${cityPart}, ${abbr}` : cityStr;
 }

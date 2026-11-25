@@ -25,11 +25,17 @@ const PROVINCE_STATE_ABBR = {
 };
 
 // ─── Exact copy: normalizeCity ───────────────────────────────────────────────
+// canadianProvince is the real helper from punchup-parse.js (imported below).
 function normalizeCity(cityStr) {
   if (!cityStr || !cityStr.includes(", ")) return cityStr;
   const idx = cityStr.lastIndexOf(", ");
   const cityPart = cityStr.slice(0, idx);
   const region = cityStr.slice(idx + 2).trim();
+  if (region.toLowerCase() === "canada") {
+    const prov = canadianProvince(cityPart);
+    if (!prov) console.warn(`  city "${cityStr}" has no province and isn't a known Canadian city; left as is`);
+    return prov ? `${cityPart}, ${prov}` : cityStr;
+  }
   const abbr = PROVINCE_STATE_ABBR[region];
   return abbr ? `${cityPart}, ${abbr}` : cityStr;
 }
@@ -62,7 +68,7 @@ function titleCaseVenue(v) {
 
 // The real helper, from the module the scraper itself imports.
 import { createRequire } from "node:module";
-const { isPresaleUrl } = createRequire(import.meta.url)("./punchup-parse.js");
+const { isPresaleUrl, canadianProvince } = createRequire(import.meta.url)("./punchup-parse.js");
 
 // ─── Exact copy: merge block + sold-out fallback, wrapped for testing ───────
 // Mirrors the merge block of scrape-tour-dates.js verbatim.
@@ -147,6 +153,27 @@ console.log("\n=== normalizeCity ===");
     "Thunder Bay, ON",
     result
   );
+}
+
+// 1a-ii. "City, Canada" (punchup, from a venue address with no province) -> province
+// (2026-11-25, The Wise Hall: "Vancouver, Canada" would have filed presale sign-ups
+// under a new Kit tag instead of "Vancouver, BC").
+for (const [input, want] of [
+  ["Vancouver, Canada", "Vancouver, BC"],
+  ["Victoria, Canada", "Victoria, BC"],
+  ["Ottawa, Canada", "Ottawa, ON"],
+  ["Montréal, Canada", "Montréal, QC"],
+  ["St. John’s, Canada", "St. John’s, NL"],
+  ["  Saint John , Canada", "  Saint John , NB"],
+  ["Kitchener-Waterloo, CANADA", "Kitchener-Waterloo, ON"],
+  ["Smalltown, Canada", "Smalltown, Canada"],
+  ["Constructor, Canada", "Constructor, Canada"],
+  ["Toronto, ON", "Toronto, ON"],
+  ["Chicago, IL", "Chicago, IL"],
+  ["Canada", "Canada"],
+]) {
+  const result = normalizeCity(input);
+  assert(`normalizeCity(${JSON.stringify(input)}) -> ${JSON.stringify(want)}`, result === want, want, result);
 }
 
 // 1b. Already abbreviated province — unchanged
