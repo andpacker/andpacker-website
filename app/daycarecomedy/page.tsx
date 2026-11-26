@@ -42,12 +42,13 @@ export const metadata: Metadata = {
 
 // As on /thepack: a 2x2 grid on landscape screens, 4 stacked bands on portrait
 // ones. 1600x1067 each, EXIF/GPS stripped. objectPosition keeps faces in frame
-// in the wide phone bands.
+// in the wide phone bands. Each photo has its own filename: a same-name swap can
+// show the old image from Vercel's edge cache for a minute.
 const PHOTOS = [
-  { src: "/day-care-waitlist-1.jpg", objectPosition: "60% 30%" }, // NYC: Andrew laughing on stage (IMG_7467)
-  { src: "/day-care-waitlist-2.jpg", objectPosition: "50% 30%" }, // NYC: Michael Moses on stage (IMG_7085)
-  { src: "/day-care-waitlist-3.jpg", objectPosition: "50% 45%" }, // Toronto: parents laughing with babies (DSC05702)
-  { src: "/day-care-waitlist-4.jpg", objectPosition: "60% 35%" }, // Toronto: two moms smiling, babies on laps (DSC01539)
+  { src: "/day-care-waitlist-toronto-dad.jpg", objectPosition: "50% 45%" }, // Toronto: dad laughing with baby (DSC05702)
+  { src: "/day-care-waitlist-michael.jpg", objectPosition: "50% 30%" }, // NYC: Michael Moses on stage (IMG_7085)
+  { src: "/day-care-waitlist-andrew.jpg", objectPosition: "60% 30%" }, // NYC: Andrew laughing on stage (IMG_7467)
+  { src: "/day-care-waitlist-nyc-dad.jpg", objectPosition: "25% 40%" }, // NYC: dad beaming with baby, packed room (IMG_7369)
 ]
 
 export default function DayCareComedyWaitlistPage() {
