@@ -48,7 +48,7 @@ const PHOTOS = [
   { src: "/day-care-waitlist-toronto-dad.jpg", objectPosition: "50% 45%" }, // Toronto: dad laughing with baby (DSC05702)
   { src: "/day-care-waitlist-michael.jpg", objectPosition: "50% 30%" }, // NYC: Michael Moses on stage (IMG_7085)
   { src: "/day-care-waitlist-andrew.jpg", objectPosition: "60% 30%" }, // NYC: Andrew laughing on stage (IMG_7467)
-  { src: "/day-care-waitlist-nyc-dad.jpg", objectPosition: "25% 40%" }, // NYC: dad beaming with baby, packed room (IMG_7369)
+  { src: "/day-care-waitlist-nyc-mom.jpg", objectPosition: "58% 45%" }, // NYC: mom smiling at her baby (IMG_6960); subject right of centre so the form does not cover it on desktop
 ]
 
 export default function DayCareComedyWaitlistPage() {
