@@ -90,7 +90,9 @@ export default function DayCareComedyWaitlistPage() {
         />
 
         <div className="relative z-10 w-full max-w-xl mx-auto px-6 pt-10 pb-12 text-center">
-          <p className="font-[family-name:var(--font-display)] font-bold text-[#0D41CB] tracking-[0.3em] uppercase text-sm md:text-base mb-3">
+          {/* White, larger and tighter than /thepack's blue eyebrow: the blue read too
+              dark over the photos (Andrew, Nov 26). */}
+          <p className="font-[family-name:var(--font-display)] font-extrabold text-white tracking-[0.15em] uppercase text-lg md:text-2xl mb-3 [text-shadow:0_2px_12px_rgba(0,0,0,0.8)]">
             Andrew Packer &amp; Michael Moses
           </p>
           <h1 className="font-[family-name:var(--font-display)] font-extrabold text-white uppercase leading-none text-[clamp(3rem,12vw,6rem)] tracking-tight mb-3">
