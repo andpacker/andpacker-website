@@ -41,13 +41,13 @@ export const metadata: Metadata = {
 }
 
 // As on /thepack: a 2x2 grid on landscape screens, 4 stacked bands on portrait
-// ones. 1600x1067 each, EXIF/GPS stripped. The Y in objectPosition keeps faces in
-// the wide phone bands; the 0% X on photo 1 keeps Andrew (far left) in frame.
+// ones. 1600x1067 each, EXIF/GPS stripped. objectPosition keeps faces in frame
+// in the wide phone bands.
 const PHOTOS = [
-  { src: "/day-care-waitlist-1.jpg", objectPosition: "0% 50%" }, // Toronto: full room, Andrew on stage
+  { src: "/day-care-waitlist-1.jpg", objectPosition: "60% 30%" }, // NYC: Andrew laughing on stage (IMG_7467)
   { src: "/day-care-waitlist-2.jpg", objectPosition: "50% 30%" }, // NYC: Michael Moses on stage (IMG_7085)
-  { src: "/day-care-waitlist-3.jpg", objectPosition: "50% 45%" }, // Toronto: parents laughing with babies
-  { src: "/day-care-waitlist-4.jpg", objectPosition: "50% 40%" }, // NYC: front rows with babies
+  { src: "/day-care-waitlist-3.jpg", objectPosition: "50% 45%" }, // Toronto: parents laughing with babies (DSC05702)
+  { src: "/day-care-waitlist-4.jpg", objectPosition: "60% 35%" }, // Toronto: two moms smiling, babies on laps (DSC01539)
 ]
 
 export default function DayCareComedyWaitlistPage() {
