@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 // the wide phone bands; the 0% X on photo 1 keeps Andrew (far left) in frame.
 const PHOTOS = [
   { src: "/day-care-waitlist-1.jpg", objectPosition: "0% 50%" }, // Toronto: full room, Andrew on stage
-  { src: "/day-care-waitlist-2.jpg", objectPosition: "50% 30%" }, // NYC: Andrew on stage
+  { src: "/day-care-waitlist-2.jpg", objectPosition: "50% 30%" }, // NYC: Michael Moses on stage (IMG_7085)
   { src: "/day-care-waitlist-3.jpg", objectPosition: "50% 45%" }, // Toronto: parents laughing with babies
   { src: "/day-care-waitlist-4.jpg", objectPosition: "50% 40%" }, // NYC: front rows with babies
 ]
@@ -91,7 +91,7 @@ export default function DayCareComedyWaitlistPage() {
 
         <div className="relative z-10 w-full max-w-xl mx-auto px-6 pt-10 pb-12 text-center">
           <p className="font-[family-name:var(--font-display)] font-bold text-[#0D41CB] tracking-[0.3em] uppercase text-sm md:text-base mb-3">
-            Andrew Packer
+            Andrew Packer &amp; Michael Moses
           </p>
           <h1 className="font-[family-name:var(--font-display)] font-extrabold text-white uppercase leading-none text-[clamp(3rem,12vw,6rem)] tracking-tight mb-3">
             Day Care Comedy
