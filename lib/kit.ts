@@ -89,3 +89,90 @@ export async function findSubscriber(
     return undefined
   }
 }
+
+// ---- Used by the Day Care Comedy waitlist (lib/dayCareWaitlist.ts) ----
+// Each returns null on any failure, so the caller can stop without a false success.
+
+/** Every tag in the account, or null when the call failed. */
+export async function listTags(
+  apiSecret: string
+): Promise<{ id: number; name: string }[] | null> {
+  try {
+    const res = await fetch(
+      `${KIT_V3_BASE}/tags?api_secret=${encodeURIComponent(apiSecret)}`
+    )
+    if (!res.ok) return null
+    const data = await res.json()
+    return Array.isArray(data.tags) ? data.tags : null
+  } catch {
+    return null
+  }
+}
+
+/** Create a tag and return its id, or null when the call failed. */
+export async function createTag(
+  apiSecret: string,
+  name: string
+): Promise<number | null> {
+  try {
+    const res = await fetch(`${KIT_V3_BASE}/tags`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ api_secret: apiSecret, tag: { name } }),
+    })
+    if (!res.ok) return null
+    const created = await res.json()
+    // V3 returns the created tag as either an object or a single-item array.
+    const tag = Array.isArray(created) ? created[0] : created
+    return typeof tag?.id === "number" ? tag.id : null
+  } catch {
+    return null
+  }
+}
+
+/** Names of the tags a subscriber has, or null when the call failed. */
+export async function getSubscriberTags(
+  apiSecret: string,
+  subscriberId: number
+): Promise<string[] | null> {
+  try {
+    const res = await fetch(
+      `${KIT_V3_BASE}/subscribers/${subscriberId}/tags?api_secret=${encodeURIComponent(
+        apiSecret
+      )}`
+    )
+    if (!res.ok) return null
+    const data = await res.json()
+    return Array.isArray(data.tags)
+      ? data.tags.map((t: { name: string }) => t.name)
+      : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Like findSubscriber, but also asks for unsubscribed people. Kit's V3 lookup may
+ * return only active subscribers by default, and its docs don't say; older V3
+ * docs name a `subscriber_state=cancelled` filter. If Kit ignores that parameter
+ * the second call just returns the same nothing. Undefined when either call failed.
+ */
+export async function findSubscriberAnyState(
+  apiSecret: string,
+  email: string
+): Promise<KitSubscriber | null | undefined> {
+  const active = await findSubscriber(apiSecret, email)
+  if (active !== null) return active
+  try {
+    const res = await fetch(
+      `${KIT_V3_BASE}/subscribers?api_secret=${encodeURIComponent(
+        apiSecret
+      )}&email_address=${encodeURIComponent(email)}&subscriber_state=cancelled`
+    )
+    if (!res.ok) return undefined
+    const data = await res.json()
+    return data.subscribers?.[0] ?? null
+  } catch {
+    return undefined
+  }
+}

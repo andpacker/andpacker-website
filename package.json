@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:daycare": "node --test scripts/test-daycare-waitlist.mts scripts/test-daycare-waitlist-qa.mts",
     "test:scraper": "node scripts/test-punchup-parse.mjs && node scripts/test-scrape-merge.mjs && node scripts/test-presale.mjs && node scripts/test-eventbrite-status.mjs && node scripts/test-eventbrite-status-qa.mjs"
   },
   "dependencies": {
